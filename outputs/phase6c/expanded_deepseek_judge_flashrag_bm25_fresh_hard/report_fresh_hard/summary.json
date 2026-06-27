@@ -1,0 +1,19 @@
+{
+  "flashrag_bm25_oracle_reader": {
+    "api_calls": 8,
+    "errors": 0,
+    "mean_latency_ms": 4693.386021535844,
+    "metrics": {
+      "context_support": 4.375,
+      "correctness": 5.0,
+      "faithfulness": 4.375,
+      "hallucination_risk": 0.625,
+      "relevance": 5.0
+    },
+    "questions": 8,
+    "total_input_tokens": 5618,
+    "total_output_tokens": 4066,
+    "total_tokens": 9684,
+    "unsupported_claims": 1
+  }
+}
