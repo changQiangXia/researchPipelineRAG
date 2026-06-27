@@ -127,7 +127,11 @@ def _validate_target_does_not_overlap_source(
 ) -> None:
     resolved_source = dataset_dir.resolve()
     resolved_target = target_dataset_dir.resolve()
-    if resolved_target == resolved_source or resolved_source in resolved_target.parents:
+    if (
+        resolved_target == resolved_source
+        or resolved_source in resolved_target.parents
+        or resolved_target in resolved_source.parents
+    ):
         raise ValidationError(
             [
                 ValidationIssue(
