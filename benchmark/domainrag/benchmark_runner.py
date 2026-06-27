@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from time import perf_counter
 
 from domainrag.dataset_adapter import load_split
 from domainrag.domain_evaluator import evaluate_record
@@ -21,10 +20,8 @@ def run_benchmark(
     output_records: list[dict] = []
     for method in methods:
         for record in records:
-            started = perf_counter()
             prompt = render_prompt(record)
             prediction = _predict(method, record)
-            latency_ms = (perf_counter() - started) * 1000
             output_records.append(
                 {
                     "id": record["id"],
@@ -34,7 +31,7 @@ def run_benchmark(
                     "prediction": prediction,
                     "golden_answers": record["golden_answers"],
                     "scores": evaluate_record(record, prediction),
-                    "latency_ms": latency_ms,
+                    "latency_ms": 0.0,
                     "input_tokens": len(prompt.split()),
                     "output_tokens": len(prediction.split()),
                     "api_calls": 0,

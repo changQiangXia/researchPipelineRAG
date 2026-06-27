@@ -2,7 +2,7 @@
   "mock_rag": {
     "api_calls": 0,
     "errors": 0,
-    "mean_latency_ms": 0.0017949690421422322,
+    "mean_latency_ms": 0.0,
     "metrics": {
       "fill_blank_alias_match": 1.0,
       "fill_blank_normalized_em": 1.0,
@@ -16,7 +16,7 @@
   "no_rag": {
     "api_calls": 0,
     "errors": 0,
-    "mean_latency_ms": 0.0028579185406366983,
+    "mean_latency_ms": 0.0,
     "metrics": {
       "fill_blank_alias_match": 0.0,
       "fill_blank_normalized_em": 0.0,
