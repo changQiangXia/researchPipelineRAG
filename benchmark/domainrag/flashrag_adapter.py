@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import re
 import shutil
 
 from domainrag.errors import ValidationError, ValidationIssue
@@ -13,6 +14,7 @@ DOMAINRAG_TO_FLASHRAG_SPLIT_FILES = {
     "test": ("test.jsonl", "test.jsonl"),
     "fresh_hard": ("fresh_hard_test.jsonl", "fresh_hard.jsonl"),
 }
+SAFE_DATASET_NAME_PATTERN = re.compile(r"^[A-Za-z0-9._-]+$")
 
 
 @dataclass(frozen=True)
@@ -34,7 +36,9 @@ def prepare_flashrag_bundle(
 ) -> FlashRAGBundle:
     validate_dataset(dataset_dir)
 
-    resolved_dataset_name = dataset_name or dataset_dir.name
+    resolved_dataset_name = _validate_dataset_name(
+        dataset_dir.name if dataset_name is None else dataset_name
+    )
     _validate_requested_splits(dataset_dir, splits)
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -70,6 +74,28 @@ def prepare_flashrag_bundle(
         config_path=config_path,
         splits=splits,
     )
+
+
+def _validate_dataset_name(dataset_name: str) -> str:
+    if (
+        not dataset_name
+        or dataset_name in {".", ".."}
+        or "/" in dataset_name
+        or "\\" in dataset_name
+        or not SAFE_DATASET_NAME_PATTERN.fullmatch(dataset_name)
+    ):
+        raise ValidationError(
+            [
+                ValidationIssue(
+                    path="dataset_name",
+                    message=(
+                        "dataset_name must be a simple dataset basename "
+                        "containing only letters, numbers, '.', '_' or '-'"
+                    ),
+                )
+            ]
+        )
+    return dataset_name
 
 
 def _validate_requested_splits(dataset_dir: Path, splits: tuple[str, ...]) -> None:
