@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -32,6 +33,66 @@ def test_generate_report_writes_markdown_and_json(tmp_path: Path):
     assert markdown_path.exists()
     assert json_path.exists()
     assert "mock_rag" in markdown_path.read_text(encoding="utf-8")
+
+
+def test_generate_report_marks_fresh_hard_candidates(tmp_path: Path):
+    input_path = tmp_path / "results.jsonl"
+    output_dir = tmp_path / "reports"
+    write_jsonl(
+        input_path,
+        [
+            {
+                "id": "q1",
+                "method": "no_rag",
+                "split": "fresh_hard",
+                "scores": {"single_choice_accuracy": 0.0},
+                "latency_ms": 0.0,
+                "input_tokens": 5,
+                "output_tokens": 0,
+                "api_calls": 0,
+                "error": None,
+            },
+            {
+                "id": "q1",
+                "method": "oracle_context",
+                "split": "fresh_hard",
+                "scores": {"single_choice_accuracy": 1.0},
+                "latency_ms": 0.0,
+                "input_tokens": 5,
+                "output_tokens": 1,
+                "api_calls": 0,
+                "error": None,
+            },
+            {
+                "id": "q2",
+                "method": "no_rag",
+                "split": "fresh_hard",
+                "scores": {"single_choice_accuracy": 1.0},
+                "latency_ms": 0.0,
+                "input_tokens": 5,
+                "output_tokens": 1,
+                "api_calls": 0,
+                "error": None,
+            },
+            {
+                "id": "q2",
+                "method": "oracle_context",
+                "split": "fresh_hard",
+                "scores": {"single_choice_accuracy": 1.0},
+                "latency_ms": 0.0,
+                "input_tokens": 5,
+                "output_tokens": 1,
+                "api_calls": 0,
+                "error": None,
+            },
+        ],
+    )
+
+    _, json_path = generate_report(input_path, output_dir)
+    summary = json.loads(json_path.read_text(encoding="utf-8"))
+
+    assert summary["_diagnostics"]["fresh_hard_candidates"] == 1
+    assert summary["_diagnostics"]["fresh_hard_candidate_ids"] == ["q1"]
 
 
 @pytest.mark.parametrize(

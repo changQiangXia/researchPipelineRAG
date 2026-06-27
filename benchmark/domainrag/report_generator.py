@@ -29,6 +29,9 @@ def generate_report(input_path: Path, output_dir: Path) -> tuple[Path, Path]:
             "api_calls": sum(row["api_calls"] for row in method_rows),
             "errors": sum(1 for row in method_rows if row.get("error")),
         }
+    diagnostics = _build_diagnostics(rows)
+    if diagnostics:
+        summary["_diagnostics"] = diagnostics
 
     output_dir.mkdir(parents=True, exist_ok=True)
     json_path = output_dir / "summary.json"
@@ -39,6 +42,36 @@ def generate_report(input_path: Path, output_dir: Path) -> tuple[Path, Path]:
     )
     markdown_path.write_text(_render_markdown(summary), encoding="utf-8")
     return markdown_path, json_path
+
+
+def _build_diagnostics(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    by_id: dict[str, dict[str, float]] = defaultdict(dict)
+    for row in rows:
+        question_id = row.get("id")
+        method = row.get("method")
+        if not isinstance(question_id, str) or not isinstance(method, str):
+            continue
+        by_id[question_id][method] = _answer_score(row["scores"])
+
+    fresh_hard_candidate_ids = [
+        question_id
+        for question_id, method_scores in sorted(by_id.items())
+        if method_scores.get("no_rag", 1.0) < 0.6
+        and method_scores.get("oracle_context", 0.0) >= 0.8
+    ]
+    return {
+        "fresh_hard_candidates": len(fresh_hard_candidate_ids),
+        "fresh_hard_candidate_ids": fresh_hard_candidate_ids,
+    }
+
+
+def _answer_score(scores: dict[str, float]) -> float:
+    answer_scores = [
+        value
+        for metric, value in scores.items()
+        if not metric.startswith("retrieval_")
+    ]
+    return mean(answer_scores) if answer_scores else 0.0
 
 
 def _validate_rows(input_path: Path, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -154,6 +187,17 @@ def _is_integer_compatible(value: Any) -> bool:
 def _render_markdown(summary: dict[str, dict]) -> str:
     lines = ["# DomainRAG-Bench Summary", ""]
     for method, values in sorted(summary.items()):
+        if method == "_diagnostics":
+            lines.append("## Diagnostics")
+            lines.append("")
+            lines.append(f"- Fresh-Hard candidates: {values['fresh_hard_candidates']}")
+            if values["fresh_hard_candidate_ids"]:
+                lines.append(
+                    "- Fresh-Hard candidate ids: "
+                    + ", ".join(values["fresh_hard_candidate_ids"])
+                )
+            lines.append("")
+            continue
         lines.append(f"## {method}")
         lines.append("")
         lines.append(f"- Questions: {values['questions']}")
