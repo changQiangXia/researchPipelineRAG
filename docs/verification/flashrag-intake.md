@@ -40,7 +40,7 @@ git status --short
 
 ## Command Outputs
 
-- `pytest`: `56 passed in 1.58s`
+- `pytest`: `57 passed in 2.78s`
 - `python scripts/create_example_domain.py`: exit `0`
 - `validate-data`: `data/example_domain is valid`
 - `prepare-flashrag`: `FlashRAG bundle written to outputs/flashrag/example_domain`
@@ -75,6 +75,6 @@ git status --short
 
 ## Final Review Follow-up
 
-- Added a pre-cleanup overlap guard so `prepare_flashrag_bundle(...)` rejects any output dataset directory that resolves to the source dataset directory or a nested path inside it.
+- Added a pre-cleanup overlap guard so `prepare_flashrag_bundle(...)` rejects any output dataset directory that resolves to the source dataset directory, a path nested inside it, or a parent path that would delete it.
 - Added validation for empty requested split sets so the adapter and CLI both reject unusable bundles such as `--splits ,`.
 - Re-ran the Phase 2A smoke sequence after the fix and confirmed it does not leave committed output artifacts modified.

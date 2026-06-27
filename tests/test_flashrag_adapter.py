@@ -118,6 +118,22 @@ def test_prepare_flashrag_bundle_rejects_output_target_nested_in_source(tmp_path
     )
 
 
+def test_prepare_flashrag_bundle_rejects_output_target_parent_of_source(tmp_path: Path):
+    dataset_dir = tmp_path / "data" / "example_domain"
+    _write_minimal_dataset(dataset_dir)
+
+    with pytest.raises(ValidationError) as excinfo:
+        prepare_flashrag_bundle(
+            dataset_dir,
+            tmp_path,
+            dataset_name="data",
+        )
+
+    assert "output dataset directory overlaps the source dataset directory" in str(
+        excinfo.value
+    )
+
+
 def test_prepare_flashrag_bundle_rejects_empty_splits(tmp_path: Path):
     dataset_dir = tmp_path / "example_domain"
     _write_minimal_dataset(dataset_dir)
