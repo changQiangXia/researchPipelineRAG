@@ -64,4 +64,3 @@ Phase 2B commits only config examples and documentation. It does not call live A
 ## AGPL Boundary
 
 Easy Dataset is AGPL-3.0 with additional terms. The local checkout is ignored and must not be committed. Any future modified Easy Dataset fork or hosted service needs a separate license compliance review.
-

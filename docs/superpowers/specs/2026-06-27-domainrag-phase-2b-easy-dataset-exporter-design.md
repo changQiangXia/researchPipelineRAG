@@ -223,4 +223,3 @@ The Easy Dataset upstream baseline commands and their environment-specific failu
 2. Easy Dataset is AGPL-3.0. This repository must not vendor the upstream checkout; downstream deployment must handle AGPL obligations separately.
 3. Full Easy Dataset build may be resource-heavy or interactive in this environment. Baseline failures are recorded rather than hidden.
 4. DeepSeek model names are time-sensitive. Config examples must be easy to update and must not hard-code retired names.
-
