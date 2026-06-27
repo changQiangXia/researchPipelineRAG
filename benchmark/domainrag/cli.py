@@ -9,6 +9,11 @@ from domainrag.deepseek_answer_runner import (
     DeepSeekAnswerConfig,
     run_deepseek_answer_benchmark,
 )
+from domainrag.deepseek_judge_runner import (
+    DeepSeekJudgeConfig,
+    generate_judge_report,
+    run_deepseek_judge,
+)
 from domainrag.deepseek_pipeline import DEFAULT_BASE_URL, DEFAULT_MODEL
 from domainrag.easy_dataset_adapter import export_domainrag_bundle
 from domainrag.errors import ValidationError
@@ -42,9 +47,24 @@ def build_parser() -> argparse.ArgumentParser:
     run_deepseek.add_argument("--top-k", type=int, default=5)
     run_deepseek.add_argument("--max-retries", type=int, default=1)
     run_deepseek.add_argument("--limit", type=int, default=None)
+    judge_deepseek = subparsers.add_parser("judge-deepseek-answers")
+    judge_deepseek.add_argument("--dataset", required=True)
+    judge_deepseek.add_argument("--input", required=True)
+    judge_deepseek.add_argument("--output", required=True)
+    judge_deepseek.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
+    judge_deepseek.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    judge_deepseek.add_argument("--model", default=DEFAULT_MODEL)
+    judge_deepseek.add_argument("--timeout-seconds", type=int, default=120)
+    judge_deepseek.add_argument("--max-tokens", type=int, default=4096)
+    judge_deepseek.add_argument("--temperature", type=float, default=0.0)
+    judge_deepseek.add_argument("--max-retries", type=int, default=1)
+    judge_deepseek.add_argument("--limit", type=int, default=None)
     report = subparsers.add_parser("report")
     report.add_argument("--input", required=True)
     report.add_argument("--output", required=True)
+    judge_report = subparsers.add_parser("judge-report")
+    judge_report.add_argument("--input", required=True)
+    judge_report.add_argument("--output", required=True)
     prepare_flashrag = subparsers.add_parser("prepare-flashrag")
     prepare_flashrag.add_argument("--dataset", required=True)
     prepare_flashrag.add_argument("--output", required=True)
@@ -110,6 +130,34 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"DeepSeek answer results written to {result_path}")
         return 0
+    if args.command == "judge-deepseek-answers":
+        api_key = os.environ.get("DEEPSEEK_API_KEY")
+        if not api_key:
+            print("DEEPSEEK_API_KEY is required")
+            return 1
+        try:
+            config = DeepSeekJudgeConfig(
+                api_key=api_key,
+                base_url=args.base_url,
+                model=args.model,
+                timeout_seconds=args.timeout_seconds,
+                max_tokens=args.max_tokens,
+                temperature=args.temperature,
+                max_retries=args.max_retries,
+            )
+            result_path = run_deepseek_judge(
+                Path(args.dataset),
+                Path(args.input),
+                Path(args.output),
+                split=args.split,
+                config=config,
+                limit=args.limit,
+            )
+        except (ValidationError, ValueError) as exc:
+            print(str(exc))
+            return 1
+        print(f"DeepSeek judge results written to {result_path}")
+        return 0
     if args.command == "report":
         try:
             markdown_path, json_path = generate_report(Path(args.input), Path(args.output))
@@ -117,6 +165,17 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"report written to {markdown_path} and {json_path}")
+        return 0
+    if args.command == "judge-report":
+        try:
+            markdown_path, json_path = generate_judge_report(
+                Path(args.input),
+                Path(args.output),
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"judge report written to {markdown_path} and {json_path}")
         return 0
     if args.command == "prepare-flashrag":
         splits = tuple(split.strip() for split in args.splits.split(",") if split.strip())
