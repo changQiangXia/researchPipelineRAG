@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -11,8 +12,8 @@ from domainrag.validator import validate_dataset
 
 def generate_calibration_packet(
     dataset_dir: Path,
-    answers_path: Path,
-    judge_path: Path,
+    answers_path: Path | Sequence[Path],
+    judge_path: Path | Sequence[Path],
     output_dir: Path,
     *,
     split: str,
@@ -20,9 +21,9 @@ def generate_calibration_packet(
     validate_dataset(dataset_dir)
     records = {record["id"]: record for record in load_split(dataset_dir, split)}
     corpus = _load_corpus(dataset_dir)
-    answer_rows = read_jsonl(answers_path)
-    judge_rows = read_jsonl(judge_path)
-    judge_by_key = _index_judges(judge_rows, split=split, path=judge_path)
+    answer_rows = _read_jsonl_inputs(answers_path)
+    judge_rows = _read_jsonl_inputs(judge_path)
+    judge_by_key = _index_judges(judge_rows, split=split, source=_describe_paths(judge_path))
 
     review_rows: list[dict[str, Any]] = []
     issues: list[ValidationIssue] = []
@@ -72,6 +73,23 @@ def generate_calibration_packet(
     return jsonl_path, markdown_path
 
 
+def _read_jsonl_inputs(paths: Path | Sequence[Path]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for path in _as_paths(paths):
+        rows.extend(read_jsonl(path))
+    return rows
+
+
+def _as_paths(paths: Path | Sequence[Path]) -> list[Path]:
+    if isinstance(paths, Path):
+        return [paths]
+    return list(paths)
+
+
+def _describe_paths(paths: Path | Sequence[Path]) -> str:
+    return ", ".join(str(path) for path in _as_paths(paths))
+
+
 def _load_corpus(dataset_dir: Path) -> dict[str, str]:
     corpus: dict[str, str] = {}
     for record in read_jsonl(dataset_dir / "corpus.jsonl"):
@@ -86,7 +104,7 @@ def _index_judges(
     judge_rows: list[dict[str, Any]],
     *,
     split: str,
-    path: Path,
+    source: str,
 ) -> dict[tuple[str, str], dict[str, Any]]:
     issues: list[ValidationIssue] = []
     indexed: dict[tuple[str, str], dict[str, Any]] = {}
@@ -96,20 +114,20 @@ def _index_judges(
         row_split = row.get("split")
         if row_split != split:
             issues.append(
-                ValidationIssue(str(path), f"record {index}: judge row split must be {split}")
+                ValidationIssue(source, f"record {index}: judge row split must be {split}")
             )
             continue
         if not isinstance(question_id, str):
-            issues.append(ValidationIssue(str(path), f"record {index}: id must be a string"))
+            issues.append(ValidationIssue(source, f"record {index}: id must be a string"))
             continue
         if not isinstance(method, str):
-            issues.append(ValidationIssue(str(path), f"record {index}: method must be a string"))
+            issues.append(ValidationIssue(source, f"record {index}: method must be a string"))
             continue
         key = (question_id, method)
         if key in indexed:
             issues.append(
                 ValidationIssue(
-                    str(path),
+                    source,
                     f"record {index}: duplicate judge row for {method}/{question_id}",
                 )
             )
@@ -229,7 +247,7 @@ def _render_markdown(rows: list[dict[str, Any]]) -> str:
                 str(row["question"]),
                 "",
                 f"Gold answers: {row['golden_answers']}",
-                f"Prediction: {row['prediction']}",
+                _format_field("Prediction", row["prediction"]),
                 "",
                 "Judge:",
                 "",
@@ -254,6 +272,13 @@ def _render_markdown(rows: list[dict[str, Any]]) -> str:
             ]
         )
     return "\n".join(lines)
+
+
+def _format_field(label: str, value: Any) -> str:
+    text = str(value)
+    if not text:
+        return f"{label}:"
+    return f"{label}: {text}"
 
 
 def _format_judge(row: dict[str, Any]) -> str:

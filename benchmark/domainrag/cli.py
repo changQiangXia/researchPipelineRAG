@@ -73,8 +73,8 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("--output", required=True)
     calibration_packet = subparsers.add_parser("calibration-packet")
     calibration_packet.add_argument("--dataset", required=True)
-    calibration_packet.add_argument("--answers", required=True)
-    calibration_packet.add_argument("--judge", required=True)
+    calibration_packet.add_argument("--answers", nargs="+", required=True)
+    calibration_packet.add_argument("--judge", nargs="+", required=True)
     calibration_packet.add_argument(
         "--split",
         default="fresh_hard",
@@ -216,8 +216,8 @@ def main(argv: list[str] | None = None) -> int:
         try:
             jsonl_path, markdown_path = generate_calibration_packet(
                 Path(args.dataset),
-                Path(args.answers),
-                Path(args.judge),
+                [Path(path) for path in args.answers],
+                [Path(path) for path in args.judge],
                 Path(args.output),
                 split=args.split,
             )
