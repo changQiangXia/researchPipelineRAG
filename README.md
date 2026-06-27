@@ -583,6 +583,55 @@ PYTHONPATH=benchmark python -m domainrag.cli report \
 
 这说明 17 个 chunk 仍然不足以区分 lexical/BM25/dense 方法，但已经把项目从最小 9 chunk pilot 推进到可复跑的中间规模数据资产。下一步应在该 expanded split 上运行 live DeepSeek answer、DeepSeek Judge、comparison 和 calibration packet。
 
+## Phase 6B: Expanded Fresh-Hard 真实 DeepSeek Answer + Judge
+
+第六阶段 B 在 Phase 6A 的扩展版 `fresh_hard` 上复跑真实模型链路。当前新增：
+
+- live answer 输出：`outputs/phase6b/expanded_live_deepseek_fresh_hard/`
+- DeepSeek Judge 输出：`outputs/phase6b/expanded_deepseek_judge_fresh_hard/`
+- comparison report：`outputs/phase6b/expanded_fresh_hard_comparison/`
+- human calibration packet：`outputs/phase6b/expanded_human_calibration_fresh_hard/`
+- 输出回归测试：`tests/test_phase6b_outputs.py`
+- 验证记录：`docs/verification/expanded-live-deepseek-eval.md`
+
+真实 answer 命令：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
+  --dataset data/real_pilot_nickel_superalloy_expanded \
+  --output outputs/phase6b/expanded_live_deepseek_fresh_hard \
+  --methods no_rag,oracle_context,lexical_rag \
+  --split fresh_hard \
+  --max-retries 1
+```
+
+DeepSeek Judge 命令：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli judge-deepseek-answers \
+  --dataset data/real_pilot_nickel_superalloy_expanded \
+  --input outputs/phase6b/expanded_live_deepseek_fresh_hard/real_pilot_nickel_superalloy_expanded/fresh_hard_deepseek_results.jsonl \
+  --output outputs/phase6b/expanded_deepseek_judge_fresh_hard \
+  --split fresh_hard \
+  --max-retries 1
+```
+
+当前真实运行结果：
+
+- live answer：24 行，27 次 API 调用，0 个错误
+- Judge：24 行，24 次 API 调用，0 个错误
+- calibration packet：24 行
+
+expanded Fresh-Hard leaderboard：
+
+| method | answer_score | retrieval_hit | correctness | faithfulness | hallucination_risk | api_calls | unsupported_claims |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| lexical_rag | 0.8673 | 1.0000 | 5.0000 | 5.0000 | 0.0000 | 17 | 0 |
+| oracle_context | 0.8631 | 1.0000 | 4.8750 | 5.0000 | 0.0000 | 16 | 0 |
+| no_rag | 0.1572 | 0.0000 | 1.8750 | 0.7500 | 4.2500 | 18 | 10 |
+
+这一步的主要证据是：扩展版数据上 No-RAG 仍然暴露出明显 hallucination risk 和 unsupported claims，而上下文方法在本轮保持 0 个 unsupported claims。与此同时，lexical retrieval 仍然 saturated，说明下一步若要比较 BM25/dense/rerank，仍需要继续扩大语料或加入更难的干扰 chunk。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -593,7 +642,7 @@ PYTHONPATH=benchmark python -m domainrag.cli report \
 
 建议下一阶段优先在扩展版数据集上复跑真实模型链路，并把 dense/rerank 作为独立环境任务处理：
 
-- 在 `data/real_pilot_nickel_superalloy_expanded` 上运行 live DeepSeek answer、DeepSeek Judge、comparison 和 calibration packet
-- 继续扩大真实文献 corpus 和问题规模；当前 17 个 chunk 对 lexical retrieval 仍然过于容易
+- 在 `data/real_pilot_nickel_superalloy_expanded` 上运行 FlashRAG BM25 bridge，并复用 `flashrag_bm25_live_deepseek` 生成 expanded BM25 live answer
+- 继续扩大真实文献 corpus 和问题规模；当前 17 个 chunk 对 lexical/BM25 retrieval 预计仍然过于容易
 - 对 expanded `review_packet.md` 做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论
 - 如果要推进 dense retriever / reranker，先新建隔离环境或明确依赖升级方案，再接入同一套 live answer + Judge 口径
