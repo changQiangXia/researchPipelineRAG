@@ -234,6 +234,11 @@ def _validate_split(
             )
             continue
         question_id = record["id"]
+        if not isinstance(question_id, str):
+            issues.append(
+                ValidationIssue(str(path), f"record {index}: id must be a string")
+            )
+            continue
         ids.add(question_id)
         if question_id not in canonical_ids:
             issues.append(

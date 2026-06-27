@@ -128,3 +128,16 @@ def test_validate_dataset_rejects_missing_qrels(tmp_path: Path):
         validate_dataset(tmp_path)
 
     assert "test.tsv" in str(exc.value)
+
+
+def test_validate_dataset_rejects_non_string_split_id(tmp_path: Path):
+    _write_minimal_dataset(tmp_path)
+    (tmp_path / "dev.jsonl").write_text(
+        '{"id":[],"question":"Which option is Supported fact one?\\nA. Unsupported\\nB. Supported fact one\\nC. Other\\nD. None","golden_answers":["B"],"metadata":{"question_type":"single_choice","correct_options":["B"],"source_chunk_ids":["d000001"],"knowledge_type":"fact","difficulty":"easy"}}\n',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValidationError) as exc:
+        validate_dataset(tmp_path)
+
+    assert "record 1: id must be a string" in str(exc.value)
