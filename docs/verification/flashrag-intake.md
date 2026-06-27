@@ -45,7 +45,7 @@ git status --short
 - `validate-data`: `data/example_domain is valid`
 - `prepare-flashrag`: `FlashRAG bundle written to outputs/flashrag/example_domain`
 - `prepare_flashrag_example.py`: `FlashRAG config written to /root/autodl-tmp/RAG/DomainRAG-Bench/.worktrees/phase-2a-flashrag-adapter/outputs/flashrag/example_domain_flashrag.yaml`
-`git status --short` before staging generated verification artifacts:
+- `git status --short` before staging generated verification artifacts:
 
 ```text
  M README.md
