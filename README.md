@@ -250,6 +250,45 @@ PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
 
 这一步还修复了真实调用中暴露的两个 runner 风险：reasoning 响应耗尽 token 导致 `message.content` 为空，以及空 `answer` 被误当作成功预测。详细记录见 `docs/verification/deepseek-live-answer-eval.md`。
 
+## Phase 4C: DeepSeek Judge 辅助评测
+
+第四阶段 C 增加 RAG.md 中要求的 DeepSeek 辅助 Judge。它不替代规则指标，而是消费 Phase 4B 的 live answer 输出，额外评分：
+
+- `correctness`
+- `context_support`
+- `faithfulness`
+- `relevance`
+- `unsupported_claims`
+
+Judge 使用 0 到 5 分制，并派生 `hallucination_risk = 5 - faithfulness` 方便报告。真实 API 调用入口：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli judge-deepseek-answers \
+  --dataset data/real_pilot_nickel_superalloy \
+  --input outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+  --output outputs/phase4c/deepseek_judge_fresh_hard \
+  --split fresh_hard
+```
+
+生成 Judge summary：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli judge-report \
+  --input outputs/phase4c/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+  --output outputs/phase4c/deepseek_judge_fresh_hard/report_fresh_hard
+```
+
+当前已在 curated real pilot 的 `fresh_hard` split 上完成真实 Judge：
+
+- 输出：`outputs/phase4c/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl`
+- 报告：`outputs/phase4c/deepseek_judge_fresh_hard/report_fresh_hard/summary.json`
+- 结果：12 行，12 次 API 调用，0 个错误
+- `no_rag` 平均 correctness：1.75，context_support：0.0，hallucination_risk：3.75
+- `oracle_context` 平均 correctness：5.0，context_support：5.0，faithfulness：4.75
+- `lexical_rag` 平均 correctness：5.0，context_support：5.0，faithfulness：5.0
+
+这一步把“模型答得像不像”推进到“回答是否被上下文支持、是否忠实”的辅助评测。详细记录见 `docs/verification/deepseek-judge-eval.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -258,8 +297,8 @@ PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
 
 ## 下一阶段建议
 
-建议下一阶段进入 DeepSeek Judge 和 FlashRAG 多方法衔接：
+建议下一阶段进入 FlashRAG 多方法衔接和规模扩展：
 
-- 先对 Phase 4B live answer 输出增加 DeepSeek Judge，评分维度包括 correctness、context support、faithfulness 和 hallucination risk
-- 再把当前 `lexical_rag` 桥接到 FlashRAG 的真实 pipeline，对比 BM25 / dense retriever / reranker 等方法
+- 把当前 `lexical_rag` 桥接到 FlashRAG 的真实 pipeline，对比 BM25 / dense retriever / reranker 等方法
 - 同步扩大真实文献 corpus，否则当前 lexical retrieval 在 9 个 chunk 的 pilot 上过于容易
+- 对 Judge 结果做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论
