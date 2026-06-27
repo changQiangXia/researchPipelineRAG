@@ -18,6 +18,7 @@ from domainrag.deepseek_pipeline import DEFAULT_BASE_URL, DEFAULT_MODEL
 from domainrag.easy_dataset_adapter import export_domainrag_bundle
 from domainrag.errors import ValidationError
 from domainrag.flashrag_adapter import prepare_flashrag_bundle
+from domainrag.flashrag_bm25_bridge import run_flashrag_bm25_bridge
 from domainrag.report_generator import generate_report
 from domainrag.validator import validate_dataset
 
@@ -70,6 +71,15 @@ def build_parser() -> argparse.ArgumentParser:
     prepare_flashrag.add_argument("--output", required=True)
     prepare_flashrag.add_argument("--dataset-name", required=True)
     prepare_flashrag.add_argument("--splits", default="dev,test,fresh_hard")
+    run_flashrag_bm25 = subparsers.add_parser("run-flashrag-bm25")
+    run_flashrag_bm25.add_argument("--flashrag-path", required=True)
+    run_flashrag_bm25.add_argument("--dataset-bundle", required=True)
+    run_flashrag_bm25.add_argument("--output", required=True)
+    run_flashrag_bm25.add_argument("--dataset-name", required=True)
+    run_flashrag_bm25.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
+    run_flashrag_bm25.add_argument("--top-k", type=int, default=5)
+    run_flashrag_bm25.add_argument("--index-dir", default=None)
+    run_flashrag_bm25.add_argument("--rebuild-index", action="store_true", default=False)
     export_domainrag = subparsers.add_parser("export-domainrag")
     export_domainrag.add_argument("--input", required=True)
     export_domainrag.add_argument("--output", required=True)
@@ -191,6 +201,23 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"FlashRAG bundle written to {bundle.dataset_dir}")
         print(f"FlashRAG config written to {bundle.config_path}")
+        return 0
+    if args.command == "run-flashrag-bm25":
+        try:
+            result_path = run_flashrag_bm25_bridge(
+                Path(args.flashrag_path),
+                Path(args.dataset_bundle),
+                Path(args.output),
+                dataset_name=args.dataset_name,
+                split=args.split,
+                top_k=args.top_k,
+                index_dir=Path(args.index_dir) if args.index_dir else None,
+                rebuild_index=args.rebuild_index,
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"FlashRAG BM25 results written to {result_path}")
         return 0
     if args.command == "export-domainrag":
         try:
