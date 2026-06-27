@@ -167,6 +167,21 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 这一步仍未调用 DeepSeek。source manifest 用于内部溯源；公开 DomainRAG 数据集不包含论文标题、URL、DOI、作者、venue、页码或原始 PDF 路径。详细记录见 `docs/verification/real-data-pilot.md`。
 
+## Phase 3B: DeepSeek 生成和独立复核 pilot
+
+第三阶段 B 已在 Phase 3A 的真实 chunk 上接入受控 DeepSeek 生成和独立复核：
+
+- 新增本地流水线模块：`benchmark/domainrag/deepseek_pipeline.py`
+- 新增运行脚本：`scripts/run_deepseek_real_pilot.py`
+- 测试和 dry-run 不调用 DeepSeek
+- 真实调用只从 `DEEPSEEK_API_KEY` 环境变量读取密钥
+- 生成调用和复核调用是两个独立请求
+- 输出保存在 `outputs/deepseek/real_pilot_nickel_superalloy/`
+- 当前真实运行生成 3 个候选题，并全部通过独立复核
+- DeepSeek accepted items 已能通过 `export-domainrag` 转成合法 DomainRAG candidate dataset
+
+这一步发现并修复了一个真实契约风险：DeepSeek 可能把选择题 `options` 输出成数组，而 DomainRAG 需要 `A/B/C/D` keyed object。现在本地校验会拒绝这种输出，prompt 也加入了明确 JSON 形状示例。详细记录见 `docs/verification/deepseek-generation-review.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -175,4 +190,4 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 ## 下一阶段建议
 
-建议下一阶段进入 Phase 3B：在 Phase 3A 的同一小 pilot 上接入受控 DeepSeek 生成和独立复核。先用环境变量临时注入 API key，生成调用和复核调用分离，输出必须过 JSON Schema、DomainRAG contract、`validate-data` 和人工抽检；确认质量后，再扩大到更多论文。
+建议下一阶段进入 Phase 3C：用同一 DeepSeek 流水线覆盖 Phase 3A 的全部真实 chunk，生成完整候选题集，并增加候选题审计表，把每条候选标成 `accepted`、`rejected` 或 `needs_human_review`。通过人工抽检后，再考虑替换或扩展 curated pilot 数据。

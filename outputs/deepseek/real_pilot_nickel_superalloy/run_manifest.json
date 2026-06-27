@@ -1,0 +1,9 @@
+{
+  "base_url": "https://api.deepseek.com",
+  "dry_run": false,
+  "generated_at": "2026-06-27T19:29:32.880622+00:00",
+  "generation_model": "deepseek-v4-pro",
+  "planned_items": 3,
+  "review_model": "deepseek-v4-pro",
+  "source_chunks": "fixtures/easy_dataset/real_pilot_nickel_superalloy/chunks.jsonl"
+}
