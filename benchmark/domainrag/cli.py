@@ -48,6 +48,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_deepseek.add_argument("--top-k", type=int, default=5)
     run_deepseek.add_argument("--max-retries", type=int, default=1)
     run_deepseek.add_argument("--limit", type=int, default=None)
+    run_deepseek.add_argument("--retrieval-results", default=None)
     judge_deepseek = subparsers.add_parser("judge-deepseek-answers")
     judge_deepseek.add_argument("--dataset", required=True)
     judge_deepseek.add_argument("--input", required=True)
@@ -134,6 +135,9 @@ def main(argv: list[str] | None = None) -> int:
                 args.split,
                 config,
                 limit=args.limit,
+                retrieval_results_path=(
+                    Path(args.retrieval_results) if args.retrieval_results else None
+                ),
             )
         except (ValidationError, ValueError) as exc:
             print(str(exc))
