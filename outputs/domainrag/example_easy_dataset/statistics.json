@@ -1,0 +1,25 @@
+{
+  "corpus_count": 3,
+  "dataset_name": "example_easy_dataset",
+  "difficulty_counts": {
+    "easy": 1,
+    "hard": 1,
+    "medium": 1
+  },
+  "question_count": 3,
+  "question_type_counts": {
+    "fill_blank": 1,
+    "short_answer": 1,
+    "single_choice": 1
+  },
+  "required_splits": [
+    "dev",
+    "fresh_hard",
+    "test"
+  ],
+  "split_counts": {
+    "dev": 1,
+    "fresh_hard": 1,
+    "test": 1
+  }
+}

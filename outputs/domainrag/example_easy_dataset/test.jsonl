@@ -1,0 +1,1 @@
+{"golden_answers": ["stress"], "id": "ed_q_002", "metadata": {"answer_aliases": ["applied stress"], "difficulty": "medium", "knowledge_type": "condition", "question_type": "fill_blank", "required_points": [], "source_chunk_ids": ["ed_chunk_002"]}, "question": "Creep rate increases when temperature and applied ____ increase together."}
