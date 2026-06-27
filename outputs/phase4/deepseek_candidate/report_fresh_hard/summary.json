@@ -1,0 +1,58 @@
+{
+  "_diagnostics": {
+    "fresh_hard_candidate_ids": [
+      "creep_descriptor_q1",
+      "domainrag_fresh_hard_001",
+      "ns_ht_am_abd900_heat_treatment_001_fb1"
+    ],
+    "fresh_hard_candidates": 3
+  },
+  "lexical_rag": {
+    "api_calls": 0,
+    "errors": 0,
+    "mean_latency_ms": 0.0,
+    "metrics": {
+      "fill_blank_alias_match": 1.0,
+      "fill_blank_normalized_em": 1.0,
+      "key_point_coverage": 0.6666666666666666,
+      "retrieval_hit": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_recall": 1.0,
+      "short_answer_token_f1": 1.0,
+      "single_choice_accuracy": 1.0
+    },
+    "questions": 3
+  },
+  "no_rag": {
+    "api_calls": 0,
+    "errors": 0,
+    "mean_latency_ms": 0.0,
+    "metrics": {
+      "fill_blank_alias_match": 0.0,
+      "fill_blank_normalized_em": 0.0,
+      "key_point_coverage": 0.0,
+      "retrieval_hit": 0.0,
+      "retrieval_mrr": 0.0,
+      "retrieval_recall": 0.0,
+      "short_answer_token_f1": 0.0,
+      "single_choice_accuracy": 0.0
+    },
+    "questions": 3
+  },
+  "oracle_context": {
+    "api_calls": 0,
+    "errors": 0,
+    "mean_latency_ms": 0.0,
+    "metrics": {
+      "fill_blank_alias_match": 1.0,
+      "fill_blank_normalized_em": 1.0,
+      "key_point_coverage": 0.6666666666666666,
+      "retrieval_hit": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_recall": 1.0,
+      "short_answer_token_f1": 1.0,
+      "single_choice_accuracy": 1.0
+    },
+    "questions": 3
+  }
+}
