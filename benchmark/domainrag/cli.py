@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 
 from domainrag.benchmark_runner import run_benchmark
+from domainrag.deepseek_answer_runner import (
+    DeepSeekAnswerConfig,
+    run_deepseek_answer_benchmark,
+)
+from domainrag.deepseek_pipeline import DEFAULT_BASE_URL, DEFAULT_MODEL
 from domainrag.easy_dataset_adapter import export_domainrag_bundle
 from domainrag.errors import ValidationError
 from domainrag.flashrag_adapter import prepare_flashrag_bundle
@@ -23,6 +29,19 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--output", required=True)
     run.add_argument("--methods", required=True)
     run.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
+    run_deepseek = subparsers.add_parser("run-deepseek-answers")
+    run_deepseek.add_argument("--dataset", required=True)
+    run_deepseek.add_argument("--output", required=True)
+    run_deepseek.add_argument("--methods", required=True)
+    run_deepseek.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
+    run_deepseek.add_argument("--base-url", default=DEFAULT_BASE_URL)
+    run_deepseek.add_argument("--model", default=DEFAULT_MODEL)
+    run_deepseek.add_argument("--timeout-seconds", type=int, default=120)
+    run_deepseek.add_argument("--max-tokens", type=int, default=4096)
+    run_deepseek.add_argument("--temperature", type=float, default=0.0)
+    run_deepseek.add_argument("--top-k", type=int, default=5)
+    run_deepseek.add_argument("--max-retries", type=int, default=1)
+    run_deepseek.add_argument("--limit", type=int, default=None)
     report = subparsers.add_parser("report")
     report.add_argument("--input", required=True)
     report.add_argument("--output", required=True)
@@ -60,6 +79,36 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"results written to {result_path}")
+        return 0
+    if args.command == "run-deepseek-answers":
+        api_key = os.environ.get("DEEPSEEK_API_KEY")
+        if not api_key:
+            print("DEEPSEEK_API_KEY is required")
+            return 1
+        methods = [method.strip() for method in args.methods.split(",") if method.strip()]
+        try:
+            config = DeepSeekAnswerConfig(
+                api_key=api_key,
+                base_url=args.base_url,
+                model=args.model,
+                timeout_seconds=args.timeout_seconds,
+                max_tokens=args.max_tokens,
+                temperature=args.temperature,
+                top_k=args.top_k,
+                max_retries=args.max_retries,
+            )
+            result_path = run_deepseek_answer_benchmark(
+                Path(args.dataset),
+                Path(args.output),
+                methods,
+                args.split,
+                config,
+                limit=args.limit,
+            )
+        except (ValidationError, ValueError) as exc:
+            print(str(exc))
+            return 1
+        print(f"DeepSeek answer results written to {result_path}")
         return 0
     if args.command == "report":
         try:
