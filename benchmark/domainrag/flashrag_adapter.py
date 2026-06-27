@@ -1,0 +1,102 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+import shutil
+
+from domainrag.errors import ValidationError, ValidationIssue
+from domainrag.validator import validate_dataset
+
+
+DOMAINRAG_TO_FLASHRAG_SPLIT_FILES = {
+    "dev": ("dev.jsonl", "dev.jsonl"),
+    "test": ("test.jsonl", "test.jsonl"),
+    "fresh_hard": ("fresh_hard_test.jsonl", "fresh_hard.jsonl"),
+}
+
+
+@dataclass(frozen=True)
+class FlashRAGBundle:
+    dataset_name: str
+    data_dir: Path
+    dataset_dir: Path
+    corpus_path: Path
+    qrels_dir: Path
+    config_path: Path
+    splits: tuple[str, ...]
+
+
+def prepare_flashrag_bundle(
+    dataset_dir: Path,
+    output_dir: Path,
+    dataset_name: str | None = None,
+    splits: tuple[str, ...] = ("dev", "test", "fresh_hard"),
+) -> FlashRAGBundle:
+    validate_dataset(dataset_dir)
+
+    resolved_dataset_name = dataset_name or dataset_dir.name
+    _validate_requested_splits(dataset_dir, splits)
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    target_dataset_dir = output_dir / resolved_dataset_name
+    if target_dataset_dir.exists():
+        shutil.rmtree(target_dataset_dir)
+    target_dataset_dir.mkdir(parents=True, exist_ok=True)
+
+    for split in splits:
+        source_name, target_name = DOMAINRAG_TO_FLASHRAG_SPLIT_FILES[split]
+        shutil.copy2(dataset_dir / source_name, target_dataset_dir / target_name)
+
+    corpus_path = target_dataset_dir / "corpus.jsonl"
+    shutil.copy2(dataset_dir / "corpus.jsonl", corpus_path)
+
+    qrels_dir = target_dataset_dir / "qrels"
+    qrels_dir.mkdir(parents=True, exist_ok=True)
+    for split in splits:
+        shutil.copy2(dataset_dir / "qrels" / f"{split}.tsv", qrels_dir / f"{split}.tsv")
+
+    config_path = output_dir / f"{resolved_dataset_name}_flashrag.yaml"
+    config_path.write_text(
+        _render_config(output_dir, resolved_dataset_name, splits),
+        encoding="utf-8",
+    )
+
+    return FlashRAGBundle(
+        dataset_name=resolved_dataset_name,
+        data_dir=output_dir,
+        dataset_dir=target_dataset_dir,
+        corpus_path=corpus_path,
+        qrels_dir=qrels_dir,
+        config_path=config_path,
+        splits=splits,
+    )
+
+
+def _validate_requested_splits(dataset_dir: Path, splits: tuple[str, ...]) -> None:
+    issues: list[ValidationIssue] = []
+    for split in splits:
+        if split not in DOMAINRAG_TO_FLASHRAG_SPLIT_FILES:
+            issues.append(
+                ValidationIssue(str(dataset_dir), f"unsupported split: {split}")
+            )
+            continue
+        source_name, _ = DOMAINRAG_TO_FLASHRAG_SPLIT_FILES[split]
+        source_path = dataset_dir / source_name
+        if not source_path.exists():
+            issues.append(ValidationIssue(str(source_path), "file does not exist"))
+    if issues:
+        raise ValidationError(issues)
+
+
+def _render_config(
+    output_dir: Path,
+    dataset_name: str,
+    splits: tuple[str, ...],
+) -> str:
+    lines = [
+        f"data_dir: {output_dir}",
+        f"dataset_name: {dataset_name}",
+        "split:",
+    ]
+    lines.extend(f"  - {split}" for split in splits)
+    return "\n".join(lines) + "\n"
