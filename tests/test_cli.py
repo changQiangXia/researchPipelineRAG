@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -5,11 +6,16 @@ from pathlib import Path
 
 from domainrag.cli import main
 from domainrag.io_utils import write_jsonl
+from tests.test_calibration_packet import _answer_row as _calibration_answer_row
+from tests.test_calibration_packet import _judge_row as _calibration_judge_row
 from tests.test_flashrag_bm25_bridge import (
     _write_bundle as _write_flashrag_bm25_bundle,
 )
 from tests.test_flashrag_bm25_bridge import (
     _write_fake_flashrag as _write_fake_flashrag_bm25_package,
+)
+from tests.test_flashrag_method_feasibility import (
+    _write_fake_flashrag as _write_fake_flashrag_feasibility_package,
 )
 from tests.test_validator import _write_minimal_dataset
 
@@ -263,6 +269,38 @@ def test_compare_command_writes_comparison_report(tmp_path: Path, capsys):
     assert (output / "summary.json").exists()
 
 
+def test_calibration_packet_command_writes_review_files(tmp_path: Path, capsys):
+    dataset = tmp_path / "dataset"
+    answers = tmp_path / "answers.jsonl"
+    judge = tmp_path / "judge.jsonl"
+    output = tmp_path / "packet"
+    _write_minimal_dataset(dataset)
+    write_jsonl(answers, [_calibration_answer_row()])
+    write_jsonl(judge, [_calibration_judge_row()])
+
+    exit_code = main(
+        [
+            "calibration-packet",
+            "--dataset",
+            str(dataset),
+            "--answers",
+            str(answers),
+            "--judge",
+            str(judge),
+            "--output",
+            str(output),
+            "--split",
+            "fresh_hard",
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "calibration packet written" in captured.out
+    assert (output / "review_packet.jsonl").exists()
+    assert (output / "review_packet.md").exists()
+
+
 def test_run_flashrag_bm25_command(tmp_path: Path, capsys):
     flashrag = tmp_path / "flashrag-fork"
     bundle = tmp_path / "bundle"
@@ -292,6 +330,54 @@ def test_run_flashrag_bm25_command(tmp_path: Path, capsys):
     assert exit_code == 0
     assert "FlashRAG BM25 results written" in captured.out
     assert (output / "bundle" / "dev_flashrag_bm25_results.jsonl").exists()
+
+
+def test_probe_flashrag_methods_command_writes_manifest(tmp_path: Path, capsys):
+    flashrag = tmp_path / "flashrag-fork"
+    output = tmp_path / "manifest.json"
+    _write_fake_flashrag_feasibility_package(flashrag)
+
+    exit_code = main(
+        [
+            "probe-flashrag-methods",
+            "--flashrag-path",
+            str(flashrag),
+            "--output",
+            str(output),
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "FlashRAG method feasibility manifest written" in captured.out
+    manifest = json.loads(output.read_text(encoding="utf-8"))
+    assert manifest["methods"]["flashrag_bm25"]["feasible"] is True
+
+
+def test_verify_flashrag_method_feasibility_script_writes_manifest(tmp_path: Path):
+    flashrag = tmp_path / "flashrag-fork"
+    output = tmp_path / "manifest.json"
+    _write_fake_flashrag_feasibility_package(flashrag)
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/verify_flashrag_method_feasibility.py",
+            "--flashrag-path",
+            str(flashrag),
+            "--output",
+            str(output),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "FlashRAG method feasibility manifest written" in result.stdout
+    assert json.loads(output.read_text(encoding="utf-8"))["methods"]["flashrag_bm25"][
+        "feasible"
+    ]
 
 
 def test_run_deepseek_answers_requires_api_key(tmp_path: Path):
