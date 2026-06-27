@@ -176,6 +176,80 @@ def test_run_command(tmp_path: Path, capsys):
     assert "results written" in captured.out
 
 
+def test_run_deepseek_answers_requires_api_key(tmp_path: Path):
+    dataset = tmp_path / "dataset"
+    output = tmp_path / "outputs"
+    _write_minimal_dataset(dataset)
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "benchmark"
+    env.pop("DEEPSEEK_API_KEY", None)
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "domainrag.cli",
+            "run-deepseek-answers",
+            "--dataset",
+            str(dataset),
+            "--output",
+            str(output),
+            "--methods",
+            "no_rag",
+            "--split",
+            "dev",
+            "--limit",
+            "1",
+        ],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "DEEPSEEK_API_KEY is required" in result.stdout
+    assert "Traceback" not in result.stdout
+    assert "Traceback" not in result.stderr
+
+
+def test_run_deepseek_answers_rejects_invalid_runtime_options(tmp_path: Path):
+    dataset = tmp_path / "dataset"
+    output = tmp_path / "outputs"
+    _write_minimal_dataset(dataset)
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "benchmark"
+    env["DEEPSEEK_API_KEY"] = "test-key"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "domainrag.cli",
+            "run-deepseek-answers",
+            "--dataset",
+            str(dataset),
+            "--output",
+            str(output),
+            "--methods",
+            "no_rag",
+            "--split",
+            "dev",
+            "--max-retries",
+            "-1",
+        ],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "max_retries must be non-negative" in result.stdout
+    assert "Traceback" not in result.stdout
+    assert "Traceback" not in result.stderr
+
+
 def test_report_command(tmp_path: Path, capsys):
     input_path = tmp_path / "results.jsonl"
     output_dir = tmp_path / "reports"

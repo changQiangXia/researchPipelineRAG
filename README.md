@@ -1,6 +1,6 @@
 # DomainRAG-Bench
 
-DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据契约和基准流水线项目。当前版本已经完成第一阶段最小闭环、Phase 2A FlashRAG 兼容输出，以及 Phase 2B Easy Dataset 风格导出适配。项目现在可以从增强版 Easy Dataset 导出包生成 DomainRAG 标准数据集，再继续准备为 FlashRAG 消费。
+DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据契约和基准流水线项目。当前版本已经完成第一阶段最小闭环、Easy Dataset intake、FlashRAG 兼容输出、真实数据 pilot、DeepSeek 生成/复核候选题，以及 No-RAG / Oracle-Context / lexical RAG 的诊断评测。项目现在已经可以在真实 pilot 数据上调用 DeepSeek API 生成 live answer，并保留检索、答题、延迟和 token 指标。
 
 ## 当前阶段范围
 
@@ -217,6 +217,39 @@ Phase 4 已在两个数据集上跑通 `dev` / `test` / `fresh_hard` 三个 spli
 
 报告中新增 `_diagnostics.fresh_hard_candidates`，用于初筛 No-RAG 低、Oracle-Context 高的问题。当前 curated `fresh_hard` 中识别 3 个候选，DeepSeek candidate `fresh_hard` 中识别 3 个候选。详细记录见 `docs/verification/oracle-lexical-rag-eval.md`。
 
+## Phase 4B: DeepSeek live answer 评测
+
+第四阶段 B 把 Phase 4 的完美 reader 模拟推进到真实 DeepSeek 回答生成。离线 `domainrag run` 仍保持 deterministic；真实 API 调用单独放在：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
+  --dataset data/real_pilot_nickel_superalloy \
+  --output outputs/phase4b/live_deepseek_fresh_hard \
+  --methods no_rag,oracle_context,lexical_rag \
+  --split fresh_hard
+```
+
+该命令只从环境变量读取 `DEEPSEEK_API_KEY`，测试不会调用真实 API。输出行保留 Phase 4 的字段，并记录真实模型的：
+
+- `prediction`
+- `latency_ms`
+- `input_tokens`
+- `output_tokens`
+- `api_calls`
+- `error`
+
+报告器现在会汇总 `mean_input_tokens`、`mean_output_tokens`、`total_input_tokens`、`total_output_tokens` 和 `total_tokens`，用于效率榜的下一步扩展。
+
+当前已在 curated real pilot 的 `fresh_hard` split 上完成真实运行：
+
+- 输出：`outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl`
+- 报告：`outputs/phase4b/live_deepseek_fresh_hard/report_fresh_hard/summary.json`
+- 结果：12 行，12 次 API 调用，0 个错误
+- live Fresh-Hard 候选：`ns_ht_q010`、`ns_ht_q011`
+- `lexical_rag` 在当前小 corpus 上检索召回为 1.0；这仍然只是 pilot 规模结果，不代表大规模语料难度
+
+这一步还修复了真实调用中暴露的两个 runner 风险：reasoning 响应耗尽 token 导致 `message.content` 为空，以及空 `answer` 被误当作成功预测。详细记录见 `docs/verification/deepseek-live-answer-eval.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -225,4 +258,8 @@ Phase 4 已在两个数据集上跑通 `dev` / `test` / `fresh_hard` 三个 spli
 
 ## 下一阶段建议
 
-建议下一阶段进入 Phase 4B：把 `no_rag`、`oracle_context` 和 `lexical_rag` 的回答环节接入受控 DeepSeek 真实生成，同时保留当前 deterministic retrieval metrics。这样可以从“完美 reader 模拟”推进到 RAG.md 要求的真实模型 No-RAG / Oracle / RAG 对比。
+建议下一阶段进入 DeepSeek Judge 和 FlashRAG 多方法衔接：
+
+- 先对 Phase 4B live answer 输出增加 DeepSeek Judge，评分维度包括 correctness、context support、faithfulness 和 hallucination risk
+- 再把当前 `lexical_rag` 桥接到 FlashRAG 的真实 pipeline，对比 BM25 / dense retriever / reranker 等方法
+- 同步扩大真实文献 corpus，否则当前 lexical retrieval 在 9 个 chunk 的 pilot 上过于容易
