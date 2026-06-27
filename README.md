@@ -152,6 +152,21 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 这一步没有调用 DeepSeek，也没有提交 Easy Dataset 上游源码、依赖目录、SQLite 文件或临时导出结果。详细记录见 `docs/verification/easy-dataset-runtime-route.md`。
 
+## Phase 3A: 小规模真实论文数据 pilot
+
+第三阶段 A 已开始从 synthetic fixture 转向真实文献数据。当前 pilot 选择“镍基高温合金高温失效”方向，人工抽取并转述 7 篇开放访问文章页面中的领域事实，形成可追溯的小规模数据闭环：
+
+- 内部来源 manifest：`data/real_pilot_sources/nickel_superalloy_high_temp_failure/sources.jsonl`
+- Easy Dataset 风格输入：`fixtures/easy_dataset/real_pilot_nickel_superalloy/chunks.jsonl` 和 `items.jsonl`
+- 公开 DomainRAG 数据集：`data/real_pilot_nickel_superalloy/`
+- 当前规模：9 个 chunk，12 道题，`dev` / `test` / `fresh_hard` 各 4 道
+- 题型覆盖：单选、多选、填空、简答各 3 道
+- 已通过 `validate-data`
+- 已能生成 FlashRAG bundle
+- 已跑通 `no_rag` 最小 baseline 和 summary report
+
+这一步仍未调用 DeepSeek。source manifest 用于内部溯源；公开 DomainRAG 数据集不包含论文标题、URL、DOI、作者、venue、页码或原始 PDF 路径。详细记录见 `docs/verification/real-data-pilot.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -160,4 +175,4 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 ## 下一阶段建议
 
-建议下一阶段进入 Phase 3A：小规模真实论文数据 pilot。不要继续扩大 mock/smoke fixture，先选择 3 到 5 篇真实论文，完成“论文文本进入 Easy Dataset 或等价本地入口 -> 生成/整理 chunk 和题目 -> 导出 DomainRAG -> 校验 -> 跑最小 baseline”的端到端闭环。确认数据质量、人工复核点和 DeepSeek 调用边界后，再扩大到 RAG.md 中的 100 到 180 篇标准规模。
+建议下一阶段进入 Phase 3B：在 Phase 3A 的同一小 pilot 上接入受控 DeepSeek 生成和独立复核。先用环境变量临时注入 API key，生成调用和复核调用分离，输出必须过 JSON Schema、DomainRAG contract、`validate-data` 和人工抽检；确认质量后，再扩大到更多论文。
