@@ -287,6 +287,80 @@ def test_run_deepseek_answers_rejects_invalid_runtime_options(tmp_path: Path):
     assert "Traceback" not in result.stderr
 
 
+def test_run_deepseek_answers_accepts_flashrag_bm25_retrieval_results(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+):
+    dataset = tmp_path / "dataset"
+    output = tmp_path / "outputs"
+    retrieval_results = tmp_path / "flashrag_bm25_results.jsonl"
+    _write_minimal_dataset(dataset)
+    write_jsonl(
+        retrieval_results,
+        [
+            {
+                "id": "q000001",
+                "method": "flashrag_bm25_oracle_reader",
+                "split": "dev",
+                "retrieved_context_ids": ["d000001"],
+            }
+        ],
+    )
+
+    captured = {}
+
+    def fake_run_deepseek_answer_benchmark(
+        dataset_dir,
+        output_dir,
+        methods,
+        split,
+        config,
+        *,
+        limit=None,
+        retrieval_results_path=None,
+    ):
+        captured["dataset_dir"] = dataset_dir
+        captured["output_dir"] = output_dir
+        captured["methods"] = methods
+        captured["split"] = split
+        captured["limit"] = limit
+        captured["retrieval_results_path"] = retrieval_results_path
+        return output / "dataset" / "dev_deepseek_results.jsonl"
+
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "test-key")
+    monkeypatch.setattr(
+        "domainrag.cli.run_deepseek_answer_benchmark",
+        fake_run_deepseek_answer_benchmark,
+    )
+
+    exit_code = main(
+        [
+            "run-deepseek-answers",
+            "--dataset",
+            str(dataset),
+            "--output",
+            str(output),
+            "--methods",
+            "flashrag_bm25_live_deepseek",
+            "--split",
+            "dev",
+            "--retrieval-results",
+            str(retrieval_results),
+            "--limit",
+            "1",
+        ]
+    )
+    stdout = capsys.readouterr().out
+
+    assert exit_code == 0
+    assert "DeepSeek answer results written" in stdout
+    assert captured["methods"] == ["flashrag_bm25_live_deepseek"]
+    assert captured["split"] == "dev"
+    assert captured["limit"] == 1
+    assert captured["retrieval_results_path"] == retrieval_results
+
+
 def test_judge_deepseek_answers_requires_api_key(tmp_path: Path):
     dataset = tmp_path / "dataset"
     input_path = tmp_path / "answers.jsonl"

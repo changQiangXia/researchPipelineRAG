@@ -1,0 +1,30 @@
+{
+  "_diagnostics": {
+    "fresh_hard_candidate_ids": [],
+    "fresh_hard_candidates": 0
+  },
+  "flashrag_bm25_live_deepseek": {
+    "api_calls": 4,
+    "errors": 0,
+    "mean_input_tokens": 560.25,
+    "mean_latency_ms": 8782.730543520302,
+    "mean_output_tokens": 968.25,
+    "metrics": {
+      "fill_blank_alias_match": 1.0,
+      "fill_blank_normalized_em": 1.0,
+      "key_point_coverage": 0.6666666666666666,
+      "multiple_choice_exact_match": 1.0,
+      "multiple_choice_jaccard": 1.0,
+      "multiple_choice_micro_f1": 1.0,
+      "retrieval_hit": 1.0,
+      "retrieval_mrr": 1.0,
+      "retrieval_recall": 1.0,
+      "short_answer_token_f1": 0.7894736842105262,
+      "single_choice_accuracy": 1.0
+    },
+    "questions": 4,
+    "total_input_tokens": 2241,
+    "total_output_tokens": 3873,
+    "total_tokens": 6114
+  }
+}

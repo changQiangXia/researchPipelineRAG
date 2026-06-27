@@ -385,6 +385,47 @@ flashrag_bm25_oracle_reader
 
 这些高分来自小规模 pilot 和 oracle reader，应作为“FlashRAG BM25 检索桥和 DomainRAG 报告/Judge schema 已接通”的证据，而不是最终规模化方法结论。
 
+## Phase 5C: FlashRAG BM25 检索上下文 + DeepSeek 真实回答
+
+第五阶段 C 把 Phase 5B 的 oracle reader 替换为真实 DeepSeek 回答生成。当前新增：
+
+- `run-deepseek-answers --retrieval-results`
+- live 方法名：`flashrag_bm25_live_deepseek`
+- 输出回归测试：`tests/test_phase5c_outputs.py`
+- 验证记录：`docs/verification/flashrag-bm25-live-answer.md`
+
+运行命令示例：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
+  --dataset data/real_pilot_nickel_superalloy \
+  --output outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard \
+  --methods flashrag_bm25_live_deepseek \
+  --split fresh_hard \
+  --retrieval-results outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
+  --max-retries 1
+```
+
+`--retrieval-results` 消费 Phase 5B 的 BM25 检索输出，从中读取 `retrieved_context_ids`，再由当前数据集的 `corpus.jsonl` 拼接上下文交给 DeepSeek 生成答案。这样避免继续使用 oracle reader，同时复用 Phase 4B/4C 已验证的 live answer 和 Judge schema。
+
+当前在 curated real pilot 的 `fresh_hard` split 上完成真实运行：
+
+- 输出：`outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl`
+- 报告：`outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/report_fresh_hard/summary.json`
+- 4 道题，4 次 answer API 调用，0 个错误
+- `retrieval_hit`、`retrieval_recall`、`retrieval_mrr` 均为 1.0
+- 单选、多选、填空规则指标为 1.0；简答 token F1 为 0.7895
+
+随后对该输出完成 DeepSeek Judge：
+
+- 输出：`outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl`
+- 报告：`outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/report_fresh_hard/summary.json`
+- 4 次 Judge API 调用，0 个错误，0 个 unsupported claims
+- correctness、context_support、faithfulness、relevance 均为 5.0
+- hallucination_risk 为 0.0
+
+这一步暴露并修复了一个真实 prompt 风险：过宽的上下文回答会加入未直接支持的因果表述，过窄的多选约束又会导致空答案。当前 prompt 明确要求只使用检索上下文中陈述的事实，同时允许多选题的正确选项由不同检索 chunk 分别支持。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -393,9 +434,9 @@ flashrag_bm25_oracle_reader
 
 ## 下一阶段建议
 
-建议下一阶段进入 FlashRAG BM25 后的非 oracle answer path、多方法衔接和规模扩展：
+建议下一阶段进入第二种 FlashRAG 检索方法、多方法对比报告和规模扩展：
 
-- 把现有 DeepSeek answer runner 接到 `flashrag_bm25` 检索上下文之后，形成真实生成答案版本
-- 在依赖和模型缓存可控的前提下推进 dense retriever / reranker
+- 在依赖和模型缓存可控的前提下推进 dense retriever / reranker，并接入同一套 live answer + Judge 口径
+- 生成横向对比报告，把 `no_rag`、`oracle_context`、`lexical_rag`、`flashrag_bm25_oracle_reader`、`flashrag_bm25_live_deepseek` 放在同一张表中
 - 同步扩大真实文献 corpus，否则当前 lexical retrieval 在 9 个 chunk 的 pilot 上过于容易
 - 对 Judge 结果做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论
