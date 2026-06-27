@@ -471,6 +471,56 @@ Leaderboard 直接汇总 answer metrics、retrieval metrics、DeepSeek Judge met
 
 `answer_score` 是非检索规则指标的便捷均值，不应替代分题型指标或 Judge 指标。
 
+## Phase 5E: FlashRAG 方法可行性和人工校准包
+
+第五阶段 E 处理两个 Phase 5D 后仍然缺失的交付点：当前运行环境是否适合继续上 dense/rerank，以及 DeepSeek Judge 结果如何进入人工校准。当前新增：
+
+- `benchmark/domainrag/flashrag_method_feasibility.py`
+- `benchmark/domainrag/calibration_packet.py`
+- CLI：`probe-flashrag-methods`
+- CLI：`calibration-packet`
+- 脚本：`scripts/verify_flashrag_method_feasibility.py`
+- 输出回归测试：`tests/test_flashrag_method_feasibility.py`、`tests/test_calibration_packet.py`、`tests/test_phase5e_outputs.py`
+- 验证记录：`docs/verification/flashrag-method-feasibility-and-calibration.md`
+
+FlashRAG 方法可行性探测命令：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli probe-flashrag-methods \
+  --flashrag-path benchmark/flashrag-fork \
+  --output outputs/phase5e/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json
+```
+
+当前 manifest 记录：
+
+- FlashRAG commit：`e0e73399ce8d4563397b5fb4980de72a9c5e15a6`
+- `flashrag.dataset.dataset`、`flashrag.retriever.retriever`、`flashrag.retriever.index_builder` 可导入
+- `flashrag.pipeline.pipeline` 缺少 `termcolor`
+- `flashrag.generator.generator` 缺少 `openai`
+- `sentence_transformers`、`FlagEmbedding`、`sklearn` 缺失
+- 当前 `torch` 是 `2.1.2+cu121`，当前 `transformers` 是 `5.12.1`；该 transformers 构建要求 PyTorch >= 2.4
+- `flashrag_bm25` 当前可行，`flashrag_dense` 和 `flashrag_reranker` 当前不可行
+
+因此本阶段没有盲目升级 PyTorch 或安装 dense/rerank 依赖；建议把 dense/rerank 放到独立依赖计划中处理。
+
+人工校准包生成命令：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli calibration-packet \
+  --dataset data/real_pilot_nickel_superalloy \
+  --answers outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+  --judge outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+  --output outputs/phase5e/human_calibration_fresh_hard \
+  --split fresh_hard
+```
+
+输出：
+
+- `outputs/phase5e/human_calibration_fresh_hard/review_packet.jsonl`
+- `outputs/phase5e/human_calibration_fresh_hard/review_packet.md`
+
+当前校准包覆盖 `fresh_hard` 的 4 道 `flashrag_bm25_live_deepseek` 题，包含问题、预测、gold answer、gold/retrieved context id、实际检索 chunk 内容、answer metrics、DeepSeek Judge 分数、风险优先级和空的 `human_review` 字段。当前 4 行均为 normal priority，Judge faithfulness 均为 5.0，hallucination_risk 均为 0.0。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -479,8 +529,9 @@ Leaderboard 直接汇总 answer metrics、retrieval metrics、DeepSeek Judge met
 
 ## 下一阶段建议
 
-建议下一阶段进入第二种 FlashRAG 检索方法和规模扩展：
+建议下一阶段优先进入规模扩展，并把 dense/rerank 作为独立环境任务处理：
 
-- 在依赖和模型缓存可控的前提下推进 dense retriever / reranker，并接入同一套 live answer + Judge 口径
-- 同步扩大真实文献 corpus，否则当前 lexical retrieval 在 9 个 chunk 的 pilot 上过于容易
-- 对 Judge 结果做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论
+- 扩大真实文献 corpus 和问题规模，否则当前 9 个 chunk 的 pilot 对 BM25/lexical retrieval 过于容易
+- 复用 Phase 5B/5C/5D/5E 的命令，在更大数据上重跑 BM25 live answer、Judge、comparison 和 calibration packet
+- 对 `review_packet.md` 做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论
+- 如果要推进 dense retriever / reranker，先新建隔离环境或明确依赖升级方案，再接入同一套 live answer + Judge 口径

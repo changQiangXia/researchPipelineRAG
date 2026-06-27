@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 from domainrag.benchmark_runner import run_benchmark
+from domainrag.calibration_packet import generate_calibration_packet
 from domainrag.comparison_report import generate_comparison_report
 from domainrag.deepseek_answer_runner import (
     DeepSeekAnswerConfig,
@@ -20,6 +21,7 @@ from domainrag.easy_dataset_adapter import export_domainrag_bundle
 from domainrag.errors import ValidationError
 from domainrag.flashrag_adapter import prepare_flashrag_bundle
 from domainrag.flashrag_bm25_bridge import run_flashrag_bm25_bridge
+from domainrag.flashrag_method_feasibility import probe_flashrag_method_feasibility
 from domainrag.report_generator import generate_report
 from domainrag.validator import validate_dataset
 
@@ -69,6 +71,16 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("--answer-inputs", nargs="+", required=True)
     compare.add_argument("--judge-inputs", nargs="+", default=[])
     compare.add_argument("--output", required=True)
+    calibration_packet = subparsers.add_parser("calibration-packet")
+    calibration_packet.add_argument("--dataset", required=True)
+    calibration_packet.add_argument("--answers", required=True)
+    calibration_packet.add_argument("--judge", required=True)
+    calibration_packet.add_argument(
+        "--split",
+        default="fresh_hard",
+        choices=["dev", "test", "fresh_hard"],
+    )
+    calibration_packet.add_argument("--output", required=True)
     judge_report = subparsers.add_parser("judge-report")
     judge_report.add_argument("--input", required=True)
     judge_report.add_argument("--output", required=True)
@@ -86,6 +98,9 @@ def build_parser() -> argparse.ArgumentParser:
     run_flashrag_bm25.add_argument("--top-k", type=int, default=5)
     run_flashrag_bm25.add_argument("--index-dir", default=None)
     run_flashrag_bm25.add_argument("--rebuild-index", action="store_true", default=False)
+    probe_flashrag_methods = subparsers.add_parser("probe-flashrag-methods")
+    probe_flashrag_methods.add_argument("--flashrag-path", required=True)
+    probe_flashrag_methods.add_argument("--output", required=True)
     export_domainrag = subparsers.add_parser("export-domainrag")
     export_domainrag.add_argument("--input", required=True)
     export_domainrag.add_argument("--output", required=True)
@@ -197,6 +212,20 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"comparison report written to {markdown_path} and {json_path}")
         return 0
+    if args.command == "calibration-packet":
+        try:
+            jsonl_path, markdown_path = generate_calibration_packet(
+                Path(args.dataset),
+                Path(args.answers),
+                Path(args.judge),
+                Path(args.output),
+                split=args.split,
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"calibration packet written to {jsonl_path} and {markdown_path}")
+        return 0
     if args.command == "judge-report":
         try:
             markdown_path, json_path = generate_judge_report(
@@ -239,6 +268,17 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"FlashRAG BM25 results written to {result_path}")
+        return 0
+    if args.command == "probe-flashrag-methods":
+        try:
+            probe_flashrag_method_feasibility(
+                Path(args.flashrag_path),
+                output_path=Path(args.output),
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"FlashRAG method feasibility manifest written to {args.output}")
         return 0
     if args.command == "export-domainrag":
         try:
