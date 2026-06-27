@@ -4,6 +4,8 @@ from domainrag.answer_normalizer import alias_match, normalize_choice_answer, no
 def test_normalize_single_choice_variants():
     assert normalize_choice_answer("答案是B") == ["B"]
     assert normalize_choice_answer("选 b") == ["B"]
+    assert normalize_choice_answer("Answer: B") == ["B"]
+    assert normalize_choice_answer("option C") == ["C"]
 
 
 def test_normalize_multiple_choice_variants():
