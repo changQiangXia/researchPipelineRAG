@@ -38,12 +38,16 @@ def test_prepare_flashrag_bundle_writes_expected_yaml(tmp_path: Path):
 
     yaml_text = (output_dir / "example_domain_flashrag.yaml").read_text(encoding="utf-8")
 
-    assert "data_dir:" in yaml_text
-    assert "dataset_name: example_domain" in yaml_text
-    assert "split:" in yaml_text
-    assert "  - dev" in yaml_text
-    assert "  - test" in yaml_text
-    assert "  - fresh_hard" in yaml_text
+    expected_yaml = (
+        f"data_dir: {output_dir}\n"
+        "dataset_name: example_domain\n"
+        "split:\n"
+        "  - dev\n"
+        "  - test\n"
+        "  - fresh_hard\n"
+    )
+
+    assert yaml_text == expected_yaml
 
 
 def test_prepare_flashrag_bundle_rejects_invalid_dataset(tmp_path: Path):
@@ -52,3 +56,30 @@ def test_prepare_flashrag_bundle_rejects_invalid_dataset(tmp_path: Path):
 
     with pytest.raises(ValidationError):
         prepare_flashrag_bundle(dataset_dir, output_dir)
+
+
+@pytest.mark.parametrize("dataset_name", ["", ".", "..", "nested/name", "nested\\name"])
+def test_prepare_flashrag_bundle_rejects_unsafe_dataset_name(
+    tmp_path: Path, dataset_name: str
+):
+    dataset_dir = ROOT / "data" / "example_domain"
+    output_dir = tmp_path / "flashrag"
+
+    with pytest.raises(ValidationError) as excinfo:
+        prepare_flashrag_bundle(dataset_dir, output_dir, dataset_name=dataset_name)
+
+    assert "dataset_name must be a simple dataset basename" in str(excinfo.value)
+
+
+def test_prepare_flashrag_bundle_replaces_existing_target_dataset_dir(tmp_path: Path):
+    dataset_dir = ROOT / "data" / "example_domain"
+    output_dir = tmp_path / "flashrag"
+    stale_dir = output_dir / "example_domain"
+    stale_dir.mkdir(parents=True)
+    stale_file = stale_dir / "stale.txt"
+    stale_file.write_text("obsolete", encoding="utf-8")
+
+    prepare_flashrag_bundle(dataset_dir, output_dir)
+
+    assert not stale_file.exists()
+    assert (stale_dir / "dev.jsonl").exists()
