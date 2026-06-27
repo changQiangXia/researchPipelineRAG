@@ -22,12 +22,19 @@ from domainrag.deepseek_pipeline import (
     parse_json_object,
 )
 from domainrag.domain_evaluator import evaluate_record
-from domainrag.io_utils import write_jsonl
+from domainrag.errors import ValidationError, ValidationIssue
+from domainrag.io_utils import read_jsonl, write_jsonl
 from domainrag.prompt_renderer import render_prompt
 from domainrag.validator import validate_dataset
 
 
-SUPPORTED_LIVE_METHODS = {"no_rag", "oracle_context", "lexical_rag"}
+FLASHRAG_BM25_LIVE_METHOD = "flashrag_bm25_live_deepseek"
+SUPPORTED_LIVE_METHODS = {
+    "no_rag",
+    "oracle_context",
+    "lexical_rag",
+    FLASHRAG_BM25_LIVE_METHOD,
+}
 
 
 @dataclass(frozen=True)
@@ -69,6 +76,7 @@ def run_deepseek_answer_benchmark(
     *,
     chat_client: ChatClient = call_chat_completions,
     limit: int | None = None,
+    retrieval_results_path: Path | None = None,
 ) -> Path:
     validate_dataset(dataset_dir)
     records = load_split(dataset_dir, split)
@@ -76,6 +84,11 @@ def run_deepseek_answer_benchmark(
         records = records[:limit]
     corpus = _load_corpus(dataset_dir)
     qrels = _load_qrels(dataset_dir, split)
+    external_retrievals = _load_external_retrievals(
+        retrieval_results_path,
+        methods=methods,
+        split=split,
+    )
     output_records: list[dict[str, Any]] = []
 
     for method in methods:
@@ -88,6 +101,7 @@ def run_deepseek_answer_benchmark(
                 corpus=corpus,
                 qrels=qrels,
                 top_k=config.top_k,
+                external_retrievals=external_retrievals,
             )
             context_chunks = [
                 {"id": context_id, "contents": corpus[context_id]}
@@ -158,7 +172,9 @@ def build_answer_messages(
                 "Context chunks:",
                 json.dumps(context_chunks, ensure_ascii=False, sort_keys=True),
                 "",
-                "Use the context chunks when they are relevant. Do not cite chunk ids.",
+                "Use only facts stated in the supplied context chunks. "
+                "Do not add mechanisms, causal links, or comparisons unless they are "
+                "explicitly supported by those chunks. Do not cite chunk ids.",
             ]
         )
     return [
@@ -208,6 +224,7 @@ def _select_context_ids(
     corpus: dict[str, str],
     qrels: dict[str, list[str]],
     top_k: int,
+    external_retrievals: dict[str, list[str]],
 ) -> list[str]:
     if method == "no_rag":
         return []
@@ -215,7 +232,71 @@ def _select_context_ids(
         return qrels.get(record["id"], [])
     if method == "lexical_rag":
         return _retrieve_lexical(record["question"], corpus, top_k=top_k)
+    if method == FLASHRAG_BM25_LIVE_METHOD:
+        return external_retrievals.get(record["id"], [])
     raise ValueError(f"unsupported method: {method}")
+
+
+def _load_external_retrievals(
+    retrieval_results_path: Path | None,
+    *,
+    methods: list[str],
+    split: str,
+) -> dict[str, list[str]]:
+    if FLASHRAG_BM25_LIVE_METHOD not in methods:
+        return {}
+    if retrieval_results_path is None:
+        raise ValidationError(
+            [
+                ValidationIssue(
+                    "retrieval_results_path",
+                    f"retrieval_results_path is required for {FLASHRAG_BM25_LIVE_METHOD}",
+                )
+            ]
+        )
+
+    issues: list[ValidationIssue] = []
+    retrievals: dict[str, list[str]] = {}
+    for index, row in enumerate(read_jsonl(retrieval_results_path), start=1):
+        question_id = row.get("id")
+        row_split = row.get("split")
+        context_ids = row.get("retrieved_context_ids")
+        if not isinstance(question_id, str):
+            issues.append(
+                ValidationIssue(str(retrieval_results_path), f"record {index}: id must be a string")
+            )
+            continue
+        if row_split != split:
+            issues.append(
+                ValidationIssue(
+                    str(retrieval_results_path),
+                    f"record {index}: split must be {split}",
+                )
+            )
+            continue
+        if not isinstance(context_ids, list) or not all(
+            isinstance(context_id, str) for context_id in context_ids
+        ):
+            issues.append(
+                ValidationIssue(
+                    str(retrieval_results_path),
+                    f"record {index}: retrieved_context_ids must be an array of strings",
+                )
+            )
+            continue
+        if question_id in retrievals:
+            issues.append(
+                ValidationIssue(
+                    str(retrieval_results_path),
+                    f"record {index}: duplicate id {question_id}",
+                )
+            )
+            continue
+        retrievals[question_id] = context_ids
+
+    if issues:
+        raise ValidationError(issues)
+    return retrievals
 
 
 def _answer_format_constraint(question_type: str) -> str:
@@ -228,7 +309,9 @@ def _answer_format_constraint(question_type: str) -> str:
         return (
             "Select every supported option and omit unsupported options. Return sorted "
             "uppercase option letters separated by commas in answer, for example A,C,D. "
-            "Never return an empty answer."
+            "An option is supported when its statement is directly supported by any "
+            "supplied context chunk; all correct options do not need to be supported by "
+            "the same chunk. Never return an empty answer."
         )
     if question_type == "fill_blank":
         return "Return only the missing text in answer."
