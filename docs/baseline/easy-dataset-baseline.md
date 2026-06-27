@@ -77,4 +77,3 @@ The command timed out at the optimized production build stage. This is recorded 
 Official DeepSeek API docs were checked on 2026-06-27. The OpenAI-compatible base URL is `https://api.deepseek.com`. Current model names include `deepseek-v4-flash` and `deepseek-v4-pro`; `deepseek-chat` and `deepseek-reasoner` are documented as deprecated on 2026-07-24 15:59 UTC.
 
 Phase 2B does not call DeepSeek. Config examples must reference `DEEPSEEK_API_KEY` but must not contain an API key.
-

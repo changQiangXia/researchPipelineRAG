@@ -120,6 +120,25 @@ def test_prepare_flashrag_module_entrypoint_rejects_empty_splits(tmp_path: Path)
     assert "at least one split must be requested" in result.stdout
 
 
+def test_export_domainrag_module_entrypoint_writes_valid_dataset(tmp_path: Path):
+    fixture = ROOT / "fixtures" / "easy_dataset" / "example_export"
+    output = tmp_path / "outputs"
+
+    result = _run_cli(
+        "export-domainrag",
+        "--input",
+        str(fixture),
+        "--output",
+        str(output),
+        "--dataset-name",
+        "example_easy_dataset",
+    )
+
+    assert result.returncode == 0
+    assert "DomainRAG dataset written to" in result.stdout
+    assert (output / "example_easy_dataset" / "canonical_dataset.jsonl").exists()
+
+
 def test_prepare_flashrag_example_script_keeps_relative_config_path():
     result = subprocess.run(
         [sys.executable, "scripts/prepare_flashrag_example.py"],

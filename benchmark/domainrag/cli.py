@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 
 from domainrag.benchmark_runner import run_benchmark
+from domainrag.easy_dataset_adapter import export_domainrag_bundle
 from domainrag.errors import ValidationError
 from domainrag.flashrag_adapter import prepare_flashrag_bundle
 from domainrag.report_generator import generate_report
@@ -30,6 +31,10 @@ def build_parser() -> argparse.ArgumentParser:
     prepare_flashrag.add_argument("--output", required=True)
     prepare_flashrag.add_argument("--dataset-name", required=True)
     prepare_flashrag.add_argument("--splits", default="dev,test,fresh_hard")
+    export_domainrag = subparsers.add_parser("export-domainrag")
+    export_domainrag.add_argument("--input", required=True)
+    export_domainrag.add_argument("--output", required=True)
+    export_domainrag.add_argument("--dataset-name", required=True)
     return parser
 
 
@@ -78,6 +83,18 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"FlashRAG bundle written to {bundle.dataset_dir}")
         print(f"FlashRAG config written to {bundle.config_path}")
+        return 0
+    if args.command == "export-domainrag":
+        try:
+            bundle = export_domainrag_bundle(
+                Path(args.input),
+                Path(args.output),
+                args.dataset_name,
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"DomainRAG dataset written to {bundle.dataset_dir}")
         return 0
     parser.error(f"unknown command: {args.command}")
     return 2
