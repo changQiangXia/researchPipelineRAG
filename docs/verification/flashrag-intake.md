@@ -13,7 +13,7 @@ Phase: 2A - FlashRAG Intake + DomainRAG Adapter
 
 ## Dependency Import Baseline
 
-Source inspection baseline is recorded in [docs/baseline/flashrag-baseline.md](/root/autodl-tmp/RAG/DomainRAG-Bench/.worktrees/phase-2a-flashrag-adapter/docs/baseline/flashrag-baseline.md). The lightweight verification environment does not install full FlashRAG runtime dependencies.
+Source inspection baseline is recorded in [docs/baseline/flashrag-baseline.md](../baseline/flashrag-baseline.md). The lightweight verification environment does not install full FlashRAG runtime dependencies.
 
 Observed baseline result:
 
@@ -45,7 +45,13 @@ git status --short
 - `validate-data`: `data/example_domain is valid`
 - `prepare-flashrag`: `FlashRAG bundle written to outputs/flashrag/example_domain`
 - `prepare_flashrag_example.py`: `FlashRAG config written to /root/autodl-tmp/RAG/DomainRAG-Bench/.worktrees/phase-2a-flashrag-adapter/outputs/flashrag/example_domain_flashrag.yaml`
-- `git status --short`: `?? outputs/flashrag/` before staging generated verification artifacts
+`git status --short` before staging generated verification artifacts:
+
+```text
+ M README.md
+?? docs/verification/flashrag-intake.md
+?? outputs/flashrag/
+```
 
 ## Output Paths
 
