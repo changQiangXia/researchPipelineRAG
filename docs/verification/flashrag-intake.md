@@ -45,13 +45,7 @@ git status --short
 - `validate-data`: `data/example_domain is valid`
 - `prepare-flashrag`: `FlashRAG bundle written to outputs/flashrag/example_domain`
 - `prepare_flashrag_example.py`: `FlashRAG config written to /root/autodl-tmp/RAG/DomainRAG-Bench/.worktrees/phase-2a-flashrag-adapter/outputs/flashrag/example_domain_flashrag.yaml`
-- `git status --short` after the smoke sequence:
-
-```text
- M benchmark/domainrag/flashrag_adapter.py
- M tests/test_cli.py
- M tests/test_flashrag_adapter.py
-```
+- `git status --short` after the smoke sequence: clean
 
 ## Output Paths
 
