@@ -289,6 +289,48 @@ PYTHONPATH=benchmark python -m domainrag.cli judge-report \
 
 这一步把“模型答得像不像”推进到“回答是否被上下文支持、是否忠实”的辅助评测。详细记录见 `docs/verification/deepseek-judge-eval.md`。
 
+## Phase 5A: FlashRAG 真实 Dataset runtime intake
+
+第五阶段 A 从“只生成 FlashRAG 兼容文件”推进到“真实 FlashRAG 上游代码能读取 DomainRAG bundle”。当前在 ignored 的本地 checkout 中重新 clone 了 FlashRAG：
+
+```text
+benchmark/flashrag-fork/
+```
+
+该路径不提交进仓库。当前 upstream commit：
+
+```text
+e0e73399ce8d4563397b5fb4980de72a9c5e15a6
+```
+
+新增校验模块和脚本：
+
+```text
+benchmark/domainrag/flashrag_runtime_intake.py
+scripts/verify_flashrag_runtime_intake.py
+```
+
+真实运行命令：
+
+```bash
+python scripts/verify_flashrag_runtime_intake.py \
+  --flashrag-path benchmark/flashrag-fork \
+  --dataset-bundle outputs/flashrag/real_pilot_nickel_superalloy \
+  --dataset-name real_pilot_nickel_superalloy \
+  --output outputs/phase5a/flashrag_runtime_intake/real_pilot_nickel_superalloy_manifest.json \
+  --splits dev,test,fresh_hard
+```
+
+当前结果：
+
+- FlashRAG `flashrag.dataset.dataset.Dataset` 可导入并能读取 real pilot bundle
+- FlashRAG `flashrag.config.config` 可导入
+- `flashrag.utils.utils` 仍因缺少 `transformers` 无法导入
+- `dev` / `test` / `fresh_hard` 三个 split 均由真实 FlashRAG `Dataset` 读取成功，各 4 条记录
+- manifest：`outputs/phase5a/flashrag_runtime_intake/real_pilot_nickel_superalloy_manifest.json`
+
+这一步不是完整 FlashRAG 多方法实验，但已经把数据层从“格式兼容”推进到“真实上游 Dataset runtime 可读”。详细记录见 `docs/verification/flashrag-runtime-intake.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -299,6 +341,7 @@ PYTHONPATH=benchmark python -m domainrag.cli judge-report \
 
 建议下一阶段进入 FlashRAG 多方法衔接和规模扩展：
 
-- 把当前 `lexical_rag` 桥接到 FlashRAG 的真实 pipeline，对比 BM25 / dense retriever / reranker 等方法
+- 安装或隔离一个依赖完整的 FlashRAG runtime，优先跑通 BM25 风格方法，再推进 dense retriever / reranker
+- 把 Phase 4B/4C 的 live answer 和 Judge 报告接到 FlashRAG 方法输出之后，形成同一套报告口径
 - 同步扩大真实文献 corpus，否则当前 lexical retrieval 在 9 个 chunk 的 pilot 上过于容易
 - 对 Judge 结果做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论

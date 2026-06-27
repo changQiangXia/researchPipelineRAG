@@ -1,0 +1,67 @@
+{
+  "dataset_bundle": "outputs/flashrag/real_pilot_nickel_superalloy",
+  "dataset_name": "real_pilot_nickel_superalloy",
+  "flashrag_commit": "e0e73399ce8d4563397b5fb4980de72a9c5e15a6",
+  "flashrag_path": "benchmark/flashrag-fork",
+  "generated_at": "2026-06-27T21:06:04.500867+00:00",
+  "module_imports": {
+    "flashrag.config.config": {
+      "error": null,
+      "error_type": null,
+      "ok": true
+    },
+    "flashrag.dataset.dataset": {
+      "error": null,
+      "error_type": null,
+      "ok": true
+    },
+    "flashrag.utils.utils": {
+      "error": "No module named 'transformers'",
+      "error_type": "ModuleNotFoundError",
+      "ok": false
+    }
+  },
+  "qrels": {
+    "dev": {
+      "file": "outputs/flashrag/real_pilot_nickel_superalloy/qrels/dev.tsv",
+      "rows": 4
+    },
+    "fresh_hard": {
+      "file": "outputs/flashrag/real_pilot_nickel_superalloy/qrels/fresh_hard.tsv",
+      "rows": 6
+    },
+    "test": {
+      "file": "outputs/flashrag/real_pilot_nickel_superalloy/qrels/test.tsv",
+      "rows": 4
+    }
+  },
+  "splits": {
+    "dev": {
+      "file": "outputs/flashrag/real_pilot_nickel_superalloy/dev.jsonl",
+      "first_golden_answers": [
+        "A"
+      ],
+      "first_id": "ns_ht_q001",
+      "first_question_preview": "Which factor can make initial intergranular oxidation in Inconel 718 non-uniform across boundaries?\nA. Grain-boundary energy state\nB. Question numbering order\nC",
+      "records": 4
+    },
+    "fresh_hard": {
+      "file": "outputs/flashrag/real_pilot_nickel_superalloy/fresh_hard.jsonl",
+      "first_golden_answers": [
+        "A"
+      ],
+      "first_id": "ns_ht_q009",
+      "first_question_preview": "During 850 C creep, which factor can control gamma-prime rafting in a directionally solidified nickel-based superalloy?\nA. Aluminum mobility\nB. Markdown heading",
+      "records": 4
+    },
+    "test": {
+      "file": "outputs/flashrag/real_pilot_nickel_superalloy/test.jsonl",
+      "first_golden_answers": [
+        "A"
+      ],
+      "first_id": "ns_ht_q005",
+      "first_question_preview": "What is the intended oxidation benefit of a very thin cerium coating on additively manufactured IN625?\nA. Improve chromia scale adherence and slow inward oxide ",
+      "records": 4
+    }
+  }
+}
