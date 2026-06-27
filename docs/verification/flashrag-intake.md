@@ -44,7 +44,7 @@ git status --short
 - `python scripts/create_example_domain.py`: exit `0`
 - `validate-data`: `data/example_domain is valid`
 - `prepare-flashrag`: `FlashRAG bundle written to outputs/flashrag/example_domain`
-- `prepare_flashrag_example.py`: `FlashRAG config written to /root/autodl-tmp/RAG/DomainRAG-Bench/.worktrees/phase-2a-flashrag-adapter/outputs/flashrag/example_domain_flashrag.yaml`
+- `prepare_flashrag_example.py`: `FlashRAG config written to outputs/flashrag/example_domain_flashrag.yaml`
 - `git status --short` after the smoke sequence: clean
 
 ## Output Paths
