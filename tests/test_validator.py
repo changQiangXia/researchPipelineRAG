@@ -240,6 +240,49 @@ def test_validate_dataset_rejects_multiple_choice_with_wrong_option_keys(tmp_pat
     assert "multiple_choice requires A-E or A-F options" in str(exc.value)
 
 
+def test_validate_dataset_rejects_multiple_choice_with_duplicate_answers(tmp_path: Path):
+    _write_minimal_dataset(tmp_path)
+    canonical_path = tmp_path / "canonical_dataset.jsonl"
+    dev_path = tmp_path / "dev.jsonl"
+    canonical = read_jsonl(canonical_path)
+    dev_records = read_jsonl(dev_path)
+    canonical[0]["question_type"] = "multiple_choice"
+    canonical[0]["options"] = {
+        "A": "Supported fact one",
+        "B": "Distractor one",
+        "C": "Distractor two",
+        "D": "Distractor three",
+        "E": "Distractor four",
+    }
+    canonical[0]["answer"] = ["A", "A"]
+    dev_records[0]["golden_answers"] = ["A", "A"]
+    dev_records[0]["metadata"]["question_type"] = "multiple_choice"
+    dev_records[0]["metadata"]["correct_options"] = ["A", "A"]
+    dev_records[0]["question"] = (
+        "Which options are correct?\n"
+        "A. Supported fact one\n"
+        "B. Distractor one\n"
+        "C. Distractor two\n"
+        "D. Distractor three\n"
+        "E. Distractor four"
+    )
+    import json
+
+    canonical_path.write_text(
+        "".join(json.dumps(record) + "\n" for record in canonical),
+        encoding="utf-8",
+    )
+    dev_path.write_text(
+        "".join(json.dumps(record) + "\n" for record in dev_records),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValidationError) as exc:
+        validate_dataset(tmp_path)
+
+    assert "multiple_choice requires at least two distinct answers" in str(exc.value)
+
+
 def test_validate_dataset_rejects_choice_options_with_blank_or_non_string_values(
     tmp_path: Path,
 ):

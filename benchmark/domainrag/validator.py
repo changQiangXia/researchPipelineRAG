@@ -214,8 +214,22 @@ def _validate_type_rules(
                     f"{question_id}: multiple_choice requires at least two answers",
                 )
             )
-        elif isinstance(options, dict):
-            _validate_choice_answers(path, question_id, answer, set(options), issues)
+        else:
+            option_keys = set(options) if isinstance(options, dict) else set()
+            valid_answer_count = _validate_choice_answers(
+                path,
+                question_id,
+                answer,
+                option_keys,
+                issues,
+            )
+            if valid_answer_count < 2:
+                issues.append(
+                    ValidationIssue(
+                        str(path),
+                        f"{question_id}: multiple_choice requires at least two distinct answers",
+                    )
+                )
     if question_type == "fill_blank":
         if not isinstance(record["answer_aliases"], list) or not record["answer_aliases"]:
             issues.append(
@@ -375,7 +389,8 @@ def _validate_choice_answers(
     answers: list[Any],
     option_keys: set[str],
     issues: list[ValidationIssue],
-) -> None:
+) -> int:
+    valid_answers: list[str] = []
     for answer_value in answers:
         if not isinstance(answer_value, str):
             issues.append(
@@ -392,6 +407,17 @@ def _validate_choice_answers(
                     f"{question_id}: answer {answer_value} must be present in option keys",
                 )
             )
+            continue
+        valid_answers.append(answer_value)
+
+    if len(valid_answers) != len(set(valid_answers)):
+        issues.append(
+            ValidationIssue(
+                str(path),
+                f"{question_id}: choice answers must not contain duplicates",
+            )
+        )
+    return len(set(valid_answers))
 
 
 def _validate_split_against_canonical(
