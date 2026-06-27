@@ -5,6 +5,7 @@ from pathlib import Path
 
 from domainrag.benchmark_runner import run_benchmark
 from domainrag.errors import ValidationError
+from domainrag.report_generator import generate_report
 from domainrag.validator import validate_dataset
 
 
@@ -20,6 +21,9 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--output", required=True)
     run.add_argument("--methods", required=True)
     run.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
+    report = subparsers.add_parser("report")
+    report.add_argument("--input", required=True)
+    report.add_argument("--output", required=True)
     return parser
 
 
@@ -45,6 +49,14 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"results written to {result_path}")
+        return 0
+    if args.command == "report":
+        try:
+            markdown_path, json_path = generate_report(Path(args.input), Path(args.output))
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"report written to {markdown_path} and {json_path}")
         return 0
     parser.error(f"unknown command: {args.command}")
     return 2
