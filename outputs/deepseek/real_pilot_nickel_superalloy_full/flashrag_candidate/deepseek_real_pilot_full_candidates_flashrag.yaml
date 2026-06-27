@@ -1,0 +1,6 @@
+data_dir: outputs/deepseek/real_pilot_nickel_superalloy_full/flashrag_candidate
+dataset_name: deepseek_real_pilot_full_candidates
+split:
+  - dev
+  - test
+  - fresh_hard
