@@ -182,6 +182,21 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 这一步发现并修复了一个真实契约风险：DeepSeek 可能把选择题 `options` 输出成数组，而 DomainRAG 需要 `A/B/C/D` keyed object。现在本地校验会拒绝这种输出，prompt 也加入了明确 JSON 形状示例。详细记录见 `docs/verification/deepseek-generation-review.md`。
 
+## Phase 3C: DeepSeek 全 chunk 候选题和审计表
+
+第三阶段 C 已把 DeepSeek 生成/复核从 3 条小样本扩展到 Phase 3A 的全部真实 chunk：
+
+- `scripts/run_deepseek_real_pilot.py --plan all-chunks` 会为输入 `chunks.jsonl` 的每个 chunk 规划 1 道候选题
+- 新增 `candidate_audit.jsonl`，把每条候选标为 `accepted`、`rejected` 或 `needs_human_review`
+- 当前真实运行覆盖 9 个 chunk，生成 9 道候选题
+- 9 道候选题都通过独立复核并达到自动接受阈值
+- 生成完整候选 DomainRAG 数据集：`outputs/deepseek/real_pilot_nickel_superalloy_full/domainrag_candidate/deepseek_real_pilot_full_candidates/`
+- 候选数据集已通过 `validate-data`
+- 候选数据集已能生成 FlashRAG bundle
+- 候选数据集已跑通 `no_rag` 最小 baseline 和 summary report
+
+这一步仍不把 DeepSeek candidate 直接替换为最终 gold 数据；它是可审计的候选生产结果。详细记录见 `docs/verification/deepseek-full-candidate-audit.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -190,4 +205,4 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 ## 下一阶段建议
 
-建议下一阶段进入 Phase 3C：用同一 DeepSeek 流水线覆盖 Phase 3A 的全部真实 chunk，生成完整候选题集，并增加候选题审计表，把每条候选标成 `accepted`、`rejected` 或 `needs_human_review`。通过人工抽检后，再考虑替换或扩展 curated pilot 数据。
+建议下一阶段进入 Phase 4：在真实 pilot 和 DeepSeek candidate 数据集上实现 Oracle-Context 与简单 Actual-RAG baseline。先证明题目能被正确 evidence 回答、检索能找到对应 chunk，再进入更完整的 FlashRAG 多方法对比。
