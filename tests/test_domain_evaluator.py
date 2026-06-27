@@ -20,6 +20,7 @@ def test_fill_blank_alias_match():
         "metadata": {"question_type": "fill_blank", "answer_aliases": ["oxygen ingress"]},
     }
     scores = evaluate_record(record, "oxygen ingress")
+    assert scores["fill_blank_normalized_em"] == 0.0
     assert scores["fill_blank_alias_match"] == 1.0
 
 
@@ -32,4 +33,5 @@ def test_short_answer_key_point_coverage():
         },
     }
     scores = evaluate_record(record, "Fine precipitates impede dislocation motion.")
+    assert scores["short_answer_token_f1"] == 1.0
     assert round(scores["key_point_coverage"], 3) == 0.667
