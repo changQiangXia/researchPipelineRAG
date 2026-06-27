@@ -426,6 +426,51 @@ PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
 
 这一步暴露并修复了一个真实 prompt 风险：过宽的上下文回答会加入未直接支持的因果表述，过窄的多选约束又会导致空答案。当前 prompt 明确要求只使用检索上下文中陈述的事实，同时允许多选题的正确选项由不同检索 chunk 分别支持。
 
+## Phase 5D: Fresh-Hard 横向对比榜
+
+第五阶段 D 把分散在 Phase 4B/4C、Phase 5B、Phase 5C 的 fresh_hard 输出合并成统一 comparison report。当前新增：
+
+- `benchmark/domainrag/comparison_report.py`
+- CLI：`compare`
+- 输出回归测试：`tests/test_comparison_report.py`、`tests/test_phase5d_outputs.py`
+- 验证记录：`docs/verification/fresh-hard-comparison-leaderboard.md`
+
+运行命令示例：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli compare \
+  --answer-inputs \
+    outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+    outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
+    outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+  --judge-inputs \
+    outputs/phase4c/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+    outputs/phase5b/deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+    outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+  --output outputs/phase5d/fresh_hard_comparison
+```
+
+输出：
+
+- `outputs/phase5d/fresh_hard_comparison/summary.json`
+- `outputs/phase5d/fresh_hard_comparison/summary.md`
+
+当前 comparison report 覆盖：
+
+- `no_rag`
+- `oracle_context`
+- `lexical_rag`
+- `flashrag_bm25_oracle_reader`
+- `flashrag_bm25_live_deepseek`
+
+Leaderboard 直接汇总 answer metrics、retrieval metrics、DeepSeek Judge metrics、token 数、API 调用、错误数和 unsupported claims。当前核心结论：
+
+- `no_rag` 的 context_support 为 0.0，hallucination_risk 为 3.75，unsupported claims 为 5
+- 所有上下文方法的 retrieval_hit 都是 1.0，但这是小规模 pilot 的结果
+- `flashrag_bm25_live_deepseek` 是当前第一条“FlashRAG 检索 + 非 oracle live answer + Judge”完整链路，fresh_hard 上 correctness、context_support、faithfulness、relevance 均为 5.0，unsupported claims 为 0
+
+`answer_score` 是非检索规则指标的便捷均值，不应替代分题型指标或 Judge 指标。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -434,9 +479,8 @@ PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
 
 ## 下一阶段建议
 
-建议下一阶段进入第二种 FlashRAG 检索方法、多方法对比报告和规模扩展：
+建议下一阶段进入第二种 FlashRAG 检索方法和规模扩展：
 
 - 在依赖和模型缓存可控的前提下推进 dense retriever / reranker，并接入同一套 live answer + Judge 口径
-- 生成横向对比报告，把 `no_rag`、`oracle_context`、`lexical_rag`、`flashrag_bm25_oracle_reader`、`flashrag_bm25_live_deepseek` 放在同一张表中
 - 同步扩大真实文献 corpus，否则当前 lexical retrieval 在 9 个 chunk 的 pilot 上过于容易
 - 对 Judge 结果做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论

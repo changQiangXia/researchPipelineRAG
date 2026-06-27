@@ -182,6 +182,87 @@ def test_run_command(tmp_path: Path, capsys):
     assert "results written" in captured.out
 
 
+def test_compare_command_writes_comparison_report(tmp_path: Path, capsys):
+    answer_path = tmp_path / "answers.jsonl"
+    judge_path = tmp_path / "judge.jsonl"
+    output = tmp_path / "comparison"
+    write_jsonl(
+        answer_path,
+        [
+            {
+                "id": "q1",
+                "method": "method_a",
+                "split": "fresh_hard",
+                "prediction": "A",
+                "golden_answers": ["A"],
+                "gold_context_ids": ["d1"],
+                "retrieved_context_ids": ["d1"],
+                "scores": {
+                    "single_choice_accuracy": 1.0,
+                    "retrieval_hit": 1.0,
+                },
+                "latency_ms": 0.0,
+                "input_tokens": 1,
+                "output_tokens": 1,
+                "api_calls": 0,
+                "error": None,
+            }
+        ],
+    )
+    write_jsonl(
+        judge_path,
+        [
+            {
+                "id": "q1",
+                "method": "method_a",
+                "split": "fresh_hard",
+                "prediction": "A",
+                "golden_answers": ["A"],
+                "gold_context_ids": ["d1"],
+                "retrieved_context_ids": ["d1"],
+                "judge": {
+                    "correctness": 5.0,
+                    "context_support": 5.0,
+                    "faithfulness": 5.0,
+                    "relevance": 5.0,
+                    "unsupported_claims": [],
+                    "reason": "ok",
+                },
+                "judge_scores": {
+                    "correctness": 5.0,
+                    "context_support": 5.0,
+                    "faithfulness": 5.0,
+                    "relevance": 5.0,
+                    "hallucination_risk": 0.0,
+                },
+                "latency_ms": 0.0,
+                "input_tokens": 2,
+                "output_tokens": 1,
+                "api_calls": 1,
+                "error": None,
+            }
+        ],
+    )
+
+    exit_code = main(
+        [
+            "compare",
+            "--answer-inputs",
+            str(answer_path),
+            "--judge-inputs",
+            str(judge_path),
+            "--output",
+            str(output),
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "comparison report written" in captured.out
+    assert (output / "summary.md").exists()
+    assert (output / "summary.json").exists()
+
+
 def test_run_flashrag_bm25_command(tmp_path: Path, capsys):
     flashrag = tmp_path / "flashrag-fork"
     bundle = tmp_path / "bundle"
