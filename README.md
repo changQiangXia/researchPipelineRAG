@@ -521,6 +521,68 @@ PYTHONPATH=benchmark python -m domainrag.cli calibration-packet \
 
 当前校准包覆盖 `fresh_hard` 的 4 道 `flashrag_bm25_live_deepseek` 题，包含问题、预测、gold answer、gold/retrieved context id、实际检索 chunk 内容、answer metrics、DeepSeek Judge 分数、风险优先级和空的 `human_review` 字段。当前 4 行均为 normal priority，Judge faithfulness 均为 5.0，hallucination_risk 均为 0.0。
 
+## Phase 6A: 真实 pilot 数据规模扩展
+
+第六阶段 A 开始处理 RAG.md 中最大的剩余缺口：真实数据规模。当前没有直接跳到标准版 5,000+ chunk，而是先构造一个可复现的中间规模扩展包，用于后续 live answer / Judge / calibration 复跑。
+
+新增：
+
+- 扩展 source manifest：`data/real_pilot_sources/nickel_superalloy_high_temp_failure_expanded/sources.jsonl`
+- 扩展 Easy Dataset 风格输入：`fixtures/easy_dataset/real_pilot_nickel_superalloy_expanded/`
+- 构建脚本：`scripts/build_real_pilot_expanded.py`
+- 扩展 DomainRAG 数据集：`data/real_pilot_nickel_superalloy_expanded/`
+- 扩展 FlashRAG bundle：`outputs/flashrag/real_pilot_nickel_superalloy_expanded/`
+- fresh_hard 离线 baseline：`outputs/phase6a/expanded_baseline/`
+- 验证记录：`docs/verification/expanded-real-pilot-scale.md`
+
+构建命令：
+
+```bash
+python scripts/build_real_pilot_expanded.py
+PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_expanded
+```
+
+当前扩展数据集规模：
+
+- 17 个 corpus chunk
+- 24 道题
+- `dev` / `test` / `fresh_hard` 各 8 道
+- 单选、多选、填空、简答各 6 道
+- 内部 source manifest 覆盖 15 条真实来源记录
+
+生成 FlashRAG bundle：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli prepare-flashrag \
+  --dataset data/real_pilot_nickel_superalloy_expanded \
+  --output outputs/flashrag \
+  --dataset-name real_pilot_nickel_superalloy_expanded
+```
+
+离线 fresh_hard baseline：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli run \
+  --dataset data/real_pilot_nickel_superalloy_expanded \
+  --output outputs/phase6a/expanded_baseline \
+  --methods no_rag,oracle_context,lexical_rag \
+  --split fresh_hard
+
+PYTHONPATH=benchmark python -m domainrag.cli report \
+  --input outputs/phase6a/expanded_baseline/real_pilot_nickel_superalloy_expanded/fresh_hard_results.jsonl \
+  --output outputs/phase6a/expanded_baseline/report_fresh_hard
+```
+
+当前 expanded fresh_hard 结果：
+
+- 8 道题
+- Fresh-Hard diagnostic candidates：6
+- `no_rag` retrieval_hit：0.0
+- `oracle_context` retrieval_hit：1.0
+- `lexical_rag` retrieval_hit：1.0
+
+这说明 17 个 chunk 仍然不足以区分 lexical/BM25/dense 方法，但已经把项目从最小 9 chunk pilot 推进到可复跑的中间规模数据资产。下一步应在该 expanded split 上运行 live DeepSeek answer、DeepSeek Judge、comparison 和 calibration packet。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -529,9 +591,9 @@ PYTHONPATH=benchmark python -m domainrag.cli calibration-packet \
 
 ## 下一阶段建议
 
-建议下一阶段优先进入规模扩展，并把 dense/rerank 作为独立环境任务处理：
+建议下一阶段优先在扩展版数据集上复跑真实模型链路，并把 dense/rerank 作为独立环境任务处理：
 
-- 扩大真实文献 corpus 和问题规模，否则当前 9 个 chunk 的 pilot 对 BM25/lexical retrieval 过于容易
-- 复用 Phase 5B/5C/5D/5E 的命令，在更大数据上重跑 BM25 live answer、Judge、comparison 和 calibration packet
-- 对 `review_packet.md` 做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论
+- 在 `data/real_pilot_nickel_superalloy_expanded` 上运行 live DeepSeek answer、DeepSeek Judge、comparison 和 calibration packet
+- 继续扩大真实文献 corpus 和问题规模；当前 17 个 chunk 对 lexical retrieval 仍然过于容易
+- 对 expanded `review_packet.md` 做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论
 - 如果要推进 dense retriever / reranker，先新建隔离环境或明确依赖升级方案，再接入同一套 live answer + Judge 口径
