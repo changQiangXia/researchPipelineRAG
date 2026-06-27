@@ -4,14 +4,18 @@ import re
 import unicodedata
 
 
-CHOICE_RE = re.compile(r"[A-Z]", re.IGNORECASE)
+CHOICE_TOKEN_RE = re.compile(r"(?<![A-Z])[A-F](?![A-Z])")
+COMPACT_CHOICE_RE = re.compile(r"^[A-F]+$")
 
 
 def normalize_choice_answer(text: str) -> list[str]:
     normalized = unicodedata.normalize("NFKC", text).upper()
-    letters = CHOICE_RE.findall(normalized)
-    allowed = [letter for letter in letters if "A" <= letter <= "Z"]
-    return sorted(set(allowed))
+    stripped = normalized.strip()
+    if COMPACT_CHOICE_RE.fullmatch(stripped):
+        return sorted(set(stripped))
+
+    letters = CHOICE_TOKEN_RE.findall(normalized)
+    return sorted(set(letters))
 
 
 def normalize_text_answer(text: str) -> str:
