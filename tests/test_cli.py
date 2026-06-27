@@ -106,3 +106,31 @@ def test_report_command(tmp_path: Path, capsys):
 
     assert exit_code == 0
     assert "report written" in captured.out
+
+
+def test_report_command_rejects_invalid_rows(tmp_path: Path, capsys):
+    input_path = tmp_path / "results.jsonl"
+    output_dir = tmp_path / "reports"
+    write_jsonl(
+        input_path,
+        [
+            {
+                "id": "q1",
+                "method": "mock_rag",
+                "split": "dev",
+                "scores": {"single_choice_accuracy": "bad"},
+                "latency_ms": 10.0,
+                "input_tokens": 5,
+                "output_tokens": 1,
+                "api_calls": 0,
+                "error": None,
+            }
+        ],
+    )
+
+    exit_code = main(["report", "--input", str(input_path), "--output", str(output_dir)])
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "record 1: scores.single_choice_accuracy must be numeric" in captured.out
+    assert "Traceback" not in captured.out
