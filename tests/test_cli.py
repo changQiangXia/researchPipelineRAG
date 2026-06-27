@@ -250,6 +250,124 @@ def test_run_deepseek_answers_rejects_invalid_runtime_options(tmp_path: Path):
     assert "Traceback" not in result.stderr
 
 
+def test_judge_deepseek_answers_requires_api_key(tmp_path: Path):
+    dataset = tmp_path / "dataset"
+    input_path = tmp_path / "answers.jsonl"
+    output = tmp_path / "outputs"
+    _write_minimal_dataset(dataset)
+    write_jsonl(input_path, [])
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "benchmark"
+    env.pop("DEEPSEEK_API_KEY", None)
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "domainrag.cli",
+            "judge-deepseek-answers",
+            "--dataset",
+            str(dataset),
+            "--input",
+            str(input_path),
+            "--output",
+            str(output),
+            "--split",
+            "dev",
+        ],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "DEEPSEEK_API_KEY is required" in result.stdout
+    assert "Traceback" not in result.stdout
+    assert "Traceback" not in result.stderr
+
+
+def test_judge_deepseek_answers_rejects_invalid_runtime_options(tmp_path: Path):
+    dataset = tmp_path / "dataset"
+    input_path = tmp_path / "answers.jsonl"
+    output = tmp_path / "outputs"
+    _write_minimal_dataset(dataset)
+    write_jsonl(input_path, [])
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "benchmark"
+    env["DEEPSEEK_API_KEY"] = "test-key"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "domainrag.cli",
+            "judge-deepseek-answers",
+            "--dataset",
+            str(dataset),
+            "--input",
+            str(input_path),
+            "--output",
+            str(output),
+            "--split",
+            "dev",
+            "--max-retries",
+            "-1",
+        ],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "max_retries must be non-negative" in result.stdout
+    assert "Traceback" not in result.stdout
+    assert "Traceback" not in result.stderr
+
+
+def test_judge_report_command_writes_summary(tmp_path: Path, capsys):
+    input_path = tmp_path / "judge_results.jsonl"
+    output = tmp_path / "report"
+    write_jsonl(
+        input_path,
+        [
+            {
+                "id": "q1",
+                "method": "oracle_context",
+                "split": "dev",
+                "judge": {
+                    "correctness": 5.0,
+                    "context_support": 5.0,
+                    "faithfulness": 4.0,
+                    "relevance": 5.0,
+                    "unsupported_claims": [],
+                    "reason": "good",
+                },
+                "judge_scores": {
+                    "correctness": 5.0,
+                    "context_support": 5.0,
+                    "faithfulness": 4.0,
+                    "relevance": 5.0,
+                    "hallucination_risk": 1.0,
+                },
+                "latency_ms": 10.0,
+                "input_tokens": 20,
+                "output_tokens": 5,
+                "api_calls": 1,
+                "error": None,
+            }
+        ],
+    )
+
+    exit_code = main(["judge-report", "--input", str(input_path), "--output", str(output)])
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "judge report written" in captured.out
+    assert (output / "summary.json").exists()
+
+
 def test_report_command(tmp_path: Path, capsys):
     input_path = tmp_path / "results.jsonl"
     output_dir = tmp_path / "reports"
