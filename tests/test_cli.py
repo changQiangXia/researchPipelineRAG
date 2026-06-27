@@ -56,3 +56,25 @@ def test_validate_data_module_entrypoint_rejects_missing_qrels(tmp_path: Path):
 
     assert result.returncode == 1
     assert "test.tsv" in result.stdout
+
+
+def test_run_command(tmp_path: Path, capsys):
+    dataset = tmp_path / "dataset"
+    output = tmp_path / "outputs"
+    _write_minimal_dataset(dataset)
+
+    exit_code = main(
+        [
+            "run",
+            "--dataset",
+            str(dataset),
+            "--output",
+            str(output),
+            "--methods",
+            "no_rag,mock_rag",
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "results written" in captured.out
