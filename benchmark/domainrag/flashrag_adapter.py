@@ -43,6 +43,7 @@ def prepare_flashrag_bundle(
 
     output_dir.mkdir(parents=True, exist_ok=True)
     target_dataset_dir = output_dir / resolved_dataset_name
+    _validate_target_does_not_overlap_source(dataset_dir, target_dataset_dir)
     if target_dataset_dir.exists():
         shutil.rmtree(target_dataset_dir)
     target_dataset_dir.mkdir(parents=True, exist_ok=True)
@@ -100,6 +101,13 @@ def _validate_dataset_name(dataset_name: str) -> str:
 
 def _validate_requested_splits(dataset_dir: Path, splits: tuple[str, ...]) -> None:
     issues: list[ValidationIssue] = []
+    if not splits:
+        issues.append(
+            ValidationIssue(
+                path="splits",
+                message="at least one split must be requested",
+            )
+        )
     for split in splits:
         if split not in DOMAINRAG_TO_FLASHRAG_SPLIT_FILES:
             issues.append(
@@ -112,6 +120,25 @@ def _validate_requested_splits(dataset_dir: Path, splits: tuple[str, ...]) -> No
             issues.append(ValidationIssue(str(source_path), "file does not exist"))
     if issues:
         raise ValidationError(issues)
+
+
+def _validate_target_does_not_overlap_source(
+    dataset_dir: Path, target_dataset_dir: Path
+) -> None:
+    resolved_source = dataset_dir.resolve()
+    resolved_target = target_dataset_dir.resolve()
+    if resolved_target == resolved_source or resolved_source in resolved_target.parents:
+        raise ValidationError(
+            [
+                ValidationIssue(
+                    path=str(target_dataset_dir),
+                    message=(
+                        "output dataset directory overlaps the source dataset directory; "
+                        "choose an output path outside the source dataset"
+                    ),
+                )
+            ]
+        )
 
 
 def _render_config(

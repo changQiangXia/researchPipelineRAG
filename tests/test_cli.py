@@ -99,6 +99,27 @@ def test_prepare_flashrag_module_entrypoint_rejects_invalid_fixture(tmp_path: Pa
     assert result.returncode != 0
 
 
+def test_prepare_flashrag_module_entrypoint_rejects_empty_splits(tmp_path: Path):
+    dataset = tmp_path / "dataset"
+    output = tmp_path / "outputs"
+    _write_minimal_dataset(dataset)
+
+    result = _run_cli(
+        "prepare-flashrag",
+        "--dataset",
+        str(dataset),
+        "--output",
+        str(output),
+        "--dataset-name",
+        "example_domain",
+        "--splits",
+        ",",
+    )
+
+    assert result.returncode == 1
+    assert "at least one split must be requested" in result.stdout
+
+
 def test_prepare_flashrag_example_script_keeps_relative_config_path():
     result = subprocess.run(
         [sys.executable, "scripts/prepare_flashrag_example.py"],

@@ -4,6 +4,7 @@ import pytest
 
 from domainrag.errors import ValidationError
 from domainrag.flashrag_adapter import prepare_flashrag_bundle
+from tests.test_validator import _write_minimal_dataset
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -83,3 +84,50 @@ def test_prepare_flashrag_bundle_replaces_existing_target_dataset_dir(tmp_path: 
 
     assert not stale_file.exists()
     assert (stale_dir / "dev.jsonl").exists()
+
+
+def test_prepare_flashrag_bundle_rejects_output_target_equal_to_source(tmp_path: Path):
+    dataset_dir = tmp_path / "example_domain"
+    _write_minimal_dataset(dataset_dir)
+
+    with pytest.raises(ValidationError) as excinfo:
+        prepare_flashrag_bundle(
+            dataset_dir,
+            dataset_dir.parent,
+            dataset_name=dataset_dir.name,
+        )
+
+    assert "output dataset directory overlaps the source dataset directory" in str(
+        excinfo.value
+    )
+
+
+def test_prepare_flashrag_bundle_rejects_output_target_nested_in_source(tmp_path: Path):
+    dataset_dir = tmp_path / "dataset"
+    _write_minimal_dataset(dataset_dir)
+
+    with pytest.raises(ValidationError) as excinfo:
+        prepare_flashrag_bundle(
+            dataset_dir,
+            dataset_dir / "outputs",
+            dataset_name="nested_bundle",
+        )
+
+    assert "output dataset directory overlaps the source dataset directory" in str(
+        excinfo.value
+    )
+
+
+def test_prepare_flashrag_bundle_rejects_empty_splits(tmp_path: Path):
+    dataset_dir = tmp_path / "example_domain"
+    _write_minimal_dataset(dataset_dir)
+    output_dir = tmp_path / "flashrag"
+
+    with pytest.raises(ValidationError) as excinfo:
+        prepare_flashrag_bundle(
+            dataset_dir,
+            output_dir,
+            splits=(),
+        )
+
+    assert "at least one split must be requested" in str(excinfo.value)
