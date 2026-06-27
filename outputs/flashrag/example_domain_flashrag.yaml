@@ -1,0 +1,6 @@
+data_dir: outputs/flashrag
+dataset_name: example_domain
+split:
+  - dev
+  - test
+  - fresh_hard

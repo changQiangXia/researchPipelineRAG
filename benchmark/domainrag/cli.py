@@ -5,6 +5,7 @@ from pathlib import Path
 
 from domainrag.benchmark_runner import run_benchmark
 from domainrag.errors import ValidationError
+from domainrag.flashrag_adapter import prepare_flashrag_bundle
 from domainrag.report_generator import generate_report
 from domainrag.validator import validate_dataset
 
@@ -24,6 +25,11 @@ def build_parser() -> argparse.ArgumentParser:
     report = subparsers.add_parser("report")
     report.add_argument("--input", required=True)
     report.add_argument("--output", required=True)
+    prepare_flashrag = subparsers.add_parser("prepare-flashrag")
+    prepare_flashrag.add_argument("--dataset", required=True)
+    prepare_flashrag.add_argument("--output", required=True)
+    prepare_flashrag.add_argument("--dataset-name", required=True)
+    prepare_flashrag.add_argument("--splits", default="dev,test,fresh_hard")
     return parser
 
 
@@ -57,6 +63,21 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"report written to {markdown_path} and {json_path}")
+        return 0
+    if args.command == "prepare-flashrag":
+        splits = tuple(split.strip() for split in args.splits.split(",") if split.strip())
+        try:
+            bundle = prepare_flashrag_bundle(
+                Path(args.dataset),
+                Path(args.output),
+                dataset_name=args.dataset_name,
+                splits=splits,
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"FlashRAG bundle written to {bundle.dataset_dir}")
+        print(f"FlashRAG config written to {bundle.config_path}")
         return 0
     parser.error(f"unknown command: {args.command}")
     return 2
