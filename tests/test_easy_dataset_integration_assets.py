@@ -180,6 +180,12 @@ def test_easy_dataset_domainrag_helper_payload_feeds_python_exporter(
     assert bundle["errors"] == []
     files = {file["path"]: file["content"] for file in bundle["files"]}
     assert set(files) == {"chunks.jsonl", "items.jsonl"}
+    exported_items = [
+        json.loads(line)
+        for line in files["items.jsonl"].splitlines()
+        if line.strip()
+    ]
+    assert [item["quality_score"] for item in exported_items] == [0.95, 0.95, 0.95]
 
     source = tmp_path / "easy-dataset-export"
     source.mkdir()

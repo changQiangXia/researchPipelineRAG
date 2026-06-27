@@ -307,6 +307,9 @@ function resolveEnumValue(overrideValue, tagValue, defaultValue, allowed, fallba
 
 function resolveQualityScore(overrideValue, tagValue, defaultValue) {
   for (const value of [overrideValue, tagValue, defaultValue, DEFAULTS.quality_score]) {
+    if (value === null || value === undefined || String(value).trim() === '') {
+      continue;
+    }
     const numberValue = Number(value);
     if (Number.isFinite(numberValue)) {
       return Math.max(0, Math.min(1, numberValue));
