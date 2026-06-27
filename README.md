@@ -138,6 +138,20 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 当前环境的 cgroup 内存上限是 2GiB，完整 Easy Dataset `npm install` 会被 Signal 9 杀掉，因此本阶段没有把 Next.js dev server 作为通过门槛。详细记录见 `docs/verification/easy-dataset-fork-smoke-test.md`。
 
+## Phase 2E: Easy Dataset 真实路由运行验证
+
+第二阶段 E 已在 ignored 的 Easy Dataset fork 中启动真实 Next.js dev server，并通过 HTTP 调用复制进去的 DomainRAG 导出路由：
+
+- Easy Dataset fork 版本：`4002b09d9c5726cafb9f61a8d12765cb96a2d94b`，`easy-dataset 1.7.3`
+- 当前容器 cgroup 内存上限仍为 2GiB，但使用 `pnpm install --frozen-lockfile --ignore-scripts --child-concurrency=1 --network-concurrency=1` 可以完成依赖安装
+- `pnpm exec prisma db push` 创建本地 SQLite schema 并生成 Prisma Client
+- 通过 Prisma Client 写入真实 Easy Dataset 项目、chunk 和 eval dataset 行
+- `GET /api/projects/domainrag_smoke/domainrag-export` 返回 200
+- `POST /api/projects/domainrag_smoke/domainrag-export` 返回 200，并导出 `chunks.jsonl` 与 `items.jsonl`
+- 路由导出结果可以被本仓库 `export-domainrag` 消费，并通过 `validate-data`
+
+这一步没有调用 DeepSeek，也没有提交 Easy Dataset 上游源码、依赖目录、SQLite 文件或临时导出结果。详细记录见 `docs/verification/easy-dataset-runtime-route.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -146,4 +160,4 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 ## 下一阶段建议
 
-建议下一阶段做 Phase 2E：在内存更高的环境中启动 Easy Dataset dev server，调用真实 `POST /api/projects/:projectId/domainrag-export` 路由；或者先为 Easy Dataset fork 增加 UI 下载按钮/zip 下载，再进入小规模真实论文 pilot。
+建议下一阶段进入 Phase 3A：小规模真实论文数据 pilot。不要继续扩大 mock/smoke fixture，先选择 3 到 5 篇真实论文，完成“论文文本进入 Easy Dataset 或等价本地入口 -> 生成/整理 chunk 和题目 -> 导出 DomainRAG -> 校验 -> 跑最小 baseline”的端到端闭环。确认数据质量、人工复核点和 DeepSeek 调用边界后，再扩大到 RAG.md 中的 100 到 180 篇标准规模。
