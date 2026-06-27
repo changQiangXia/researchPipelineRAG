@@ -1,7 +1,25 @@
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 from domainrag.cli import main
 from tests.test_validator import _write_minimal_dataset
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _run_cli(*args: str, dataset: Path) -> subprocess.CompletedProcess[str]:
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "benchmark"
+    return subprocess.run(
+        [sys.executable, "-m", "domainrag.cli", *args, "--dataset", str(dataset)],
+        cwd=ROOT,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
 
 
 def test_version_command(capsys):
@@ -19,3 +37,22 @@ def test_validate_data_command(tmp_path: Path, capsys):
 
     assert exit_code == 0
     assert "valid" in captured.out
+
+
+def test_validate_data_module_entrypoint_accepts_valid_dataset(tmp_path: Path):
+    _write_minimal_dataset(tmp_path)
+
+    result = _run_cli("validate-data", dataset=tmp_path)
+
+    assert result.returncode == 0
+    assert "is valid" in result.stdout
+
+
+def test_validate_data_module_entrypoint_rejects_missing_qrels(tmp_path: Path):
+    _write_minimal_dataset(tmp_path)
+    (tmp_path / "qrels" / "test.tsv").unlink()
+
+    result = _run_cli("validate-data", dataset=tmp_path)
+
+    assert result.returncode == 1
+    assert "test.tsv" in result.stdout
