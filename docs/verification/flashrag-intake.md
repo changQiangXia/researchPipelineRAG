@@ -40,17 +40,17 @@ git status --short
 
 ## Command Outputs
 
-- `pytest`: `51 passed in 1.29s`
+- `pytest`: `56 passed in 1.58s`
 - `python scripts/create_example_domain.py`: exit `0`
 - `validate-data`: `data/example_domain is valid`
 - `prepare-flashrag`: `FlashRAG bundle written to outputs/flashrag/example_domain`
 - `prepare_flashrag_example.py`: `FlashRAG config written to /root/autodl-tmp/RAG/DomainRAG-Bench/.worktrees/phase-2a-flashrag-adapter/outputs/flashrag/example_domain_flashrag.yaml`
-- `git status --short` before staging generated verification artifacts:
+- `git status --short` after the smoke sequence:
 
 ```text
- M README.md
-?? docs/verification/flashrag-intake.md
-?? outputs/flashrag/
+ M benchmark/domainrag/flashrag_adapter.py
+ M tests/test_cli.py
+ M tests/test_flashrag_adapter.py
 ```
 
 ## Output Paths
@@ -72,3 +72,9 @@ git status --short
 - Phase 2A does not install or import FlashRAG as part of required verification.
 - Phase 2A does not call live APIs or run real generation.
 - The prepared bundle is a compatibility artifact for later FlashRAG execution, not a full FlashRAG experiment result.
+
+## Final Review Follow-up
+
+- Added a pre-cleanup overlap guard so `prepare_flashrag_bundle(...)` rejects any output dataset directory that resolves to the source dataset directory or a nested path inside it.
+- Added validation for empty requested split sets so the adapter and CLI both reject unusable bundles such as `--splits ,`.
+- Re-ran the Phase 2A smoke sequence after the fix and confirmed it does not leave committed output artifacts modified.
