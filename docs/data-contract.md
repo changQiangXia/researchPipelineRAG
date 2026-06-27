@@ -33,7 +33,14 @@ Required fields:
 
 ## Public Metadata Rule
 
-Public exports allow dataset ids and source chunk ids. They do not allow DOI, authors, venue, page number, original PDF path, or original paper title fields.
+Public exports allow only the documented public fields for each artifact:
+
+- `corpus.jsonl` rows: `id`, `contents`
+- `canonical_dataset.jsonl` rows: the required canonical item fields listed above, with no extras
+- split rows: `id`, `question`, `golden_answers`, `metadata`
+- split `metadata`: `question_type`, `source_chunk_ids`, `knowledge_type`, `difficulty`, `answer_aliases`, `required_points`, and `correct_options` only for choice questions
+
+Public exports must not contain forbidden metadata fields anywhere in the row, including nested metadata objects or arrays. Forbidden field families include DOI, author/authors, venue, page/page_number, original PDF path, and original paper title.
 
 ## Qrels
 

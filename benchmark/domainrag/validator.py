@@ -7,11 +7,14 @@ from domainrag.errors import ValidationError, ValidationIssue
 from domainrag.io_utils import read_jsonl, read_qrels
 from domainrag.schema import (
     DIFFICULTIES,
+    FORBIDDEN_PUBLIC_FIELD_FAMILIES,
     KNOWLEDGE_TYPES,
     QUESTION_TYPES,
     REQUIRED_CANONICAL_FIELDS,
     REQUIRED_CORPUS_FIELDS,
     REQUIRED_FLASHRAG_FIELDS,
+    SPLIT_METADATA_BASE_FIELDS,
+    SPLIT_METADATA_CHOICE_FIELDS,
 )
 
 
@@ -20,6 +23,15 @@ SPLIT_FILES = {
     "test": ("test.jsonl", "test.tsv"),
     "fresh_hard": ("fresh_hard_test.jsonl", "fresh_hard.tsv"),
 }
+
+NORMALIZED_FORBIDDEN_PUBLIC_FIELDS = {
+    "".join(ch for ch in field.lower() if ch.isalnum())
+    for field in FORBIDDEN_PUBLIC_FIELD_FAMILIES
+}
+MULTIPLE_CHOICE_OPTION_KEY_SETS = (
+    {"A", "B", "C", "D", "E"},
+    {"A", "B", "C", "D", "E", "F"},
+)
 
 
 def validate_dataset(dataset_dir: Path) -> None:
@@ -34,7 +46,7 @@ def validate_dataset(dataset_dir: Path) -> None:
         raise exc
 
     corpus_ids = _validate_corpus(corpus_path, corpus, issues)
-    canonical_ids, chunk_groups = _validate_canonical(
+    canonical_ids, chunk_groups, canonical_by_id = _validate_canonical(
         canonical_path,
         canonical,
         corpus_ids,
@@ -51,7 +63,13 @@ def validate_dataset(dataset_dir: Path) -> None:
         except ValidationError as exc:
             issues.extend(exc.issues)
             continue
-        query_ids = _validate_split(split_path, split_records, canonical_ids, issues)
+        query_ids = _validate_split(
+            split_path,
+            split_records,
+            canonical_ids,
+            canonical_by_id,
+            issues,
+        )
         _validate_qrels(qrels_path, qrels_rows, query_ids, corpus_ids, issues)
         split_to_source_groups[split_name] = {
             tuple(chunk_groups[query_id])
@@ -81,14 +99,10 @@ def _validate_corpus(
 ) -> set[str]:
     ids: set[str] = set()
     for index, record in enumerate(records, start=1):
-        missing = REQUIRED_CORPUS_FIELDS - set(record)
-        if missing:
-            issues.append(
-                ValidationIssue(
-                    str(path),
-                    f"record {index}: missing fields {sorted(missing)}",
-                )
-            )
+        _validate_exact_fields(path, f"record {index}", record, REQUIRED_CORPUS_FIELDS, issues)
+        _reject_forbidden_public_fields(path, f"record {index}", record, issues)
+        if REQUIRED_CORPUS_FIELDS - set(record):
+            continue
         record_id = record.get("id")
         if isinstance(record_id, str):
             ids.add(record_id)
@@ -104,24 +118,27 @@ def _validate_canonical(
     records: list[dict[str, Any]],
     corpus_ids: set[str],
     issues: list[ValidationIssue],
-) -> tuple[set[str], dict[str, list[str]]]:
+) -> tuple[set[str], dict[str, list[str]], dict[str, dict[str, Any]]]:
     ids: set[str] = set()
     chunk_groups: dict[str, list[str]] = {}
+    canonical_by_id: dict[str, dict[str, Any]] = {}
     for index, record in enumerate(records, start=1):
-        missing = REQUIRED_CANONICAL_FIELDS - set(record)
-        if missing:
-            issues.append(
-                ValidationIssue(
-                    str(path),
-                    f"record {index}: missing fields {sorted(missing)}",
-                )
-            )
+        _validate_exact_fields(
+            path,
+            f"record {index}",
+            record,
+            REQUIRED_CANONICAL_FIELDS,
+            issues,
+        )
+        _reject_forbidden_public_fields(path, f"record {index}", record, issues)
+        if REQUIRED_CANONICAL_FIELDS - set(record):
             continue
         question_id = record["id"]
         if not isinstance(question_id, str):
             issues.append(ValidationIssue(str(path), f"record {index}: id must be a string"))
             continue
         ids.add(question_id)
+        canonical_by_id[question_id] = record
         if record["question_type"] not in QUESTION_TYPES:
             issues.append(ValidationIssue(str(path), f"{question_id}: unknown question_type"))
         if record["knowledge_type"] not in KNOWLEDGE_TYPES:
@@ -149,7 +166,7 @@ def _validate_canonical(
                 )
         chunk_groups[question_id] = sorted(str(chunk_id) for chunk_id in source_chunk_ids)
         _validate_type_rules(path, record, issues)
-    return ids, chunk_groups
+    return ids, chunk_groups, canonical_by_id
 
 
 def _validate_type_rules(
@@ -169,6 +186,8 @@ def _validate_type_rules(
                     f"{question_id}: single_choice requires A-D options",
                 )
             )
+        else:
+            _validate_option_values(path, question_id, options, issues)
         if not isinstance(answer, list) or len(answer) != 1:
             issues.append(
                 ValidationIssue(
@@ -176,14 +195,18 @@ def _validate_type_rules(
                     f"{question_id}: single_choice requires one answer",
                 )
             )
+        elif isinstance(options, dict):
+            _validate_choice_answers(path, question_id, answer, set(options), issues)
     if question_type == "multiple_choice":
-        if not isinstance(options, dict) or not (5 <= len(options) <= 6):
+        if not isinstance(options, dict) or set(options) not in MULTIPLE_CHOICE_OPTION_KEY_SETS:
             issues.append(
                 ValidationIssue(
                     str(path),
-                    f"{question_id}: multiple_choice requires 5-6 options",
+                    f"{question_id}: multiple_choice requires A-E or A-F options",
                 )
             )
+        else:
+            _validate_option_values(path, question_id, options, issues)
         if not isinstance(answer, list) or len(answer) < 2:
             issues.append(
                 ValidationIssue(
@@ -191,6 +214,8 @@ def _validate_type_rules(
                     f"{question_id}: multiple_choice requires at least two answers",
                 )
             )
+        elif isinstance(options, dict):
+            _validate_choice_answers(path, question_id, answer, set(options), issues)
     if question_type == "fill_blank":
         if not isinstance(record["answer_aliases"], list) or not record["answer_aliases"]:
             issues.append(
@@ -220,18 +245,14 @@ def _validate_split(
     path: Path,
     records: list[dict[str, Any]],
     canonical_ids: set[str],
+    canonical_by_id: dict[str, dict[str, Any]],
     issues: list[ValidationIssue],
 ) -> set[str]:
     ids: set[str] = set()
     for index, record in enumerate(records, start=1):
-        missing = REQUIRED_FLASHRAG_FIELDS - set(record)
-        if missing:
-            issues.append(
-                ValidationIssue(
-                    str(path),
-                    f"record {index}: missing fields {sorted(missing)}",
-                )
-            )
+        _validate_exact_fields(path, f"record {index}", record, REQUIRED_FLASHRAG_FIELDS, issues)
+        _reject_forbidden_public_fields(path, f"record {index}", record, issues)
+        if REQUIRED_FLASHRAG_FIELDS - set(record):
             continue
         question_id = record["id"]
         if not isinstance(question_id, str):
@@ -244,6 +265,8 @@ def _validate_split(
             issues.append(
                 ValidationIssue(str(path), f"{question_id}: not in canonical_dataset.jsonl")
             )
+            continue
+        _validate_split_against_canonical(path, record, canonical_by_id[question_id], issues)
     return ids
 
 
@@ -273,3 +296,147 @@ def _validate_qrels(
     missing = query_ids - seen_queries
     for query_id in sorted(missing):
         issues.append(ValidationIssue(str(path), f"{query_id}: missing qrels row"))
+
+
+def _validate_exact_fields(
+    path: Path,
+    label: str,
+    record: dict[str, Any],
+    expected_fields: set[str],
+    issues: list[ValidationIssue],
+) -> None:
+    actual_fields = set(record)
+    missing = expected_fields - actual_fields
+    extra = actual_fields - expected_fields
+    if missing:
+        issues.append(
+            ValidationIssue(
+                str(path),
+                f"{label}: missing fields {sorted(missing)}",
+            )
+        )
+    if extra:
+        issues.append(
+            ValidationIssue(
+                str(path),
+                f"{label}: unexpected fields {sorted(extra)}",
+            )
+        )
+
+
+def _reject_forbidden_public_fields(
+    path: Path,
+    label: str,
+    value: Any,
+    issues: list[ValidationIssue],
+    location: str | None = None,
+) -> None:
+    if isinstance(value, dict):
+        for key, nested_value in value.items():
+            nested_location = key if location is None else f"{location}.{key}"
+            if _is_forbidden_public_field(key):
+                issues.append(
+                    ValidationIssue(
+                        str(path),
+                        f"{label}: forbidden field '{nested_location}'",
+                    )
+                )
+            _reject_forbidden_public_fields(path, label, nested_value, issues, nested_location)
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            nested_location = f"{location}[{index}]" if location is not None else f"[{index}]"
+            _reject_forbidden_public_fields(path, label, item, issues, nested_location)
+
+
+def _is_forbidden_public_field(key: str) -> bool:
+    normalized = "".join(ch for ch in key.lower() if ch.isalnum())
+    return normalized in NORMALIZED_FORBIDDEN_PUBLIC_FIELDS
+
+
+def _validate_option_values(
+    path: Path,
+    question_id: str,
+    options: dict[str, Any],
+    issues: list[ValidationIssue],
+) -> None:
+    for option_key, option_value in options.items():
+        if not isinstance(option_value, str) or not option_value.strip():
+            issues.append(
+                ValidationIssue(
+                    str(path),
+                    f"{question_id}: option {option_key} must be a non-empty string",
+                )
+            )
+
+
+def _validate_choice_answers(
+    path: Path,
+    question_id: str,
+    answers: list[Any],
+    option_keys: set[str],
+    issues: list[ValidationIssue],
+) -> None:
+    for answer_value in answers:
+        if not isinstance(answer_value, str):
+            issues.append(
+                ValidationIssue(
+                    str(path),
+                    f"{question_id}: choice answers must be strings",
+                )
+            )
+            continue
+        if answer_value not in option_keys:
+            issues.append(
+                ValidationIssue(
+                    str(path),
+                    f"{question_id}: answer {answer_value} must be present in option keys",
+                )
+            )
+
+
+def _validate_split_against_canonical(
+    path: Path,
+    record: dict[str, Any],
+    canonical_record: dict[str, Any],
+    issues: list[ValidationIssue],
+) -> None:
+    question_id = record["id"]
+    if record.get("golden_answers") != canonical_record["answer"]:
+        issues.append(
+            ValidationIssue(
+                str(path),
+                f"{question_id}: golden_answers must match canonical answer",
+            )
+        )
+
+    metadata = record.get("metadata")
+    if not isinstance(metadata, dict):
+        issues.append(
+            ValidationIssue(str(path), f"{question_id}: metadata must be an object")
+        )
+        return
+
+    expected_fields = set(SPLIT_METADATA_BASE_FIELDS)
+    if canonical_record["question_type"] in {"single_choice", "multiple_choice"}:
+        expected_fields |= SPLIT_METADATA_CHOICE_FIELDS
+    _validate_exact_fields(path, f"{question_id}: metadata", metadata, expected_fields, issues)
+
+    for field in sorted(SPLIT_METADATA_BASE_FIELDS):
+        if field in metadata and metadata[field] != canonical_record[field]:
+            issues.append(
+                ValidationIssue(
+                    str(path),
+                    f"{question_id}: metadata.{field} must match canonical {field}",
+                )
+            )
+    if (
+        canonical_record["question_type"] in {"single_choice", "multiple_choice"}
+        and "correct_options" in metadata
+        and metadata["correct_options"] != canonical_record["answer"]
+    ):
+        issues.append(
+            ValidationIssue(
+                str(path),
+                f"{question_id}: metadata.correct_options must match canonical answer",
+            )
+        )
