@@ -197,6 +197,26 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 这一步仍不把 DeepSeek candidate 直接替换为最终 gold 数据；它是可审计的候选生产结果。详细记录见 `docs/verification/deepseek-full-candidate-audit.md`。
 
+## Phase 4: Oracle-Context 和 lexical RAG 评测闭环
+
+第四阶段开始进入真实评测链路。当前 runner 已支持：
+
+- `no_rag`：不提供上下文，作为低分诊断基线
+- `oracle_context`：直接使用 qrels gold context，验证题目能被正确证据回答
+- `lexical_rag`：使用无外部依赖的词面检索 top-k，并记录 `retrieval_hit`、`retrieval_recall` 和 `retrieval_mrr`
+
+Phase 4 已在两个数据集上跑通 `dev` / `test` / `fresh_hard` 三个 split：
+
+- curated real pilot：`data/real_pilot_nickel_superalloy`
+- DeepSeek full candidate dataset：`outputs/deepseek/real_pilot_nickel_superalloy_full/domainrag_candidate/deepseek_real_pilot_full_candidates`
+
+输出位置：
+
+- curated reports：`outputs/phase4/curated/report_*/summary.json`
+- DeepSeek candidate reports：`outputs/phase4/deepseek_candidate/report_*/summary.json`
+
+报告中新增 `_diagnostics.fresh_hard_candidates`，用于初筛 No-RAG 低、Oracle-Context 高的问题。当前 curated `fresh_hard` 中识别 3 个候选，DeepSeek candidate `fresh_hard` 中识别 3 个候选。详细记录见 `docs/verification/oracle-lexical-rag-eval.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -205,4 +225,4 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 ## 下一阶段建议
 
-建议下一阶段进入 Phase 4：在真实 pilot 和 DeepSeek candidate 数据集上实现 Oracle-Context 与简单 Actual-RAG baseline。先证明题目能被正确 evidence 回答、检索能找到对应 chunk，再进入更完整的 FlashRAG 多方法对比。
+建议下一阶段进入 Phase 4B：把 `no_rag`、`oracle_context` 和 `lexical_rag` 的回答环节接入受控 DeepSeek 真实生成，同时保留当前 deterministic retrieval metrics。这样可以从“完美 reader 模拟”推进到 RAG.md 要求的真实模型 No-RAG / Oracle / RAG 对比。
