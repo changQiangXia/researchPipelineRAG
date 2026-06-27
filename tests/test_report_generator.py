@@ -95,6 +95,49 @@ def test_generate_report_marks_fresh_hard_candidates(tmp_path: Path):
     assert summary["_diagnostics"]["fresh_hard_candidate_ids"] == ["q1"]
 
 
+def test_generate_report_summarizes_token_usage(tmp_path: Path):
+    input_path = tmp_path / "results.jsonl"
+    output_dir = tmp_path / "reports"
+    write_jsonl(
+        input_path,
+        [
+            {
+                "id": "q1",
+                "method": "deepseek_oracle",
+                "split": "dev",
+                "scores": {"single_choice_accuracy": 1.0},
+                "latency_ms": 10.0,
+                "input_tokens": 11,
+                "output_tokens": 2,
+                "api_calls": 1,
+                "error": None,
+            },
+            {
+                "id": "q2",
+                "method": "deepseek_oracle",
+                "split": "dev",
+                "scores": {"single_choice_accuracy": 0.0},
+                "latency_ms": 20.0,
+                "input_tokens": 13,
+                "output_tokens": 4,
+                "api_calls": 1,
+                "error": None,
+            },
+        ],
+    )
+
+    markdown_path, json_path = generate_report(input_path, output_dir)
+    summary = json.loads(json_path.read_text(encoding="utf-8"))
+    markdown = markdown_path.read_text(encoding="utf-8")
+
+    assert summary["deepseek_oracle"]["total_input_tokens"] == 24
+    assert summary["deepseek_oracle"]["total_output_tokens"] == 6
+    assert summary["deepseek_oracle"]["total_tokens"] == 30
+    assert summary["deepseek_oracle"]["mean_input_tokens"] == 12
+    assert summary["deepseek_oracle"]["mean_output_tokens"] == 3
+    assert "Total tokens: 30" in markdown
+
+
 @pytest.mark.parametrize(
     "row, message",
     [
