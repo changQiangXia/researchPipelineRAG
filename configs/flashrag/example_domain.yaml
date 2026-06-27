@@ -1,0 +1,13 @@
+data_dir: outputs/flashrag
+dataset_name: example_domain
+split:
+  - dev
+  - test
+  - fresh_hard
+framework: openai
+generator_model: local-noop
+disable_save: true
+metrics:
+  - em
+  - f1
+  - acc
