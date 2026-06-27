@@ -40,7 +40,7 @@ git status --short
 
 ## Command Outputs
 
-- `pytest`: `57 passed in 2.78s`
+- `pytest`: `57 passed`
 - `python scripts/create_example_domain.py`: exit `0`
 - `validate-data`: `data/example_domain is valid`
 - `prepare-flashrag`: `FlashRAG bundle written to outputs/flashrag/example_domain`
