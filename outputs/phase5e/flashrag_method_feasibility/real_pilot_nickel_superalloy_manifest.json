@@ -1,0 +1,163 @@
+{
+  "blockers": [
+    {
+      "error": "No module named 'openai'",
+      "error_type": "ModuleNotFoundError",
+      "kind": "module_import_failure",
+      "name": "flashrag.generator.generator"
+    },
+    {
+      "error": "No module named 'termcolor'",
+      "error_type": "ModuleNotFoundError",
+      "kind": "module_import_failure",
+      "name": "flashrag.pipeline.pipeline"
+    },
+    {
+      "error": "No module named 'FlagEmbedding'",
+      "error_type": "ModuleNotFoundError",
+      "kind": "missing_package",
+      "name": "FlagEmbedding"
+    },
+    {
+      "error": "No module named 'sentence_transformers'",
+      "error_type": "ModuleNotFoundError",
+      "kind": "missing_package",
+      "name": "sentence_transformers"
+    },
+    {
+      "error": "No module named 'sklearn'",
+      "error_type": "ModuleNotFoundError",
+      "kind": "missing_package",
+      "name": "sklearn"
+    },
+    {
+      "dependent": "transformers",
+      "dependent_version": "5.12.1",
+      "installed": "2.1.2+cu121",
+      "kind": "version_mismatch",
+      "name": "torch",
+      "requirement": "torch>=2.4 for this transformers build"
+    }
+  ],
+  "flashrag_commit": "e0e73399ce8d4563397b5fb4980de72a9c5e15a6",
+  "flashrag_path": "benchmark/flashrag-fork",
+  "generated_at": "2026-06-27T22:25:28.795119+00:00",
+  "methods": {
+    "flashrag_bm25": {
+      "evidence": "Dataset, retriever, and index builder modules import successfully.",
+      "feasible": true
+    },
+    "flashrag_dense": {
+      "evidence": "Blocked by missing packages: sentence_transformers",
+      "feasible": false,
+      "required_packages": [
+        "torch",
+        "transformers",
+        "sentence_transformers",
+        "faiss",
+        "numpy"
+      ]
+    },
+    "flashrag_reranker": {
+      "evidence": "Blocked by missing packages: FlagEmbedding, sklearn",
+      "feasible": false,
+      "required_packages": [
+        "torch",
+        "transformers",
+        "FlagEmbedding",
+        "sklearn",
+        "numpy"
+      ]
+    }
+  },
+  "module_imports": {
+    "flashrag.dataset.dataset": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": null
+    },
+    "flashrag.generator.generator": {
+      "error": "No module named 'openai'",
+      "error_type": "ModuleNotFoundError",
+      "ok": false
+    },
+    "flashrag.pipeline.pipeline": {
+      "error": "No module named 'termcolor'",
+      "error_type": "ModuleNotFoundError",
+      "ok": false
+    },
+    "flashrag.retriever.index_builder": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": null
+    },
+    "flashrag.retriever.retriever": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": null
+    }
+  },
+  "packages": {
+    "FlagEmbedding": {
+      "error": "No module named 'FlagEmbedding'",
+      "error_type": "ModuleNotFoundError",
+      "ok": false,
+      "version": null
+    },
+    "Stemmer": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": "3.1.0"
+    },
+    "bm25s": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": "0.2.1"
+    },
+    "faiss": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": "1.14.3"
+    },
+    "numpy": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": "1.26.3"
+    },
+    "sentence_transformers": {
+      "error": "No module named 'sentence_transformers'",
+      "error_type": "ModuleNotFoundError",
+      "ok": false,
+      "version": null
+    },
+    "sklearn": {
+      "error": "No module named 'sklearn'",
+      "error_type": "ModuleNotFoundError",
+      "ok": false,
+      "version": null
+    },
+    "torch": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": "2.1.2+cu121"
+    },
+    "transformers": {
+      "error": null,
+      "error_type": null,
+      "ok": true,
+      "version": "5.12.1"
+    }
+  },
+  "recommendation": {
+    "next_step": "keep_bm25_and_calibration_first",
+    "rationale": "BM25 is available enough for current experiments; dense/rerank should wait for an isolated dependency plan instead of mutating this environment blindly."
+  }
+}
