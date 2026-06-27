@@ -104,3 +104,32 @@ def test_export_domainrag_bundle_rejects_output_inside_input(tmp_path: Path):
         export_domainrag_bundle(source, source / "nested-output", "bad")
 
     assert "overlaps the Easy Dataset input directory" in str(exc.value)
+
+
+def test_export_domainrag_bundle_preserves_existing_output_when_validation_fails(
+    tmp_path: Path,
+):
+    output = tmp_path / "outputs"
+    original_bundle = export_domainrag_bundle(FIXTURE, output, "example_easy_dataset")
+    original_statistics = original_bundle.statistics_path.read_text(encoding="utf-8")
+    invalid_source = tmp_path / "invalid_source"
+    invalid_source.mkdir()
+    (invalid_source / "chunks.jsonl").write_text(
+        '{"id":"chunk-1","content":"content one"}\n'
+        '{"id":"chunk-2","content":"content two"}\n'
+        '{"id":"chunk-3","content":"content three"}\n',
+        encoding="utf-8",
+    )
+    (invalid_source / "items.jsonl").write_text(
+        '{"id":"q1","split":"dev","question_type":"unsupported","question":"Q?","options":{},"answer":["A"],"answer_aliases":[],"reference_answer":"A","required_points":[],"source_chunk_ids":["chunk-1"],"subdomain":"demo","knowledge_type":"fact","difficulty":"easy","quality_score":1.0}\n'
+        '{"id":"q2","split":"test","question_type":"fill_blank","question":"Blank ____","options":{},"answer":["x"],"answer_aliases":["x"],"reference_answer":"x","required_points":[],"source_chunk_ids":["chunk-2"],"subdomain":"demo","knowledge_type":"fact","difficulty":"easy","quality_score":1.0}\n'
+        '{"id":"q3","split":"fresh_hard","question_type":"short_answer","question":"Why?","options":{},"answer":["because"],"answer_aliases":[],"reference_answer":"because","required_points":["because"],"source_chunk_ids":["chunk-3"],"subdomain":"demo","knowledge_type":"fact","difficulty":"hard","quality_score":1.0}\n',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValidationError) as exc:
+        export_domainrag_bundle(invalid_source, output, "example_easy_dataset")
+
+    assert "unknown question_type" in str(exc.value)
+    validate_dataset(original_bundle.dataset_dir)
+    assert original_bundle.statistics_path.read_text(encoding="utf-8") == original_statistics

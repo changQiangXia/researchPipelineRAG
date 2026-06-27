@@ -63,47 +63,35 @@ def export_domainrag_bundle(
         chunk_ids,
     )
 
-    if target_dataset_dir.exists():
-        shutil.rmtree(target_dataset_dir)
-    target_dataset_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    staging_dataset_dir = output_dir / f".{resolved_dataset_name}.tmp"
+    if staging_dataset_dir.exists():
+        shutil.rmtree(staging_dataset_dir)
+    staging_dataset_dir.mkdir(parents=True, exist_ok=True)
+
+    try:
+        _write_domainrag_dataset(
+            staging_dataset_dir,
+            resolved_dataset_name,
+            corpus_records,
+            canonical_records,
+            split_records,
+            qrels_rows,
+        )
+        validate_dataset(staging_dataset_dir)
+        if target_dataset_dir.exists():
+            shutil.rmtree(target_dataset_dir)
+        staging_dataset_dir.rename(target_dataset_dir)
+    except Exception:
+        if staging_dataset_dir.exists():
+            shutil.rmtree(staging_dataset_dir)
+        raise
 
     corpus_path = target_dataset_dir / "corpus.jsonl"
     canonical_path = target_dataset_dir / "canonical_dataset.jsonl"
     qrels_dir = target_dataset_dir / "qrels"
     dataset_card_path = target_dataset_dir / "dataset_card.md"
     statistics_path = target_dataset_dir / "statistics.json"
-
-    write_jsonl(corpus_path, corpus_records)
-    write_jsonl(canonical_path, canonical_records)
-
-    for split_name, output_name in SPLIT_OUTPUT_FILES.items():
-        write_jsonl(target_dataset_dir / output_name, split_records[split_name])
-
-    qrels_dir.mkdir(parents=True, exist_ok=True)
-    for split_name in SPLIT_OUTPUT_FILES:
-        _write_qrels(qrels_dir / f"{split_name}.tsv", qrels_rows[split_name])
-
-    dataset_card_path.write_text(
-        _render_dataset_card(resolved_dataset_name, corpus_records, canonical_records),
-        encoding="utf-8",
-    )
-    statistics_path.write_text(
-        json.dumps(
-            _build_statistics(
-                resolved_dataset_name,
-                corpus_records,
-                canonical_records,
-                split_records,
-            ),
-            ensure_ascii=False,
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n",
-        encoding="utf-8",
-    )
-
-    validate_dataset(target_dataset_dir)
 
     return DomainRAGExportBundle(
         dataset_name=resolved_dataset_name,
@@ -114,6 +102,51 @@ def export_domainrag_bundle(
         qrels_dir=qrels_dir,
         dataset_card_path=dataset_card_path,
         statistics_path=statistics_path,
+    )
+
+
+def _write_domainrag_dataset(
+    dataset_dir: Path,
+    dataset_name: str,
+    corpus_records: list[dict[str, str]],
+    canonical_records: list[dict[str, Any]],
+    split_records: dict[str, list[dict[str, Any]]],
+    qrels_rows: dict[str, list[tuple[str, str, int]]],
+) -> None:
+    corpus_path = dataset_dir / "corpus.jsonl"
+    canonical_path = dataset_dir / "canonical_dataset.jsonl"
+    qrels_dir = dataset_dir / "qrels"
+    dataset_card_path = dataset_dir / "dataset_card.md"
+    statistics_path = dataset_dir / "statistics.json"
+
+    write_jsonl(corpus_path, corpus_records)
+    write_jsonl(canonical_path, canonical_records)
+
+    for split_name, output_name in SPLIT_OUTPUT_FILES.items():
+        write_jsonl(dataset_dir / output_name, split_records[split_name])
+
+    qrels_dir.mkdir(parents=True, exist_ok=True)
+    for split_name in SPLIT_OUTPUT_FILES:
+        _write_qrels(qrels_dir / f"{split_name}.tsv", qrels_rows[split_name])
+
+    dataset_card_path.write_text(
+        _render_dataset_card(dataset_name, corpus_records, canonical_records),
+        encoding="utf-8",
+    )
+    statistics_path.write_text(
+        json.dumps(
+            _build_statistics(
+                dataset_name,
+                corpus_records,
+                canonical_records,
+                split_records,
+            ),
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
     )
 
 
