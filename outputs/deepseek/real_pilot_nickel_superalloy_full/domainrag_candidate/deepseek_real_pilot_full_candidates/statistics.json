@@ -1,0 +1,25 @@
+{
+  "corpus_count": 9,
+  "dataset_name": "deepseek_real_pilot_full_candidates",
+  "difficulty_counts": {
+    "easy": 7,
+    "medium": 2
+  },
+  "question_count": 9,
+  "question_type_counts": {
+    "fill_blank": 2,
+    "multiple_choice": 2,
+    "short_answer": 2,
+    "single_choice": 3
+  },
+  "required_splits": [
+    "dev",
+    "fresh_hard",
+    "test"
+  ],
+  "split_counts": {
+    "dev": 3,
+    "fresh_hard": 3,
+    "test": 3
+  }
+}
