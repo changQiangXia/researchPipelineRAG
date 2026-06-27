@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 from domainrag.benchmark_runner import run_benchmark
+from domainrag.comparison_report import generate_comparison_report
 from domainrag.deepseek_answer_runner import (
     DeepSeekAnswerConfig,
     run_deepseek_answer_benchmark,
@@ -64,6 +65,10 @@ def build_parser() -> argparse.ArgumentParser:
     report = subparsers.add_parser("report")
     report.add_argument("--input", required=True)
     report.add_argument("--output", required=True)
+    compare = subparsers.add_parser("compare")
+    compare.add_argument("--answer-inputs", nargs="+", required=True)
+    compare.add_argument("--judge-inputs", nargs="+", default=[])
+    compare.add_argument("--output", required=True)
     judge_report = subparsers.add_parser("judge-report")
     judge_report.add_argument("--input", required=True)
     judge_report.add_argument("--output", required=True)
@@ -179,6 +184,18 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"report written to {markdown_path} and {json_path}")
+        return 0
+    if args.command == "compare":
+        try:
+            markdown_path, json_path = generate_comparison_report(
+                answer_inputs=[Path(path) for path in args.answer_inputs],
+                judge_inputs=[Path(path) for path in args.judge_inputs],
+                output_dir=Path(args.output),
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"comparison report written to {markdown_path} and {json_path}")
         return 0
     if args.command == "judge-report":
         try:
