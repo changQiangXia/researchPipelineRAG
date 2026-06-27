@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -11,9 +12,10 @@ from domainrag.flashrag_adapter import prepare_flashrag_bundle
 
 
 def main() -> None:
+    os.chdir(ROOT)
     bundle = prepare_flashrag_bundle(
-        ROOT / "data" / "example_domain",
-        ROOT / "outputs" / "flashrag",
+        Path("data") / "example_domain",
+        Path("outputs") / "flashrag",
         dataset_name="example_domain",
     )
     print(f"FlashRAG bundle written to {bundle.dataset_dir}")

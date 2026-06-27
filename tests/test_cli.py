@@ -99,6 +99,21 @@ def test_prepare_flashrag_module_entrypoint_rejects_invalid_fixture(tmp_path: Pa
     assert result.returncode != 0
 
 
+def test_prepare_flashrag_example_script_keeps_relative_config_path():
+    result = subprocess.run(
+        [sys.executable, "scripts/prepare_flashrag_example.py"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    config_text = (ROOT / "outputs" / "flashrag" / "example_domain_flashrag.yaml").read_text(
+        encoding="utf-8"
+    )
+    assert config_text.startswith("data_dir: outputs/flashrag\n")
+
+
 def test_run_command(tmp_path: Path, capsys):
     dataset = tmp_path / "dataset"
     output = tmp_path / "outputs"
