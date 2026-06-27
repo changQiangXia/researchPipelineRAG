@@ -3,7 +3,7 @@
 ## mock_rag
 
 - Questions: 6
-- Mean latency ms: 0.002
+- Mean latency ms: 0.000
 - API calls: 0
 - Errors: 0
 - fill_blank_alias_match: 1.0000
@@ -16,7 +16,7 @@
 ## no_rag
 
 - Questions: 6
-- Mean latency ms: 0.003
+- Mean latency ms: 0.000
 - API calls: 0
 - Errors: 0
 - fill_blank_alias_match: 0.0000
