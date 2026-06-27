@@ -125,6 +125,19 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 本仓库不会提交修改后的 Easy Dataset 上游源码；`dataset-factory/easy-dataset-fork/` 仍然只作为本地 ignored 对照 checkout。
 
+## Phase 2D: Easy Dataset fork smoke test
+
+第二阶段 D 已在 ignored 的 Easy Dataset fork 中验证 Phase 2C 资产复制路径：
+
+- Easy Dataset fork 版本：`4002b09d9c5726cafb9f61a8d12765cb96a2d94b`，`easy-dataset 1.7.3`
+- 复制后目标路径：
+  - `lib/domainrag/exporter.js`
+  - `app/api/projects/[projectId]/domainrag-export/route.js`
+- fork 内 helper 可以生成 `chunks.jsonl` 和 `items.jsonl`
+- 生成的文件可以被本仓库 `export-domainrag` 消费，并通过 `validate-data`
+
+当前环境的 cgroup 内存上限是 2GiB，完整 Easy Dataset `npm install` 会被 Signal 9 杀掉，因此本阶段没有把 Next.js dev server 作为通过门槛。详细记录见 `docs/verification/easy-dataset-fork-smoke-test.md`。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -133,4 +146,4 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset outputs/dom
 
 ## 下一阶段建议
 
-建议下一阶段做 Phase 2D：把 Phase 2C 的导出入口复制到真实 Easy Dataset fork，用一个小项目实际导出 `chunks.jsonl` 和 `items.jsonl`，确认真实导出能被本仓库 `export-domainrag` 消费后，再进入小规模真实论文 pilot。
+建议下一阶段做 Phase 2E：在内存更高的环境中启动 Easy Dataset dev server，调用真实 `POST /api/projects/:projectId/domainrag-export` 路由；或者先为 Easy Dataset fork 增加 UI 下载按钮/zip 下载，再进入小规模真实论文 pilot。
