@@ -26,6 +26,11 @@ def generate_report(input_path: Path, output_dir: Path) -> tuple[Path, Path]:
             "questions": len(method_rows),
             "metrics": {metric: mean(values) for metric, values in sorted(metric_values.items())},
             "mean_latency_ms": mean(row["latency_ms"] for row in method_rows),
+            "mean_input_tokens": mean(row["input_tokens"] for row in method_rows),
+            "mean_output_tokens": mean(row["output_tokens"] for row in method_rows),
+            "total_input_tokens": sum(row["input_tokens"] for row in method_rows),
+            "total_output_tokens": sum(row["output_tokens"] for row in method_rows),
+            "total_tokens": sum(row["input_tokens"] + row["output_tokens"] for row in method_rows),
             "api_calls": sum(row["api_calls"] for row in method_rows),
             "errors": sum(1 for row in method_rows if row.get("error")),
         }
@@ -81,8 +86,17 @@ def _validate_rows(input_path: Path, rows: list[dict[str, Any]]) -> list[dict[st
         method = _validate_string_field(input_path, row, index, "method", issues)
         scores = _validate_scores_field(input_path, row, index, issues)
         latency_ms = _validate_numeric_field(input_path, row, index, "latency_ms", issues)
+        input_tokens = _validate_integer_field(input_path, row, index, "input_tokens", issues)
+        output_tokens = _validate_integer_field(input_path, row, index, "output_tokens", issues)
         api_calls = _validate_integer_field(input_path, row, index, "api_calls", issues)
-        if method is None or scores is None or latency_ms is None or api_calls is None:
+        if (
+            method is None
+            or scores is None
+            or latency_ms is None
+            or input_tokens is None
+            or output_tokens is None
+            or api_calls is None
+        ):
             continue
         validated_rows.append(
             {
@@ -90,6 +104,8 @@ def _validate_rows(input_path: Path, rows: list[dict[str, Any]]) -> list[dict[st
                 "method": method,
                 "scores": scores,
                 "latency_ms": latency_ms,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
                 "api_calls": api_calls,
             }
         )
@@ -202,6 +218,11 @@ def _render_markdown(summary: dict[str, dict]) -> str:
         lines.append("")
         lines.append(f"- Questions: {values['questions']}")
         lines.append(f"- Mean latency ms: {values['mean_latency_ms']:.3f}")
+        lines.append(f"- Mean input tokens: {values['mean_input_tokens']:.3f}")
+        lines.append(f"- Mean output tokens: {values['mean_output_tokens']:.3f}")
+        lines.append(f"- Total input tokens: {values['total_input_tokens']}")
+        lines.append(f"- Total output tokens: {values['total_output_tokens']}")
+        lines.append(f"- Total tokens: {values['total_tokens']}")
         lines.append(f"- API calls: {values['api_calls']}")
         lines.append(f"- Errors: {values['errors']}")
         for metric, score in sorted(values["metrics"].items()):
