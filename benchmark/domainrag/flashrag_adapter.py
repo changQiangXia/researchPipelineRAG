@@ -40,10 +40,10 @@ def prepare_flashrag_bundle(
         dataset_dir.name if dataset_name is None else dataset_name
     )
     _validate_requested_splits(dataset_dir, splits)
-
-    output_dir.mkdir(parents=True, exist_ok=True)
     target_dataset_dir = output_dir / resolved_dataset_name
     _validate_target_does_not_overlap_source(dataset_dir, target_dataset_dir)
+
+    output_dir.mkdir(parents=True, exist_ok=True)
     if target_dataset_dir.exists():
         shutil.rmtree(target_dataset_dir)
     target_dataset_dir.mkdir(parents=True, exist_ok=True)
