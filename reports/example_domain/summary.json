@@ -1,0 +1,30 @@
+{
+  "mock_rag": {
+    "api_calls": 0,
+    "errors": 0,
+    "mean_latency_ms": 0.0017949690421422322,
+    "metrics": {
+      "fill_blank_alias_match": 1.0,
+      "fill_blank_normalized_em": 1.0,
+      "multiple_choice_exact_match": 1.0,
+      "multiple_choice_jaccard": 1.0,
+      "multiple_choice_micro_f1": 1.0,
+      "single_choice_accuracy": 1.0
+    },
+    "questions": 6
+  },
+  "no_rag": {
+    "api_calls": 0,
+    "errors": 0,
+    "mean_latency_ms": 0.0028579185406366983,
+    "metrics": {
+      "fill_blank_alias_match": 0.0,
+      "fill_blank_normalized_em": 0.0,
+      "multiple_choice_exact_match": 0.0,
+      "multiple_choice_jaccard": 0.0,
+      "multiple_choice_micro_f1": 0.0,
+      "single_choice_accuracy": 0.0
+    },
+    "questions": 6
+  }
+}
