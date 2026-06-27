@@ -332,10 +332,27 @@ def test_run_flashrag_bm25_command(tmp_path: Path, capsys):
     assert (output / "bundle" / "dev_flashrag_bm25_results.jsonl").exists()
 
 
-def test_probe_flashrag_methods_command_writes_manifest(tmp_path: Path, capsys):
+def test_probe_flashrag_methods_command_writes_manifest(tmp_path: Path, capsys, monkeypatch):
     flashrag = tmp_path / "flashrag-fork"
     output = tmp_path / "manifest.json"
     _write_fake_flashrag_feasibility_package(flashrag)
+
+    def fake_probe_flashrag_method_feasibility(flashrag_path, *, output_path):
+        manifest = {
+            "flashrag_path": str(flashrag_path),
+            "methods": {
+                "flashrag_bm25": {"feasible": True},
+                "flashrag_dense": {"feasible": False},
+                "flashrag_reranker": {"feasible": False},
+            },
+        }
+        output_path.write_text(json.dumps(manifest), encoding="utf-8")
+        return manifest
+
+    monkeypatch.setattr(
+        "domainrag.cli.probe_flashrag_method_feasibility",
+        fake_probe_flashrag_method_feasibility,
+    )
 
     exit_code = main(
         [

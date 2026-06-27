@@ -1,0 +1,19 @@
+{
+  "flashrag_bm25_live_deepseek": {
+    "api_calls": 7,
+    "errors": 1,
+    "mean_latency_ms": 5655.2440286614,
+    "metrics": {
+      "context_support": 4.375,
+      "correctness": 3.75,
+      "faithfulness": 4.375,
+      "hallucination_risk": 0.625,
+      "relevance": 4.375
+    },
+    "questions": 8,
+    "total_input_tokens": 4915,
+    "total_output_tokens": 5125,
+    "total_tokens": 10040,
+    "unsupported_claims": 0
+  }
+}

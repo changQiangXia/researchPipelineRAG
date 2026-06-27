@@ -135,3 +135,73 @@ def test_generate_calibration_packet_rejects_wrong_answer_split(tmp_path: Path):
         )
 
     assert "answer row split must be fresh_hard" in str(exc.value)
+
+
+def test_generate_calibration_packet_accepts_multiple_answer_and_judge_inputs(tmp_path: Path):
+    dataset = tmp_path / "dataset"
+    first_answers = tmp_path / "answers_a.jsonl"
+    second_answers = tmp_path / "answers_b.jsonl"
+    first_judge = tmp_path / "judge_a.jsonl"
+    second_judge = tmp_path / "judge_b.jsonl"
+    output = tmp_path / "packet"
+    _write_minimal_dataset(dataset)
+    write_jsonl(first_answers, [_answer_row(method="no_rag", retrieved_context_ids=[])])
+    write_jsonl(second_answers, [_answer_row(method="flashrag_bm25_live_deepseek")])
+    write_jsonl(
+        first_judge,
+        [
+            _judge_row(
+                method="no_rag",
+                judge_scores={
+                    "correctness": 1.0,
+                    "context_support": 0.0,
+                    "faithfulness": 0.0,
+                    "relevance": 2.0,
+                    "hallucination_risk": 5.0,
+                },
+            )
+        ],
+    )
+    write_jsonl(second_judge, [_judge_row(method="flashrag_bm25_live_deepseek")])
+
+    jsonl_path, markdown_path = generate_calibration_packet(
+        dataset,
+        [first_answers, second_answers],
+        [first_judge, second_judge],
+        output,
+        split="fresh_hard",
+    )
+
+    rows = [json.loads(line) for line in jsonl_path.read_text(encoding="utf-8").splitlines()]
+    markdown = markdown_path.read_text(encoding="utf-8")
+
+    assert markdown_path == output / "review_packet.md"
+    assert [row["method"] for row in rows] == ["no_rag", "flashrag_bm25_live_deepseek"]
+    assert rows[0]["priority"] == "high"
+    assert rows[1]["priority"] == "high"
+    assert "Questions for review: 2" in markdown
+
+
+def test_generate_calibration_packet_renders_empty_prediction_without_trailing_space(
+    tmp_path: Path,
+):
+    dataset = tmp_path / "dataset"
+    answers = tmp_path / "answers.jsonl"
+    judge = tmp_path / "judge.jsonl"
+    output = tmp_path / "packet"
+    _write_minimal_dataset(dataset)
+    write_jsonl(answers, [_answer_row(prediction="", error="empty response")])
+    write_jsonl(judge, [_judge_row()])
+
+    _, markdown_path = generate_calibration_packet(
+        dataset,
+        answers,
+        judge,
+        output,
+        split="fresh_hard",
+    )
+
+    markdown = markdown_path.read_text(encoding="utf-8")
+
+    assert "Prediction:\n" in markdown
+    assert "Prediction: \n" not in markdown
