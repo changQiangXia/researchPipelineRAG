@@ -5,6 +5,12 @@ from pathlib import Path
 
 from domainrag.cli import main
 from domainrag.io_utils import write_jsonl
+from tests.test_flashrag_bm25_bridge import (
+    _write_bundle as _write_flashrag_bm25_bundle,
+)
+from tests.test_flashrag_bm25_bridge import (
+    _write_fake_flashrag as _write_fake_flashrag_bm25_package,
+)
 from tests.test_validator import _write_minimal_dataset
 
 
@@ -174,6 +180,37 @@ def test_run_command(tmp_path: Path, capsys):
 
     assert exit_code == 0
     assert "results written" in captured.out
+
+
+def test_run_flashrag_bm25_command(tmp_path: Path, capsys):
+    flashrag = tmp_path / "flashrag-fork"
+    bundle = tmp_path / "bundle"
+    output = tmp_path / "outputs"
+    _write_fake_flashrag_bm25_package(flashrag)
+    _write_flashrag_bm25_bundle(bundle)
+
+    exit_code = main(
+        [
+            "run-flashrag-bm25",
+            "--flashrag-path",
+            str(flashrag),
+            "--dataset-bundle",
+            str(bundle),
+            "--output",
+            str(output),
+            "--dataset-name",
+            "unit_domain",
+            "--split",
+            "dev",
+            "--top-k",
+            "2",
+        ]
+    )
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "FlashRAG BM25 results written" in captured.out
+    assert (output / "bundle" / "dev_flashrag_bm25_results.jsonl").exists()
 
 
 def test_run_deepseek_answers_requires_api_key(tmp_path: Path):

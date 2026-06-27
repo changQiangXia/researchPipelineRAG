@@ -331,6 +331,60 @@ python scripts/verify_flashrag_runtime_intake.py \
 
 这一步不是完整 FlashRAG 多方法实验，但已经把数据层从“格式兼容”推进到“真实上游 Dataset runtime 可读”。详细记录见 `docs/verification/flashrag-runtime-intake.md`。
 
+## Phase 5B: FlashRAG BM25 检索桥接
+
+第五阶段 B 从 Dataset runtime intake 继续推进到真实 FlashRAG 检索组件。当前新增：
+
+- `benchmark/domainrag/flashrag_bm25_bridge.py`
+- CLI：`run-flashrag-bm25`
+- 输出回归测试：`tests/test_flashrag_bm25_bridge.py`、`tests/test_phase5b_outputs.py`
+- 验证记录：`docs/verification/flashrag-bm25-bridge.md`
+
+该阶段使用真实 FlashRAG 上游 checkout 中的：
+
+- `flashrag.dataset.dataset.Dataset`
+- `flashrag.retriever.index_builder.Index_Builder`
+- `flashrag.retriever.retriever.BM25Retriever`
+
+真实运行命令示例：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli run-flashrag-bm25 \
+  --flashrag-path benchmark/flashrag-fork \
+  --dataset-bundle outputs/flashrag/real_pilot_nickel_superalloy \
+  --output outputs/phase5b/flashrag_bm25_bridge \
+  --dataset-name real_pilot_nickel_superalloy \
+  --split fresh_hard \
+  --top-k 5 \
+  --index-dir outputs/phase5b/flashrag_bm25_bridge/index \
+  --rebuild-index
+```
+
+方法名是：
+
+```text
+flashrag_bm25_oracle_reader
+```
+
+这个名字是有意为之：该阶段已经用真实 FlashRAG Dataset 和 BM25Retriever 做检索，但答案仍是检索命中后的 deterministic oracle reader，不是完整 FlashRAG generator pipeline。
+
+当前在 curated real pilot 上完成 `dev` / `test` / `fresh_hard` 三个 split：
+
+- 每个 split 4 道题
+- `retrieval_hit`、`retrieval_recall`、`retrieval_mrr` 均为 1.0
+- 输出：`outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/*_flashrag_bm25_results.jsonl`
+- 报告：`outputs/phase5b/flashrag_bm25_bridge/report_*/summary.json`
+- BM25s 索引：`outputs/phase5b/flashrag_bm25_bridge/index/bm25/`
+
+同时对 `fresh_hard` 的 4 条 Phase 5B 输出完成 DeepSeek Judge：
+
+- 输出：`outputs/phase5b/deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl`
+- 报告：`outputs/phase5b/deepseek_judge_flashrag_bm25_fresh_hard/report_fresh_hard/summary.json`
+- 4 次 API 调用，0 个错误，0 个 unsupported claims
+- correctness、context_support、faithfulness、relevance 均为 5.0
+
+这些高分来自小规模 pilot 和 oracle reader，应作为“FlashRAG BM25 检索桥和 DomainRAG 报告/Judge schema 已接通”的证据，而不是最终规模化方法结论。
+
 ## 数据安全约束
 
 公开数据中只保留数据集内部需要的 ID 和证据关系，不导出论文身份元数据。校验器会拒绝 DOI、作者、venue、页码、原始 PDF 路径、原始论文标题等字段。
@@ -339,9 +393,9 @@ python scripts/verify_flashrag_runtime_intake.py \
 
 ## 下一阶段建议
 
-建议下一阶段进入 FlashRAG 多方法衔接和规模扩展：
+建议下一阶段进入 FlashRAG BM25 后的非 oracle answer path、多方法衔接和规模扩展：
 
-- 安装或隔离一个依赖完整的 FlashRAG runtime，优先跑通 BM25 风格方法，再推进 dense retriever / reranker
-- 把 Phase 4B/4C 的 live answer 和 Judge 报告接到 FlashRAG 方法输出之后，形成同一套报告口径
+- 把现有 DeepSeek answer runner 接到 `flashrag_bm25` 检索上下文之后，形成真实生成答案版本
+- 在依赖和模型缓存可控的前提下推进 dense retriever / reranker
 - 同步扩大真实文献 corpus，否则当前 lexical retrieval 在 9 个 chunk 的 pilot 上过于容易
 - 对 Judge 结果做人工抽检，形成少量校准样例，避免单一 LLM Judge 偏差被误当作最终结论
