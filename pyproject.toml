@@ -3,7 +3,7 @@ name = "domainrag-bench"
 version = "0.1.0"
 description = "First milestone implementation for DomainRAG-Bench."
 requires-python = ">=3.10"
-dependencies = []
+dependencies = ["bm25s[core]==0.2.1"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]

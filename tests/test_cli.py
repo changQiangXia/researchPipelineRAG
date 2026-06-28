@@ -427,6 +427,30 @@ def test_probe_flashrag_methods_command_writes_manifest(tmp_path: Path, capsys, 
     assert manifest["methods"]["flashrag_bm25"]["feasible"] is True
 
 
+def test_run_bm25s_command_writes_retrieval_rows(tmp_path: Path):
+    from tests.test_validator import _write_minimal_dataset
+
+    dataset = tmp_path / "dataset"
+    output = tmp_path / "outputs"
+    _write_minimal_dataset(dataset)
+
+    result = _run_cli(
+        "run-bm25s",
+        "--dataset",
+        str(dataset),
+        "--output",
+        str(output),
+        "--split",
+        "dev",
+        "--top-k",
+        "2",
+    )
+
+    assert result.returncode == 0
+    assert "BM25s results written" in result.stdout
+    assert (output / "dataset" / "dev_bm25s_results.jsonl").exists()
+
+
 def test_dense_rerank_readiness_module_entrypoint_writes_manifest_and_summary(tmp_path: Path):
     feasibility = tmp_path / "feasibility.json"
     output = tmp_path / "readiness"
