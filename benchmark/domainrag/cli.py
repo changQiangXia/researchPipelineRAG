@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 from domainrag.benchmark_runner import run_benchmark
+from domainrag.calibration_audit import generate_calibration_audit
 from domainrag.calibration_packet import generate_calibration_packet
 from domainrag.comparison_report import generate_comparison_report
 from domainrag.deepseek_answer_runner import (
@@ -81,6 +82,10 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["dev", "test", "fresh_hard"],
     )
     calibration_packet.add_argument("--output", required=True)
+    calibration_audit = subparsers.add_parser("calibration-audit")
+    calibration_audit.add_argument("--packet", required=True)
+    calibration_audit.add_argument("--labels", required=True)
+    calibration_audit.add_argument("--output", required=True)
     judge_report = subparsers.add_parser("judge-report")
     judge_report.add_argument("--input", required=True)
     judge_report.add_argument("--output", required=True)
@@ -225,6 +230,18 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"calibration packet written to {jsonl_path} and {markdown_path}")
+        return 0
+    if args.command == "calibration-audit":
+        try:
+            markdown_path, json_path = generate_calibration_audit(
+                Path(args.packet),
+                Path(args.labels),
+                Path(args.output),
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"calibration audit written to {markdown_path} and {json_path}")
         return 0
     if args.command == "judge-report":
         try:
