@@ -1,0 +1,6 @@
+data_dir: outputs/flashrag
+dataset_name: real_pilot_nickel_superalloy_medium
+split:
+  - dev
+  - test
+  - fresh_hard
