@@ -60,7 +60,7 @@ def test_phase7k_updates_docs_and_audit_without_claiming_neural_dense_done():
     assert "non-neural" in doc
     assert "hashed_dense_oracle_reader" in doc
     assert "hashed_dense_lexical_rerank_oracle_reader" in doc
-    assert audit["phase"] == "Phase 7K"
+    assert audit["phase"] == "Phase 7L"
     assert audit["phase7k_hashed_dense_benchmark"] == {
         "dataset": DATASET_NAME,
         "split": "fresh_hard",

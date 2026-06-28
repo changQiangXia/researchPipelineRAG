@@ -1,0 +1,21 @@
+{
+  "access_rows": 115,
+  "chunk_count": 2196,
+  "chunk_status_counts": {
+    "chunked": 60,
+    "skipped_not_parseable": 44,
+    "too_short": 11
+  },
+  "chunk_tokens": 350,
+  "include_text": false,
+  "min_chunk_tokens": 80,
+  "overlap_tokens": 50,
+  "parseable_access_rows": 71,
+  "phase": "Phase 7L",
+  "provenance_status": "machine_parseable_not_human_final",
+  "raw_text_storage_policy": "chunk text omitted; text_sha256 retained",
+  "sources_attempted": 71,
+  "sources_chunked": 60,
+  "total_chunk_chars": 5074825,
+  "total_chunk_tokens": 761302
+}

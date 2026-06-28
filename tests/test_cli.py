@@ -477,6 +477,31 @@ def test_run_hashed_dense_command_writes_retrieval_rows(tmp_path: Path):
     assert (output / "dataset" / "dev_hashed_dense_results.jsonl").exists()
 
 
+def test_extract_fulltext_chunks_command_writes_empty_outputs(tmp_path: Path):
+    access = tmp_path / "full_text_access.jsonl"
+    output = tmp_path / "chunks"
+    access.write_text("", encoding="utf-8")
+
+    result = _run_cli(
+        "extract-fulltext-chunks",
+        "--access",
+        str(access),
+        "--output",
+        str(output),
+        "--chunk-tokens",
+        "32",
+        "--overlap-tokens",
+        "4",
+        "--min-chunk-tokens",
+        "8",
+    )
+
+    assert result.returncode == 0
+    assert "full-text chunks written" in result.stdout
+    assert (output / "full_text_chunks.jsonl").exists()
+    assert (output / "chunk_extraction_summary.json").exists()
+
+
 def test_dense_rerank_readiness_module_entrypoint_writes_manifest_and_summary(tmp_path: Path):
     feasibility = tmp_path / "feasibility.json"
     output = tmp_path / "readiness"

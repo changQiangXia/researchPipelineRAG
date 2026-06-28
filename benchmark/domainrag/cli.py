@@ -25,6 +25,7 @@ from domainrag.errors import ValidationError
 from domainrag.flashrag_adapter import prepare_flashrag_bundle
 from domainrag.flashrag_bm25_bridge import run_flashrag_bm25_bridge
 from domainrag.flashrag_method_feasibility import probe_flashrag_method_feasibility
+from domainrag.full_text_chunk_extraction import build_full_text_chunk_outputs
 from domainrag.hashed_dense_benchmark import run_hashed_dense_benchmark
 from domainrag.report_generator import generate_report
 from domainrag.source_acquisition import acquire_demo_scale_sources, build_query_plan
@@ -129,6 +130,14 @@ def build_parser() -> argparse.ArgumentParser:
     dense_rerank_readiness = subparsers.add_parser("dense-rerank-readiness")
     dense_rerank_readiness.add_argument("--feasibility", required=True)
     dense_rerank_readiness.add_argument("--output", required=True)
+    extract_fulltext_chunks = subparsers.add_parser("extract-fulltext-chunks")
+    extract_fulltext_chunks.add_argument("--access", required=True)
+    extract_fulltext_chunks.add_argument("--output", required=True)
+    extract_fulltext_chunks.add_argument("--chunk-tokens", type=int, default=350)
+    extract_fulltext_chunks.add_argument("--overlap-tokens", type=int, default=50)
+    extract_fulltext_chunks.add_argument("--min-chunk-tokens", type=int, default=80)
+    extract_fulltext_chunks.add_argument("--max-sources", type=int, default=None)
+    extract_fulltext_chunks.add_argument("--include-text", action="store_true", default=False)
     export_domainrag = subparsers.add_parser("export-domainrag")
     export_domainrag.add_argument("--input", required=True)
     export_domainrag.add_argument("--output", required=True)
@@ -414,6 +423,27 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"dense/rerank readiness written to {markdown_path} and {json_path}")
+        return 0
+    if args.command == "extract-fulltext-chunks":
+        try:
+            chunks_path, manifest_path, summary_path, markdown_path = (
+                build_full_text_chunk_outputs(
+                    Path(args.access),
+                    output_dir=Path(args.output),
+                    chunk_tokens=args.chunk_tokens,
+                    overlap_tokens=args.overlap_tokens,
+                    min_chunk_tokens=args.min_chunk_tokens,
+                    max_sources=args.max_sources,
+                    include_text=args.include_text,
+                )
+            )
+        except (OSError, ValidationError, ValueError) as exc:
+            print(str(exc))
+            return 1
+        print(f"full-text chunks written to {chunks_path}")
+        print(f"chunk source manifest written to {manifest_path}")
+        print(f"chunk extraction summary written to {summary_path}")
+        print(f"markdown summary written to {markdown_path}")
         return 0
     if args.command == "export-domainrag":
         try:
