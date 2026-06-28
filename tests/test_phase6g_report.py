@@ -21,13 +21,15 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert "Phase 7B Medium-Plus Update" in report
     assert "Phase 7C Medium-Plus Live Subset" in report
     assert "Phase 7D Demo-Scale Source Acquisition" in report
+    assert "Phase 7E Source Screening Queue" in report
     assert "outputs/phase6e/medium_fresh_hard_comparison/summary.json" in report
     assert "outputs/phase6f/medium_human_calibration_audit/summary.json" in report
     assert "outputs/phase7b/medium_plus_bm25s/" in report
     assert "outputs/phase7c/medium_plus_live_subset/comparison/summary.json" in report
     assert "outputs/phase7d/demo_scale_source_acquisition/coverage.json" in report
+    assert "outputs/phase7e/source_screening_queue/screening_summary.json" in report
 
-    assert audit["phase"] == "Phase 7D"
+    assert audit["phase"] == "Phase 7E"
     assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_medium_plus"
     assert audit["dataset"]["corpus_chunks"] == 100
     assert audit["dataset"]["questions"] == 150
@@ -35,7 +37,7 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert audit["rag_md_targets"]["demo"]["corpus_chunks"] == [1000, 3000]
     assert audit["rag_md_targets"]["demo"]["questions"] == [300, 500]
     assert audit["completion_estimate"]["excluding_final_scale"] == "about 99%"
-    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "86%-87%"
+    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "87%-88%"
 
 
 def test_phase6g_audit_tracks_core_requirements_and_gaps():
@@ -127,5 +129,24 @@ def test_phase6g_audit_tracks_phase7d_candidate_pool_without_closing_scale_gap()
     assert acquisition["final_included_sources"] == 0
     assert acquisition["verification_status"] == "candidate_pool_only"
     assert acquisition["inclusion_status"] == "candidate_for_manual_verification"
+    assert requirements["literature_source_policy"]["status"] == "partial"
+    assert requirements["demo_scale"]["status"] == "partial"
+
+
+def test_phase6g_audit_tracks_phase7e_screening_queue_without_finalizing_sources():
+    audit = json.loads(AUDIT.read_text(encoding="utf-8"))
+    requirements = {item["id"]: item for item in audit["requirements"]}
+    screening = audit["phase7e_source_screening_queue"]
+
+    assert screening["candidate_count"] == 124
+    assert screening["final_included_sources"] == 0
+    assert screening["verification_status"] == "machine_prescreen_only"
+    assert screening["full_text_ready_candidates"] == 115
+    assert screening["review_gap_subtopics"] == [
+        "coatings",
+        "life_prediction",
+        "microstructure_characterization",
+    ]
+    assert screening["priority_counts"] == {"high": 3, "low": 42, "medium": 79}
     assert requirements["literature_source_policy"]["status"] == "partial"
     assert requirements["demo_scale"]["status"] == "partial"

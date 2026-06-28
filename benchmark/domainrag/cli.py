@@ -27,6 +27,7 @@ from domainrag.flashrag_bm25_bridge import run_flashrag_bm25_bridge
 from domainrag.flashrag_method_feasibility import probe_flashrag_method_feasibility
 from domainrag.report_generator import generate_report
 from domainrag.source_acquisition import acquire_demo_scale_sources, build_query_plan
+from domainrag.source_screening import build_screening_outputs
 from domainrag.validator import validate_dataset
 
 
@@ -130,6 +131,15 @@ def build_parser() -> argparse.ArgumentParser:
     acquire_sources.add_argument("--mailto", default=None)
     acquire_sources.add_argument("--timeout-seconds", type=int, default=60)
     acquire_sources.add_argument("--dry-run", action="store_true", default=False)
+    screen_sources = subparsers.add_parser("screen-sources")
+    screen_sources.add_argument(
+        "--candidates",
+        default="outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl",
+    )
+    screen_sources.add_argument(
+        "--output",
+        default="outputs/phase7e/source_screening_queue",
+    )
     return parser
 
 
@@ -377,6 +387,19 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"source candidates written to {candidates_path}")
         print(f"coverage summary written to {coverage_path}")
+        print(f"markdown summary written to {markdown_path}")
+        return 0
+    if args.command == "screen-sources":
+        try:
+            queue_path, summary_path, markdown_path = build_screening_outputs(
+                Path(args.candidates),
+                output_dir=Path(args.output),
+            )
+        except (OSError, ValidationError) as exc:
+            print(str(exc))
+            return 1
+        print(f"source screening queue written to {queue_path}")
+        print(f"screening summary written to {summary_path}")
         print(f"markdown summary written to {markdown_path}")
         return 0
     parser.error(f"unknown command: {args.command}")
