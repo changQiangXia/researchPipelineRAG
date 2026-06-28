@@ -1,10 +1,10 @@
 # DomainRAG-Bench：面向专业领域的可追溯 RAG 测评流水线
 
-DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据生产、标准化、检索评测和审计流水线。它的核心目标是：从领域文献和证据材料出发，构建带有 `gold evidence` 与 `qrels` 的标准化数据资产，并在同一评测协议下比较不同 RAG 方法的检索、答题、忠实度和效率表现。
+DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据生产、标准化、检索评测和审计流水线。它的核心目标是：从领域文献和证据材料出发，构建带有 `gold evidence`（每道题绑定的标准证据块）与 `qrels`（question relevance labels，即问题与相关证据 chunk 的标准关联表）的标准化数据资产，并在同一评测协议下比较不同 RAG 方法的检索、答题、忠实度和效率表现。
 
-当前示例领域是 **镍基高温合金高温失效**。这个领域足够专业、知识更新快，适合构造基础模型不能完全依赖常识回答、但可以通过领域知识库回答的 `Fresh-Hard` 问题。
+当前示例领域是 **镍基高温合金高温失效**。换句话说，当前实现领域是“镍基高温合金高温失效”。这个领域足够专业、知识更新快，适合构造 `Fresh-Hard`（专门测试证据依赖的新近/专业问题 split）问题：基础模型不能完全依赖常识回答，但可以通过领域知识库回答。
 
-当前仓库已经形成一条流水线：从 Easy Dataset 风格输入，到 DomainRAG 标准数据集，再到 FlashRAG bundle、本地检索 baseline、DeepSeek answer/Judge、人工审核 workflow 和结构化审计。当前数据集仍是 `provisional`，不是 `human-final` benchmark。
+当前仓库已经形成一条流水线：从 Easy Dataset 风格输入，到 DomainRAG 标准数据集，再到 FlashRAG bundle、本地检索 baseline、DeepSeek answer/Judge、人工审核 workflow 和结构化审计。当前数据集仍是 `provisional`（工程验证阶段的临时版本），不是 `human-final benchmark`（经过真实人工来源签核、题库复核后才能声明的最终人工验证 benchmark）。
 
 ## 项目亮点
 
@@ -99,7 +99,7 @@ Answer、Judge、reports、audit、human sign-off workflow
 - `no_rag` 测试没有检索上下文时的表现。
 - `oracle_context` 直接提供 `gold context`，用于判断题目是否能被证据回答。
 - `lexical_rag` 测试普通词面检索能否找到 `gold evidence`。
-- hashed dense 是本地 non-neural 诊断基线，不是 FlashRAG neural dense/reranker 结果。
+- hashed dense 是本地 non-neural 诊断基线，不是 FlashRAG neural dense/reranker（使用神经向量检索器或重排器的 FlashRAG 方法）结果。
 
 `oracle_context` 与检索方法之间的差距很关键：它把“题目本身可由证据回答”和“检索器是否真的找到了证据”分开看。
 

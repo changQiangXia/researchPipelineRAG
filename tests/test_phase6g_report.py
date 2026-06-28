@@ -13,7 +13,8 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     report = REPORT.read_text(encoding="utf-8")
     audit = json.loads(AUDIT.read_text(encoding="utf-8"))
 
-    assert "# DomainRAG-Bench Medium Pilot Final Report" in report
+    assert "# DomainRAG-Bench Medium Pilot Status Report" in report
+    assert "not a human-final benchmark" in report
     assert "RAG.md Completion Audit" in report
     assert "Scale Gap" in report
     assert "Dense And Rerank Gap" in report

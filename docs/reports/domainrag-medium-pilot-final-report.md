@@ -1,4 +1,4 @@
-# DomainRAG-Bench Medium Pilot Final Report
+# DomainRAG-Bench Medium Pilot Status Report
 
 Recorded: 2026-06-28
 
@@ -15,6 +15,8 @@ intake, FlashRAG bundle preparation, real FlashRAG BM25 retrieval, typed
 scoring, live DeepSeek answer generation, live DeepSeek Judge evaluation,
 Fresh-Hard comparison, a small human calibration audit, and a bounded
 medium-plus live subset.
+
+This is a status report for a provisional engineering milestone, not a human-final benchmark（不是 human-final benchmark）. The final-source and final-question claims remain blocked until real human source sign-off and accepted-source regeneration or verification are complete.
 
 Phase 7D adds a real OpenAlex-backed source-acquisition checkpoint for the
 remaining demo-scale gap: 124 candidate papers across 8 subtopics, including
@@ -92,10 +94,7 @@ dense-style benchmark gap; Phase 7L reaches the chunk-count range as manifests;
 Phase 7M reaches the question-count range provisionally. Neural dense/rerank
 remains an isolated environment task.
 
-Completion estimate:
-
-- Excluding final scale: about 99%
-- Including `RAG.md` demo scale: 97%-98%
+Completion status: the engineering pipeline is largely implemented, while strict `RAG.md` demo completion remains partial because final human source labels, accepted-source filtering/regeneration, and neural dense/rerank execution are still open. The previous percentage-style estimate should not be read as a human-final completion claim.
 
 The structured audit behind this report is committed at:
 
@@ -815,7 +814,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
 | Demo scale | partial | Phase 7L adds 2,196 machine-parseable chunk manifests and Phase 7M adds 300 provisional questions, so the chunk and question counts are reached provisionally. The final human-accepted source filter and human-final demo benchmark remain open. |
 | Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates for neural dense/rerank. Phase 7K adds a formal local hashed dense benchmark, but it is non-neural and does not close the neural dense/rerank target. |
-| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I/7J/7K/7L/7M verification documentation. |
+| Status reporting | complete | This status report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I/7J/7K/7L/7M verification documentation. |
 
 See the structured form:
 

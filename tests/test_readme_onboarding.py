@@ -49,6 +49,24 @@ def test_readme_front_loads_value_artifacts_and_results():
     assert "human-final" in before_quickstart
 
 
+def test_readme_explains_required_terms_on_first_use():
+    readme = README.read_text(encoding="utf-8")
+
+    expected_explanations = {
+        "gold evidence": "每道题绑定的标准证据块",
+        "qrels": "question relevance labels",
+        "Fresh-Hard": "专门测试证据依赖",
+        "provisional": "工程验证阶段的临时版本",
+        "human-final benchmark": "经过真实人工来源签核",
+        "FlashRAG neural dense/reranker": "使用神经向量检索器或重排器",
+    }
+
+    for term, explanation in expected_explanations.items():
+        first_index = readme.index(term)
+        first_use_window = readme[first_index : first_index + 260]
+        assert explanation in first_use_window
+
+
 def test_readme_status_table_keeps_human_final_boundary_clear():
     readme = README.read_text(encoding="utf-8")
 

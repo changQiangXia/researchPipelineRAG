@@ -66,3 +66,40 @@ def test_outputs_guidance_points_readers_to_current_before_archive():
     assert "历史运行记录" in outputs_readme
     assert "provisional" in current_readme
     assert "human-final" in current_readme
+
+
+def test_current_docs_explain_local_baseline_and_flashrag_boundaries():
+    benchmark = (OUTPUTS / "current" / "benchmark_results.md").read_text(
+        encoding="utf-8"
+    )
+    flashrag_bundle = (OUTPUTS / "current" / "flashrag_bundle.md").read_text(
+        encoding="utf-8"
+    )
+    status_report = (
+        ROOT / "docs" / "reports" / "domainrag-medium-pilot-final-report.md"
+    ).read_text(encoding="utf-8")
+
+    assert "本表的 `api_calls` 只统计外部模型/API 调用" in benchmark
+    assert "不包含 DeepSeek live answer/Judge" in benchmark
+    assert "兼容数据包" in flashrag_bundle
+    assert "不是完整 FlashRAG neural dense/reranker 实验" in flashrag_bundle
+    assert status_report.startswith("# DomainRAG-Bench Medium Pilot Status Report")
+    assert "不是 human-final benchmark" in status_report[:1200]
+
+
+def test_real_dataset_cards_keep_human_final_boundary_clear():
+    dataset_cards = [
+        ROOT / "data" / "real_pilot_nickel_superalloy" / "dataset_card.md",
+        ROOT / "data" / "real_pilot_nickel_superalloy_expanded" / "dataset_card.md",
+        ROOT / "data" / "real_pilot_nickel_superalloy_medium" / "dataset_card.md",
+        ROOT / "data" / "real_pilot_nickel_superalloy_medium_plus" / "dataset_card.md",
+        ROOT
+        / "data"
+        / "real_pilot_nickel_superalloy_demo_questions"
+        / "dataset_card.md",
+    ]
+
+    for card in dataset_cards:
+        text = card.read_text(encoding="utf-8")
+        assert "not a human-final benchmark" in text
+        assert "Final use requires real human source sign-off" in text
