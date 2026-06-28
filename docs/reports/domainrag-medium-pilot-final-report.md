@@ -4,7 +4,7 @@ Recorded: 2026-06-28
 
 Blueprint: `/root/autodl-tmp/RAG/RAG.md`
 
-Repository milestone: Phase 7J human sign-off workflow checkpoint
+Repository milestone: Phase 7K hashed dense formal benchmark checkpoint
 
 ## Executive Summary
 
@@ -61,12 +61,21 @@ pending `human_signoff_template.jsonl` and an empty `final_source_whitelist.json
 until real human labels are supplied. This is the correct stopping boundary for
 machine-only source verification.
 
+Phase 7K adds a formal local dense-style retrieval benchmark on the real
+medium-plus Fresh-Hard split. It runs `hashed_dense_oracle_reader` and
+`hashed_dense_lexical_rerank_oracle_reader` over 50 Fresh-Hard questions and
+writes 100 DomainRAG result rows. This is a non-neural signed-hashing TF-IDF
+benchmark with a lexical-overlap rerank variant; it does not claim FlashRAG
+neural dense retriever or neural reranker execution.
+
 The current project is not yet a full `RAG.md` demo-scale dataset. The best
 dataset has 100 corpus chunks and 150 questions; `RAG.md` calls for 1,000-3,000
 chunks and 300-500 questions for the demo tier. Phase 7D/7E/7F/7G/7H/7I materially
 advance the paper acquisition, screening, and provisional decision
 prerequisites, but final manual source verification, full-text parsing, chunk
-extraction, and question generation are still open.
+extraction, and question generation are still open. Phase 7K closes a local
+dense-style benchmark gap, while neural dense/rerank remains an isolated
+environment task.
 
 Completion estimate:
 
@@ -559,6 +568,32 @@ The next step requires human labels. Once labels exist, the same workflow can
 produce `final_source_whitelist.jsonl`; chunk extraction should not treat the
 current pending template as final accepted literature.
 
+## Phase 7K Hashed Dense Formal Benchmark
+
+Phase 7K adds a current-environment dense-vector retrieval benchmark without
+mutating the fragile neural retrieval dependency stack. The implementation is
+deterministic and non-neural.
+
+Output evidence:
+
+- `benchmark/domainrag/hashed_dense_benchmark.py`
+- `outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl`
+- `outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.json`
+- `docs/verification/hashed-dense-formal-benchmark.md`
+
+Fresh-Hard result:
+
+| method | questions | retrieval_hit | retrieval_recall | retrieval_mrr | api_calls |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `hashed_dense_oracle_reader` | 50 | 0.8800 | 0.7083 | 0.6240 | 0 |
+| `hashed_dense_lexical_rerank_oracle_reader` | 50 | 0.9000 | 0.7183 | 0.6260 | 0 |
+
+Interpretation: Phase 7K is a formal local dense-style benchmark on real data.
+It gives the project another retrieval baseline beyond lexical and BM25, and
+the rerank variant slightly improves retrieval hit and recall. It is not a
+neural dense retriever or neural reranker result and should not be cited as
+closing the FlashRAG dense/rerank target.
+
 Historical medium dataset:
 
 ```text
@@ -667,8 +702,8 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Method comparison | complete | Five methods compared on the same medium Fresh-Hard split. |
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
 | Demo scale | partial | 100 chunks / 150 questions plus a 108-row pending human sign-off template versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
-| Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates; dense/rerank results are not yet generated. |
-| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I/7J verification documentation. |
+| Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates for neural dense/rerank. Phase 7K adds a formal local hashed dense benchmark, but it is non-neural and does not close the neural dense/rerank target. |
+| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I/7J/7K verification documentation. |
 
 See the structured form:
 
@@ -738,6 +773,17 @@ environment, target methods, dependency list, and acceptance gates for
 `flashrag_bm25_plus_reranker`. It does not claim dense/rerank benchmark
 results yet.
 
+Phase 7K adds a separate current-environment benchmark:
+
+- `benchmark/domainrag/hashed_dense_benchmark.py`
+- `outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl`
+- `outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.json`
+- `docs/verification/hashed-dense-formal-benchmark.md`
+
+This benchmark is formal and uses the real medium-plus Fresh-Hard split, but it
+is explicitly non-neural. The correct status is: local hashed dense benchmark
+complete, neural dense/rerank benchmark still open.
+
 ## What I Would Hand Over Now
 
 The current handoff package is coherent as a medium pilot:
@@ -755,6 +801,7 @@ The current handoff package is coherent as a medium pilot:
 - A Phase 7H 115-row full-text/processability checkpoint and machine finalization queue.
 - A Phase 7I 115-row human-review packet and 108-row candidate final whitelist queue.
 - A Phase 7J 108-row pending human sign-off template.
+- A Phase 7K non-neural local hashed dense benchmark on medium-plus Fresh-Hard.
 - Deterministic diagnostic baselines.
 - Live DeepSeek answer generation and Judge evaluation.
 - A five-method Fresh-Hard comparison.
@@ -767,7 +814,7 @@ yet strong enough to claim the full `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase if work resumes: Phase 7K final-source labels, chunk
+Recommended next phase if work resumes: Phase 7L final-source labels, chunk
 extraction, and demo-scale question generation.
 
 If work resumes, the high-value path is:
@@ -782,8 +829,9 @@ If work resumes, the high-value path is:
    chunks / 300 questions.
 5. Keep the same validation, FlashRAG bundle preparation, retrieval comparison,
    live answer/Judge, and sampled human calibration gates.
-6. Run dense/rerank only in the isolated environment described by Phase 7A, not
-   by mutating the current AutoDL runtime.
+6. Run neural dense/rerank only in the isolated environment described by Phase
+   7A, not by mutating the current AutoDL runtime. Phase 7K already covers the
+   non-neural local hashed dense baseline.
 
 If the goal is a defensible near-term project deliverable, finish with this
 medium-plus report and append a scale roadmap. If the goal is strict `RAG.md`

@@ -43,7 +43,7 @@ def test_phase7i_updates_docs_and_audit_without_claiming_human_finalization():
     assert "Phase 7I" in doc
     assert "not final manual verification" in doc
     assert "candidate final whitelist queue" in doc
-    assert audit["phase"] == "Phase 7J"
+    assert audit["phase"] == "Phase 7K"
     assert audit["phase7i_manual_finalization_packet"] == {
         "source_count": 115,
         "candidate_final_whitelist_queue_count": 108,

@@ -451,6 +451,32 @@ def test_run_bm25s_command_writes_retrieval_rows(tmp_path: Path):
     assert (output / "dataset" / "dev_bm25s_results.jsonl").exists()
 
 
+def test_run_hashed_dense_command_writes_retrieval_rows(tmp_path: Path):
+    from tests.test_validator import _write_minimal_dataset
+
+    dataset = tmp_path / "dataset"
+    output = tmp_path / "outputs"
+    _write_minimal_dataset(dataset)
+
+    result = _run_cli(
+        "run-hashed-dense",
+        "--dataset",
+        str(dataset),
+        "--output",
+        str(output),
+        "--split",
+        "dev",
+        "--top-k",
+        "2",
+        "--dimensions",
+        "64",
+    )
+
+    assert result.returncode == 0
+    assert "hashed dense results written" in result.stdout
+    assert (output / "dataset" / "dev_hashed_dense_results.jsonl").exists()
+
+
 def test_dense_rerank_readiness_module_entrypoint_writes_manifest_and_summary(tmp_path: Path):
     feasibility = tmp_path / "feasibility.json"
     output = tmp_path / "readiness"

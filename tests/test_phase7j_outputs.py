@@ -36,7 +36,7 @@ def test_phase7j_updates_docs_and_audit_without_final_whitelist_claim():
     assert "Phase 7J" in doc
     assert "not final manual verification" in doc
     assert "human labels" in doc
-    assert audit["phase"] == "Phase 7J"
+    assert audit["phase"] == "Phase 7K"
     assert audit["phase7j_human_signoff_workflow"] == {
         "candidate_queue_count": 108,
         "human_signoff_template_rows": 108,

@@ -72,7 +72,7 @@ def test_phase7e_updates_verification_doc_report_and_audit_without_closing_scale
     assert "outputs/phase7e/source_screening_queue/screening_queue.jsonl" in doc
     assert "Phase 7E Source Screening Queue" in report
     assert "Phase 7F Source Decisions" in report
-    assert audit["phase"] == "Phase 7J"
+    assert audit["phase"] == "Phase 7K"
     assert screening["candidate_count"] == 124
     assert screening["final_included_sources"] == 0
     assert screening["verification_status"] == "machine_prescreen_only"

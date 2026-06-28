@@ -94,7 +94,7 @@ def test_phase7c_updates_docs_and_audit_without_claiming_final_scale():
     assert "36 answer rows" in doc
     assert "36 judge rows" in doc
     assert "outputs/phase7c/medium_plus_live_subset/comparison/summary.json" in doc
-    assert audit["phase"] == "Phase 7J"
+    assert audit["phase"] == "Phase 7K"
     assert audit["dataset"]["name"] == DATASET_NAME
     assert audit["dataset"]["corpus_chunks"] == 100
     assert audit["dataset"]["questions"] == 150

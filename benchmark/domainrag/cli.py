@@ -25,6 +25,7 @@ from domainrag.errors import ValidationError
 from domainrag.flashrag_adapter import prepare_flashrag_bundle
 from domainrag.flashrag_bm25_bridge import run_flashrag_bm25_bridge
 from domainrag.flashrag_method_feasibility import probe_flashrag_method_feasibility
+from domainrag.hashed_dense_benchmark import run_hashed_dense_benchmark
 from domainrag.report_generator import generate_report
 from domainrag.source_acquisition import acquire_demo_scale_sources, build_query_plan
 from domainrag.source_decisions import build_decision_outputs
@@ -116,6 +117,12 @@ def build_parser() -> argparse.ArgumentParser:
     run_bm25s.add_argument("--output", required=True)
     run_bm25s.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
     run_bm25s.add_argument("--top-k", type=int, default=5)
+    run_hashed_dense = subparsers.add_parser("run-hashed-dense")
+    run_hashed_dense.add_argument("--dataset", required=True)
+    run_hashed_dense.add_argument("--output", required=True)
+    run_hashed_dense.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
+    run_hashed_dense.add_argument("--top-k", type=int, default=5)
+    run_hashed_dense.add_argument("--dimensions", type=int, default=512)
     probe_flashrag_methods = subparsers.add_parser("probe-flashrag-methods")
     probe_flashrag_methods.add_argument("--flashrag-path", required=True)
     probe_flashrag_methods.add_argument("--output", required=True)
@@ -371,6 +378,20 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"BM25s results written to {result_path}")
+        return 0
+    if args.command == "run-hashed-dense":
+        try:
+            result_path = run_hashed_dense_benchmark(
+                Path(args.dataset),
+                Path(args.output),
+                split=args.split,
+                top_k=args.top_k,
+                dimensions=args.dimensions,
+            )
+        except (ValidationError, ValueError) as exc:
+            print(str(exc))
+            return 1
+        print(f"hashed dense results written to {result_path}")
         return 0
     if args.command == "probe-flashrag-methods":
         try:

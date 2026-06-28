@@ -1,5 +1,5 @@
 {
-  "phase": "Phase 7J",
+  "phase": "Phase 7K",
   "report": "docs/reports/domainrag-medium-pilot-final-report.md",
   "blueprint": "/root/autodl-tmp/RAG/RAG.md",
   "dataset": {
@@ -51,7 +51,7 @@
   "completion_estimate": {
     "excluding_final_scale": "about 99%",
     "including_rag_md_demo_scale": "94%-95%",
-    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7I provides a 108-row candidate final whitelist queue inside the RAG.md 100-180 source target range. Phase 7J adds the human sign-off workflow and pending sign-off template that can promote only human-labeled accepted sources into final_source_whitelist.jsonl. The remaining hard gap is external to machine-only automation: real human labels/sign-off, followed by chunk extraction and 300-500 question generation; dense/rerank methods have isolated readiness evidence but have not yet been executed."
+    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7I provides a 108-row candidate final whitelist queue inside the RAG.md 100-180 source target range. Phase 7J adds the human sign-off workflow and pending sign-off template that can promote only human-labeled accepted sources into final_source_whitelist.jsonl. Phase 7K adds a formal local hashed dense benchmark on the real medium-plus Fresh-Hard split. The remaining hard gap is external to machine-only automation for final sources: real human labels/sign-off, followed by chunk extraction and 300-500 question generation. Neural dense/rerank methods still require the isolated dependency plan from Phase 7A."
   },
   "requirements": [
     {
@@ -250,20 +250,23 @@
     {
       "id": "dense_rerank_methods",
       "status": "partial",
-      "summary": "FlashRAG dense retriever and reranker have isolated readiness evidence, target dependencies, and acceptance gates, but dense/rerank results have not yet been generated.",
+      "summary": "FlashRAG neural dense retriever and reranker still have isolated readiness evidence, target dependencies, and acceptance gates rather than executable current-environment results. Phase 7K now adds a formal local hashed dense benchmark and lexical-overlap rerank baseline on the real medium-plus Fresh-Hard split, but it is non-neural and does not close the neural dense/rerank target.",
       "evidence": [
         "outputs/phase5e/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json",
         "outputs/phase7a/dense_rerank_readiness/readiness.json",
         "outputs/phase7a/dense_rerank_readiness/summary.md",
+        "outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl",
+        "outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.json",
         "requirements/flashrag-dense-rerank.txt",
         "docs/verification/flashrag-method-feasibility-and-calibration.md",
-        "docs/verification/dense-rerank-isolated-readiness.md"
+        "docs/verification/dense-rerank-isolated-readiness.md",
+        "docs/verification/hashed-dense-formal-benchmark.md"
       ]
     },
     {
       "id": "final_report",
       "status": "complete",
-      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B-7I update source and full-text evidence; Phase 7J adds the human sign-off workflow needed before a real final source whitelist can be claimed.",
+      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B-7I update source and full-text evidence; Phase 7J adds the human sign-off workflow needed before a real final source whitelist can be claimed; Phase 7K adds a formal non-neural local hashed dense benchmark.",
       "evidence": [
         "docs/reports/domainrag-medium-pilot-final-report.md",
         "docs/reports/rag-md-implementation-audit.json",
@@ -284,7 +287,9 @@
         "docs/verification/manual-finalization-packet.md",
         "tests/test_phase7i_outputs.py",
         "docs/verification/human-signoff-workflow.md",
-        "tests/test_phase7j_outputs.py"
+        "tests/test_phase7j_outputs.py",
+        "docs/verification/hashed-dense-formal-benchmark.md",
+        "tests/test_phase7k_outputs.py"
       ]
     }
   ],
@@ -652,8 +657,8 @@
     ]
   },
   "next_phase_recommendation": {
-    "name": "Phase 7K final-source labels, chunk extraction, and demo-scale question generation",
-    "recommended_path": "Supply real human_signoff_labels.jsonl for the 108-row template. If at least 100 sources are accepted, generate final_source_whitelist.jsonl, then extract chunks only from accepted sources and generate 300-500 questions with qrels. If fewer than 100 are accepted, run targeted replacement acquisition before chunk extraction.",
+    "name": "Phase 7L final-source labels, chunk extraction, and demo-scale question generation",
+    "recommended_path": "Supply real human_signoff_labels.jsonl for the 108-row template. If at least 100 sources are accepted, generate final_source_whitelist.jsonl, then extract chunks only from accepted sources and generate 300-500 questions with qrels. If fewer than 100 are accepted, run targeted replacement acquisition before chunk extraction. If human labels remain unavailable, the next machine-only route is a neural dense/rerank run in the isolated dependency environment described by Phase 7A.",
     "minimum_next_scale": {
       "human_signoff_template_rows": 108,
       "target_final_source_whitelist_min": 100,
@@ -726,6 +731,23 @@
       "outputs/phase7j/human_signoff/final_source_whitelist.jsonl",
       "outputs/phase7j/human_signoff/human_signoff_summary.json",
       "docs/verification/human-signoff-workflow.md"
+    ]
+  },
+  "phase7k_hashed_dense_benchmark": {
+    "dataset": "real_pilot_nickel_superalloy_medium_plus",
+    "split": "fresh_hard",
+    "questions": 50,
+    "rows": 100,
+    "methods": [
+      "hashed_dense_oracle_reader",
+      "hashed_dense_lexical_rerank_oracle_reader"
+    ],
+    "benchmark_family": "local_hashed_dense",
+    "neural_dense_or_reranker_claim": "not_claimed",
+    "outputs": [
+      "outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl",
+      "outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.json",
+      "docs/verification/hashed-dense-formal-benchmark.md"
     ]
   }
 }
