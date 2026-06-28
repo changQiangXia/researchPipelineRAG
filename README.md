@@ -2,7 +2,7 @@
 
 DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据生产、标准化、检索评测和审计流水线。它的核心目标是：从领域文献和证据材料出发，构建带有 `gold evidence`（每道题绑定的标准证据块）与 `qrels`（question relevance labels，即问题与相关证据 chunk 的标准关联表）的标准化数据资产，并在同一评测协议下比较不同 RAG 方法的检索、答题、忠实度和效率表现。
 
-当前示例领域是 **镍基高温合金高温失效**。换句话说，当前实现领域是“镍基高温合金高温失效”。这个领域足够专业、知识更新快，适合构造 `Fresh-Hard`（专门测试证据依赖的新近/专业问题 split）问题：基础模型不能完全依赖常识回答，但可以通过领域知识库回答。
+当前示例领域是 **镍基高温合金高温失效**。这个领域足够专业、知识更新快，适合构造 `Fresh-Hard`（专门测试证据依赖的新近/专业问题 split）问题：基础模型不能完全依赖常识回答，但可以通过领域知识库回答。
 
 当前仓库已经形成一条流水线：从 Easy Dataset 风格输入，到 DomainRAG 标准数据集，再到 FlashRAG bundle、本地检索 baseline、DeepSeek answer/Judge、人工审核 workflow 和结构化审计。当前数据集仍是 `provisional`（工程验证阶段的临时版本），不是 `human-final benchmark`（经过真实人工来源签核、题库复核后才能声明的最终人工验证 benchmark）。
 
@@ -94,7 +94,7 @@ Answer、Judge、reports、audit、human sign-off workflow
 | `hashed_dense_oracle_reader` | 100 | 0.7000 | 0.7000 | 0 |
 | `hashed_dense_lexical_rerank_oracle_reader` | 100 | 0.7200 | 0.7200 | 0 |
 
-这张表的读法：
+解读：
 
 - `no_rag` 测试没有检索上下文时的表现。
 - `oracle_context` 直接提供 `gold context`，用于判断题目是否能被证据回答。
@@ -113,7 +113,7 @@ outputs/current/benchmark_results.md
 
 **Easy Dataset 风格**
 
-在本仓库中，Easy Dataset 风格指一种上游数据生产和导出形状，而不是强制依赖 Easy Dataset 应用本体：
+在本仓库中，Easy Dataset 风格指一种上游数据生产和导出形状：
 
 ```text
 chunks.jsonl
@@ -163,7 +163,7 @@ FlashRAG 是下游 RAG benchmark 框架。本项目会把 DomainRAG 标准数据
 - `oracle_context`：直接提供 gold context，也就是标准证据上下文。
 - `lexical_rag`：从 corpus 中做词面检索。
 
-这三种方法组合起来，可以区分问题是出在题目设计、检索命中，还是答案生成。
+这三种方法组合起来，可以方便定位问题来源。
 
 ## 输入与输出示例
 
