@@ -1,0 +1,119 @@
+{
+  "accepted_provisional_count": 82,
+  "candidate_count": 124,
+  "decision_counts": {
+    "accepted_provisional": 82,
+    "pending_manual_review": 33,
+    "rejected_prescreen": 9
+  },
+  "demo_scale_targets": {
+    "corpus_chunks": [
+      1000,
+      3000
+    ],
+    "questions": [
+      300,
+      500
+    ],
+    "source_papers": [
+      100,
+      180
+    ]
+  },
+  "pending_manual_review_count": 33,
+  "provisional_whitelist_count": 115,
+  "rejected_prescreen_count": 9,
+  "remaining_gaps": [
+    "manual venue metric or flagship verification",
+    "manual DOI/title/year verification",
+    "manual article-type verification",
+    "manual retraction-status verification",
+    "full-text download and parsing verification",
+    "manual domain-relevance screening",
+    "full 1,000-3,000 chunk and 300-500 question demo-scale production"
+  ],
+  "research_article_candidates": 113,
+  "review_candidates": 11,
+  "review_gap_subtopics": [
+    "coatings",
+    "life_prediction",
+    "microstructure_characterization"
+  ],
+  "stop_point_recommendation": "pause_after_phase7f",
+  "subtopic_count": 8,
+  "subtopics": {
+    "additive_manufacturing": {
+      "accepted_provisional": 4,
+      "candidate_count": 8,
+      "pending_manual_review": 2,
+      "provisional_whitelist_count": 6,
+      "rejected_prescreen": 2,
+      "research_article_candidates": 5,
+      "review_candidates": 3
+    },
+    "coatings": {
+      "accepted_provisional": 7,
+      "candidate_count": 9,
+      "pending_manual_review": 2,
+      "provisional_whitelist_count": 9,
+      "rejected_prescreen": 0,
+      "research_article_candidates": 9,
+      "review_candidates": 0
+    },
+    "creep": {
+      "accepted_provisional": 24,
+      "candidate_count": 28,
+      "pending_manual_review": 3,
+      "provisional_whitelist_count": 27,
+      "rejected_prescreen": 1,
+      "research_article_candidates": 26,
+      "review_candidates": 2
+    },
+    "fatigue": {
+      "accepted_provisional": 8,
+      "candidate_count": 10,
+      "pending_manual_review": 1,
+      "provisional_whitelist_count": 9,
+      "rejected_prescreen": 1,
+      "research_article_candidates": 9,
+      "review_candidates": 1
+    },
+    "hot_corrosion": {
+      "accepted_provisional": 9,
+      "candidate_count": 17,
+      "pending_manual_review": 5,
+      "provisional_whitelist_count": 14,
+      "rejected_prescreen": 3,
+      "research_article_candidates": 15,
+      "review_candidates": 2
+    },
+    "life_prediction": {
+      "accepted_provisional": 5,
+      "candidate_count": 12,
+      "pending_manual_review": 6,
+      "provisional_whitelist_count": 11,
+      "rejected_prescreen": 1,
+      "research_article_candidates": 12,
+      "review_candidates": 0
+    },
+    "microstructure_characterization": {
+      "accepted_provisional": 10,
+      "candidate_count": 15,
+      "pending_manual_review": 5,
+      "provisional_whitelist_count": 15,
+      "rejected_prescreen": 0,
+      "research_article_candidates": 15,
+      "review_candidates": 0
+    },
+    "oxidation": {
+      "accepted_provisional": 15,
+      "candidate_count": 25,
+      "pending_manual_review": 9,
+      "provisional_whitelist_count": 24,
+      "rejected_prescreen": 1,
+      "research_article_candidates": 22,
+      "review_candidates": 3
+    }
+  },
+  "verification_status": "provisional_not_final"
+}

@@ -4,7 +4,7 @@ Recorded: 2026-06-28
 
 Blueprint: `/root/autodl-tmp/RAG/RAG.md`
 
-Repository milestone: Phase 7E source screening queue checkpoint
+Repository milestone: Phase 7F provisional source decisions and stop point
 
 ## Executive Summary
 
@@ -28,17 +28,22 @@ open-access/full-text-ready candidates, and flags review-paper gaps in
 `coatings`, `life_prediction`, and `microstructure_characterization`. It still
 does not finalize any source.
 
+Phase 7F converts the screening queue into a provisional source-decision
+package: 82 `accepted_provisional`, 33 `pending_manual_review`, 9
+`rejected_prescreen`, and a 115-row provisional source whitelist. This is the
+recommended pause point for the current engineering/source-screening effort.
+
 The current project is not yet a full `RAG.md` demo-scale dataset. The best
 dataset has 100 corpus chunks and 150 questions; `RAG.md` calls for 1,000-3,000
-chunks and 300-500 questions for the demo tier. Phase 7D/7E materially advance
-the paper acquisition and screening prerequisites, but final source
-whitelisting, full-text parsing, chunk extraction, and question generation are
-still open.
+chunks and 300-500 questions for the demo tier. Phase 7D/7E/7F materially
+advance the paper acquisition, screening, and provisional decision
+prerequisites, but final manual source verification, full-text parsing, chunk
+extraction, and question generation are still open.
 
 Completion estimate:
 
 - Excluding final scale: about 99%
-- Including `RAG.md` demo scale: 87%-88%
+- Including `RAG.md` demo scale: 89%-90%
 
 The structured audit behind this report is committed at:
 
@@ -307,6 +312,49 @@ screening pass. The best immediate value is to review the 3 high-priority and
 79 medium-priority rows first, while running targeted review-paper search for
 `coatings`, `life_prediction`, and `microstructure_characterization`.
 
+## Phase 7F Source Decisions
+
+Phase 7F turns the Phase 7E screening queue into provisional source decisions.
+It is explicitly not final manual verification. Its purpose is to create a
+clean pause point with a usable source-side handoff.
+
+Output evidence:
+
+- `outputs/phase7f/source_decisions/source_decisions.jsonl`
+- `outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl`
+- `outputs/phase7f/source_decisions/decision_summary.json`
+- `outputs/phase7f/source_decisions/summary.md`
+- `docs/verification/source-decisions-and-stop-point.md`
+
+Decision summary:
+
+| metric | value |
+| --- | ---: |
+| candidate decisions | 124 |
+| accepted provisional | 82 |
+| pending manual review | 33 |
+| rejected prescreen | 9 |
+| provisional source whitelist | 115 |
+| stop recommendation | pause_after_phase7f |
+
+Subtopic decisions:
+
+| subtopic | candidates | accepted | pending | rejected | whitelist | reviews |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| additive_manufacturing | 8 | 4 | 2 | 2 | 6 | 3 |
+| coatings | 9 | 7 | 2 | 0 | 9 | 0 |
+| creep | 28 | 24 | 3 | 1 | 27 | 2 |
+| fatigue | 10 | 8 | 1 | 1 | 9 | 1 |
+| hot_corrosion | 17 | 9 | 5 | 3 | 14 | 2 |
+| life_prediction | 12 | 5 | 6 | 1 | 11 | 0 |
+| microstructure_characterization | 15 | 10 | 5 | 0 | 15 | 0 |
+| oxidation | 25 | 15 | 9 | 1 | 24 | 3 |
+
+Interpretation: the provisional whitelist count is now within the RAG.md
+100-180 source-paper range, but it remains provisional. If work resumes, the
+first source-side tasks are manual verification and targeted review search for
+`coatings`, `life_prediction`, and `microstructure_characterization`.
+
 Historical medium dataset:
 
 ```text
@@ -403,7 +451,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 
 | requirement | status | evidence |
 | --- | --- | --- |
-| Literature source policy | partial | Source manifests, a 124-paper OpenAlex candidate pool, and a Phase 7E screening queue exist, but no final manually verified 100-180-paper top-venue whitelist is committed. |
+| Literature source policy | partial | Source manifests, a 124-paper OpenAlex candidate pool, Phase 7E screening queue, and Phase 7F provisional decisions exist, but no final manually verified 100-180-paper top-venue whitelist is committed. |
 | Easy Dataset intake | complete | Easy Dataset-style export adapter and copyable integration assets are tested. |
 | DomainRAG data contract | complete | Contract, schema, validator, real datasets, and tests are present. |
 | Public metadata safety | complete | Validator and tests enforce forbidden metadata rules. |
@@ -414,7 +462,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Human calibration | complete | 15-row manual audit over Phase 6E calibration packet. |
 | Method comparison | complete | Five methods compared on the same medium Fresh-Hard split. |
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
-| Demo scale | partial | 100 chunks / 150 questions plus a 124-paper candidate pool and screening queue versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
+| Demo scale | partial | 100 chunks / 150 questions plus a 115-row provisional source whitelist versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
 | Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates; dense/rerank results are not yet generated. |
 | Final report | complete | This report and `rag-md-implementation-audit.json`. |
 
@@ -440,15 +488,16 @@ Current medium-plus pilot:
 - 50 Fresh-Hard questions
 - 124 OpenAlex source candidates for the next expansion
 - 115 open-access/full-text-ready queue candidates
-- 0 manually finalized Phase 7E source inclusions
+- 115 provisional source-whitelist rows
+- 0 final manually verified source inclusions
 
 The implementation path is ready for more scale, but the dataset itself is
 still far below the requested demo scale. A true demo-scale build should not be
 claimed until the same validation, FlashRAG preparation, retrieval comparison,
 live answer/Judge evaluation, calibration packet, and at least sampled human
 audit are repeated on a dataset at or near 1,000 chunks. The Phase 7D candidate
-pool and Phase 7E queue are the start of that route, not the completed scale
-expansion.
+pool, Phase 7E queue, and Phase 7F provisional decisions are the source-side
+handoff for that route, not the completed scale expansion.
 
 ## Dense And Rerank Gap
 
@@ -493,6 +542,7 @@ The current handoff package is coherent as a medium pilot:
 - A bounded medium-plus live DeepSeek answer/Judge subset.
 - A 124-paper OpenAlex candidate pool for demo-scale source screening.
 - A Phase 7E machine pre-screening and full-text processing queue.
+- A Phase 7F provisional source-decision package and 115-row provisional whitelist.
 - Deterministic diagnostic baselines.
 - Live DeepSeek answer generation and Judge evaluation.
 - A five-method Fresh-Hard comparison.
@@ -500,28 +550,27 @@ The current handoff package is coherent as a medium pilot:
 - A structured `RAG.md` implementation audit.
 
 The project is strong enough to support a report or demo focused on method
-diagnostics and benchmark engineering. It is not yet strong enough to claim
-the full `RAG.md` dataset scale.
+diagnostics, benchmark engineering, and source-screening readiness. It is not
+yet strong enough to claim the full `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase: Phase 7F manual source decisions and review-gap fill.
+Recommended next phase if work resumes: Phase 7G manual verification and
+demo-scale extraction.
 
-The remaining high-value path is still data scale, but Phase 7E narrows the
-first bottleneck to manual source decisions:
+This is the recommended pause point. If work resumes, the high-value path is:
 
-1. Review the 3 high-priority and 79 medium-priority queued candidates first.
-2. Verify venue quality, DOI/title/year, article type, retraction status,
+1. Verify venue quality, DOI/title/year, article type, retraction status,
    full-text processability, and domain relevance.
-3. Fill subtopic review gaps for coatings, life prediction, and
+2. Fill subtopic review gaps for coatings, life prediction, and
    microstructure characterization.
-4. Produce a final 100-180 source whitelist with accepted/rejected/pending
-   decisions.
-5. Extract chunks only from verified sources and expand toward at least 1,000
+3. Promote the 115-row provisional whitelist into a final 100-180 source
+   whitelist.
+4. Extract chunks only from verified sources and expand toward at least 1,000
    chunks / 300 questions.
-6. Keep the same validation, FlashRAG bundle preparation, retrieval comparison,
+5. Keep the same validation, FlashRAG bundle preparation, retrieval comparison,
    live answer/Judge, and sampled human calibration gates.
-7. Run dense/rerank only in the isolated environment described by Phase 7A, not
+6. Run dense/rerank only in the isolated environment described by Phase 7A, not
    by mutating the current AutoDL runtime.
 
 If the goal is a defensible near-term project deliverable, finish with this
@@ -537,6 +586,7 @@ PYTHONPATH=benchmark pytest tests/test_phase6g_report.py
 PYTHONPATH=benchmark pytest tests/test_phase7c_live_subset.py
 PYTHONPATH=benchmark pytest tests/test_phase7d_outputs.py tests/test_source_acquisition.py tests/test_cli.py -k 'phase7d or source_acquisition or acquire_sources'
 PYTHONPATH=benchmark pytest tests/test_phase7e_outputs.py tests/test_source_screening.py tests/test_cli.py -k 'phase7e or source_screening or screen_sources'
+PYTHONPATH=benchmark pytest tests/test_phase7f_outputs.py tests/test_source_decisions.py tests/test_cli.py -k 'phase7f or source_decisions or decide_sources'
 PYTHONPATH=benchmark pytest
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium_plus
 PYTHONPATH=benchmark pytest tests/test_real_pilot_medium_plus_assets.py tests/test_phase7b_outputs.py

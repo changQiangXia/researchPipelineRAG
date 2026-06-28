@@ -71,7 +71,8 @@ def test_phase7e_updates_verification_doc_report_and_audit_without_closing_scale
     assert "not a final source whitelist" in doc
     assert "outputs/phase7e/source_screening_queue/screening_queue.jsonl" in doc
     assert "Phase 7E Source Screening Queue" in report
-    assert audit["phase"] == "Phase 7E"
+    assert "Phase 7F Source Decisions" in report
+    assert audit["phase"] == "Phase 7F"
     assert screening["candidate_count"] == 124
     assert screening["final_included_sources"] == 0
     assert screening["verification_status"] == "machine_prescreen_only"
@@ -81,6 +82,9 @@ def test_phase7e_updates_verification_doc_report_and_audit_without_closing_scale
         "life_prediction",
         "microstructure_characterization",
     ]
+    assert audit["phase7f_source_decisions"]["verification_status"] == (
+        "provisional_not_final"
+    )
     assert requirements["literature_source_policy"]["status"] == "partial"
     assert requirements["demo_scale"]["status"] == "partial"
     assert "outputs/phase7e/source_screening_queue/screening_summary.json" in requirements[
