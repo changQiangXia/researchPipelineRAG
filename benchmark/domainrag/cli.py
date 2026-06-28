@@ -18,6 +18,7 @@ from domainrag.deepseek_judge_runner import (
     run_deepseek_judge,
 )
 from domainrag.deepseek_pipeline import DEFAULT_BASE_URL, DEFAULT_MODEL
+from domainrag.dense_rerank_readiness import generate_dense_rerank_readiness
 from domainrag.easy_dataset_adapter import export_domainrag_bundle
 from domainrag.errors import ValidationError
 from domainrag.flashrag_adapter import prepare_flashrag_bundle
@@ -106,6 +107,9 @@ def build_parser() -> argparse.ArgumentParser:
     probe_flashrag_methods = subparsers.add_parser("probe-flashrag-methods")
     probe_flashrag_methods.add_argument("--flashrag-path", required=True)
     probe_flashrag_methods.add_argument("--output", required=True)
+    dense_rerank_readiness = subparsers.add_parser("dense-rerank-readiness")
+    dense_rerank_readiness.add_argument("--feasibility", required=True)
+    dense_rerank_readiness.add_argument("--output", required=True)
     export_domainrag = subparsers.add_parser("export-domainrag")
     export_domainrag.add_argument("--input", required=True)
     export_domainrag.add_argument("--output", required=True)
@@ -296,6 +300,17 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"FlashRAG method feasibility manifest written to {args.output}")
+        return 0
+    if args.command == "dense-rerank-readiness":
+        try:
+            markdown_path, json_path = generate_dense_rerank_readiness(
+                Path(args.feasibility),
+                Path(args.output),
+            )
+        except ValidationError as exc:
+            print(str(exc))
+            return 1
+        print(f"dense/rerank readiness written to {markdown_path} and {json_path}")
         return 0
     if args.command == "export-domainrag":
         try:
