@@ -1,0 +1,53 @@
+{
+  "lexical_rag": {
+    "api_calls": 20,
+    "errors": 0,
+    "mean_latency_ms": 5724.478404037654,
+    "metrics": {
+      "context_support": 4.75,
+      "correctness": 4.7,
+      "faithfulness": 4.75,
+      "hallucination_risk": 0.25,
+      "relevance": 4.95
+    },
+    "questions": 20,
+    "total_input_tokens": 13957,
+    "total_output_tokens": 11836,
+    "total_tokens": 25793,
+    "unsupported_claims": 1
+  },
+  "no_rag": {
+    "api_calls": 20,
+    "errors": 0,
+    "mean_latency_ms": 11245.187621284276,
+    "metrics": {
+      "context_support": 0.0,
+      "correctness": 3.45,
+      "faithfulness": 2.5,
+      "hallucination_risk": 2.5,
+      "relevance": 4.9
+    },
+    "questions": 20,
+    "total_input_tokens": 7015,
+    "total_output_tokens": 23578,
+    "total_tokens": 30593,
+    "unsupported_claims": 17
+  },
+  "oracle_context": {
+    "api_calls": 20,
+    "errors": 0,
+    "mean_latency_ms": 5752.809507865459,
+    "metrics": {
+      "context_support": 4.75,
+      "correctness": 4.85,
+      "faithfulness": 5.0,
+      "hallucination_risk": 0.0,
+      "relevance": 5.0
+    },
+    "questions": 20,
+    "total_input_tokens": 9613,
+    "total_output_tokens": 12380,
+    "total_tokens": 21993,
+    "unsupported_claims": 0
+  }
+}
