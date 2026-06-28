@@ -1,5 +1,5 @@
 {
-  "phase": "Phase 7C",
+  "phase": "Phase 7D",
   "report": "docs/reports/domainrag-medium-pilot-final-report.md",
   "blueprint": "/root/autodl-tmp/RAG/RAG.md",
   "dataset": {
@@ -50,16 +50,19 @@
   },
   "completion_estimate": {
     "excluding_final_scale": "about 99%",
-    "including_rag_md_demo_scale": "84%-85%",
-    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7B raises the current best validated dataset to 100 chunks and 150 questions with Fresh-Hard retrieval evidence. Phase 7C adds a bounded real DeepSeek answer/Judge subset on the medium-plus Fresh-Hard split. The main hard gap remains final RAG.md demo scale; dense/rerank methods have isolated readiness evidence but have not yet been executed."
+    "including_rag_md_demo_scale": "86%-87%",
+    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7B raises the current best validated dataset to 100 chunks and 150 questions with Fresh-Hard retrieval evidence. Phase 7C adds a bounded real DeepSeek answer/Judge subset on the medium-plus Fresh-Hard split. Phase 7D adds a real OpenAlex-backed 124-paper candidate pool across 8 subtopics for the next demo-scale build. The main hard gap remains final RAG.md demo scale: manual source whitelisting, full-text processing, chunk extraction, and 300-500 question generation are still partial; dense/rerank methods have isolated readiness evidence but have not yet been executed."
   },
   "requirements": [
     {
       "id": "literature_source_policy",
       "status": "partial",
-      "summary": "The project uses source-backed nickel-superalloy high-temperature failure chunks and source manifests, but it does not yet contain the full 100-180 paper top-venue white-list and official literature verification matrix required by RAG.md.",
+      "summary": "The project uses source-backed nickel-superalloy high-temperature failure chunks and source manifests, and Phase 7D adds a 124-paper OpenAlex candidate pool. It does not yet contain the final manually verified 100-180 paper top-venue whitelist and official literature verification matrix required by RAG.md.",
       "evidence": [
         "data/real_pilot_sources/nickel_superalloy_high_temp_failure_medium_plus/sources.jsonl",
+        "outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl",
+        "outputs/phase7d/demo_scale_source_acquisition/coverage.json",
+        "docs/verification/demo-scale-source-acquisition.md",
         "docs/verification/medium-plus-scale-expansion.md",
         "/root/autodl-tmp/RAG/RAG.md"
       ]
@@ -201,9 +204,11 @@
     {
       "id": "demo_scale",
       "status": "partial",
-      "summary": "The current best dataset is 100 chunks and 150 questions, below the RAG.md demo target of 1,000-3,000 chunks and 300-500 questions.",
+      "summary": "The current best validated dataset is 100 chunks and 150 questions. Phase 7D adds a 124-paper source candidate pool for the next expansion, but the public benchmark still remains below the RAG.md demo target of 1,000-3,000 chunks and 300-500 questions.",
       "evidence": [
         "data/real_pilot_nickel_superalloy_medium_plus/statistics.json",
+        "outputs/phase7d/demo_scale_source_acquisition/coverage.json",
+        "docs/verification/demo-scale-source-acquisition.md",
         "docs/verification/medium-plus-scale-expansion.md",
         "/root/autodl-tmp/RAG/RAG.md"
       ]
@@ -224,14 +229,16 @@
     {
       "id": "final_report",
       "status": "complete",
-      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B updates this structured RAG.md implementation audit with medium-plus scale evidence; Phase 7C adds medium-plus live subset evidence.",
+      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B updates this structured RAG.md implementation audit with medium-plus scale evidence; Phase 7C adds medium-plus live subset evidence; Phase 7D adds demo-scale source acquisition evidence.",
       "evidence": [
         "docs/reports/domainrag-medium-pilot-final-report.md",
         "docs/reports/rag-md-implementation-audit.json",
         "docs/verification/medium-plus-scale-expansion.md",
         "docs/verification/medium-plus-live-subset.md",
+        "docs/verification/demo-scale-source-acquisition.md",
         "tests/test_phase6g_report.py",
-        "tests/test_phase7b_outputs.py"
+        "tests/test_phase7b_outputs.py",
+        "tests/test_phase7d_outputs.py"
       ]
     }
   ],
@@ -413,16 +420,96 @@
       }
     ]
   },
+  "phase7d_demo_scale_source_acquisition": {
+    "candidate_count": 124,
+    "research_article_candidates": 113,
+    "review_candidates": 11,
+    "open_access_candidates": 115,
+    "subtopic_count": 8,
+    "final_included_sources": 0,
+    "verification_status": "candidate_pool_only",
+    "inclusion_status": "candidate_for_manual_verification",
+    "outputs": [
+      "outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl",
+      "outputs/phase7d/demo_scale_source_acquisition/coverage.json",
+      "outputs/phase7d/demo_scale_source_acquisition/summary.md",
+      "docs/verification/demo-scale-source-acquisition.md"
+    ],
+    "subtopics": {
+      "additive_manufacturing": {
+        "candidate_count": 8,
+        "research_article_candidates": 5,
+        "review_candidates": 3,
+        "open_access_candidates": 6
+      },
+      "coatings": {
+        "candidate_count": 9,
+        "research_article_candidates": 9,
+        "review_candidates": 0,
+        "open_access_candidates": 9
+      },
+      "creep": {
+        "candidate_count": 28,
+        "research_article_candidates": 26,
+        "review_candidates": 2,
+        "open_access_candidates": 27
+      },
+      "fatigue": {
+        "candidate_count": 10,
+        "research_article_candidates": 9,
+        "review_candidates": 1,
+        "open_access_candidates": 9
+      },
+      "hot_corrosion": {
+        "candidate_count": 17,
+        "research_article_candidates": 15,
+        "review_candidates": 2,
+        "open_access_candidates": 14
+      },
+      "life_prediction": {
+        "candidate_count": 12,
+        "research_article_candidates": 12,
+        "review_candidates": 0,
+        "open_access_candidates": 11
+      },
+      "microstructure_characterization": {
+        "candidate_count": 15,
+        "research_article_candidates": 15,
+        "review_candidates": 0,
+        "open_access_candidates": 15
+      },
+      "oxidation": {
+        "candidate_count": 25,
+        "research_article_candidates": 22,
+        "review_candidates": 3,
+        "open_access_candidates": 24
+      }
+    },
+    "limitations": [
+      "OpenAlex metadata candidates only",
+      "venue metrics and top-venue status still require manual verification",
+      "full-text processability still requires manual verification",
+      "article type, retraction status, and domain relevance still require manual screening",
+      "coatings, life_prediction, and microstructure_characterization still need targeted review-paper search"
+    ]
+  },
   "next_phase_recommendation": {
-    "name": "Phase 7D demo-scale source acquisition",
-    "recommended_path": "Start the larger source-acquisition workflow needed for a true RAG.md demo-scale 1,000+ chunk build, while keeping dense/rerank execution isolated from the current AutoDL runtime.",
+    "name": "Phase 7E manual source verification and full-text processing queue",
+    "recommended_path": "Screen the Phase 7D OpenAlex candidate pool into a final manually verified 100-180 source whitelist, verify full-text processability, then expand chunks and questions toward true RAG.md demo scale.",
     "minimum_next_scale": {
-      "corpus_chunks": 100,
-      "questions": 150
+      "candidate_sources_to_screen": 124,
+      "final_source_whitelist": 100
     },
     "demo_scale_path": {
       "corpus_chunks": 1000,
       "questions": 300
-    }
+    },
+    "must_not_claim_yet": [
+      "final 100-180 paper whitelist",
+      "manual venue/JCR/CiteScore verification",
+      "full-text extraction complete",
+      "1,000-3,000 chunk demo dataset",
+      "300-500 question demo benchmark"
+    ]
   }
 }

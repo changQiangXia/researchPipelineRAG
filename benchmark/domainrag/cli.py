@@ -26,6 +26,7 @@ from domainrag.flashrag_adapter import prepare_flashrag_bundle
 from domainrag.flashrag_bm25_bridge import run_flashrag_bm25_bridge
 from domainrag.flashrag_method_feasibility import probe_flashrag_method_feasibility
 from domainrag.report_generator import generate_report
+from domainrag.source_acquisition import acquire_demo_scale_sources, build_query_plan
 from domainrag.validator import validate_dataset
 
 
@@ -120,6 +121,15 @@ def build_parser() -> argparse.ArgumentParser:
     export_domainrag.add_argument("--input", required=True)
     export_domainrag.add_argument("--output", required=True)
     export_domainrag.add_argument("--dataset-name", required=True)
+    acquire_sources = subparsers.add_parser("acquire-sources")
+    acquire_sources.add_argument(
+        "--output",
+        default="outputs/phase7d/demo_scale_source_acquisition",
+    )
+    acquire_sources.add_argument("--per-query", type=int, default=15)
+    acquire_sources.add_argument("--mailto", default=None)
+    acquire_sources.add_argument("--timeout-seconds", type=int, default=60)
+    acquire_sources.add_argument("--dry-run", action="store_true", default=False)
     return parser
 
 
@@ -342,6 +352,32 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"DomainRAG dataset written to {bundle.dataset_dir}")
+        return 0
+    if args.command == "acquire-sources":
+        if args.per_query <= 0:
+            print("per-query must be positive")
+            return 1
+        if args.timeout_seconds <= 0:
+            print("timeout-seconds must be positive")
+            return 1
+        if args.dry_run:
+            print("OpenAlex query plan")
+            for planned in build_query_plan(per_query=args.per_query, mailto=args.mailto):
+                print(f"{planned['subtopic']}\t{planned['query']}\t{planned['url']}")
+            return 0
+        try:
+            candidates_path, coverage_path, markdown_path = acquire_demo_scale_sources(
+                output_dir=Path(args.output),
+                per_query=args.per_query,
+                mailto=args.mailto,
+                timeout_seconds=args.timeout_seconds,
+            )
+        except OSError as exc:
+            print(str(exc))
+            return 1
+        print(f"source candidates written to {candidates_path}")
+        print(f"coverage summary written to {coverage_path}")
+        print(f"markdown summary written to {markdown_path}")
         return 0
     parser.error(f"unknown command: {args.command}")
     return 2

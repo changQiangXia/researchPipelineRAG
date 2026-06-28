@@ -1,0 +1,111 @@
+{
+  "candidate_count": 124,
+  "demo_scale_targets": {
+    "corpus_chunks": [
+      1000,
+      3000
+    ],
+    "questions": [
+      300,
+      500
+    ],
+    "source_papers": [
+      100,
+      180
+    ]
+  },
+  "open_access_candidates": 115,
+  "research_article_candidates": 113,
+  "review_candidates": 11,
+  "subtopic_count": 8,
+  "subtopics": {
+    "additive_manufacturing": {
+      "candidate_count": 8,
+      "open_access_candidates": 6,
+      "research_article_candidates": 5,
+      "review_candidates": 3,
+      "year_counts": {
+        "2026": 8
+      }
+    },
+    "coatings": {
+      "candidate_count": 9,
+      "open_access_candidates": 9,
+      "research_article_candidates": 9,
+      "review_candidates": 0,
+      "year_counts": {
+        "2026": 9
+      }
+    },
+    "creep": {
+      "candidate_count": 28,
+      "open_access_candidates": 27,
+      "research_article_candidates": 26,
+      "review_candidates": 2,
+      "year_counts": {
+        "2024": 5,
+        "2025": 13,
+        "2026": 10
+      }
+    },
+    "fatigue": {
+      "candidate_count": 10,
+      "open_access_candidates": 9,
+      "research_article_candidates": 9,
+      "review_candidates": 1,
+      "year_counts": {
+        "2026": 10
+      }
+    },
+    "hot_corrosion": {
+      "candidate_count": 17,
+      "open_access_candidates": 14,
+      "research_article_candidates": 15,
+      "review_candidates": 2,
+      "year_counts": {
+        "2026": 17
+      }
+    },
+    "life_prediction": {
+      "candidate_count": 12,
+      "open_access_candidates": 11,
+      "research_article_candidates": 12,
+      "review_candidates": 0,
+      "year_counts": {
+        "2026": 12
+      }
+    },
+    "microstructure_characterization": {
+      "candidate_count": 15,
+      "open_access_candidates": 15,
+      "research_article_candidates": 15,
+      "review_candidates": 0,
+      "year_counts": {
+        "2026": 15
+      }
+    },
+    "oxidation": {
+      "candidate_count": 25,
+      "open_access_candidates": 24,
+      "research_article_candidates": 22,
+      "review_candidates": 3,
+      "year_counts": {
+        "2026": 25
+      }
+    }
+  },
+  "venue_whitelist_status_counts": {
+    "candidate_top_venue_or_domain_flagship": 4,
+    "needs_venue_metric_verification": 120
+  },
+  "verification_note": "OpenAlex verifies bibliographic metadata candidates. Final inclusion still requires manual venue, full-text, article-type, retraction, and domain checks.",
+  "work_kind_counts": {
+    "research_article_candidate": 113,
+    "review_candidate": 11
+  },
+  "year_counts": {
+    "2024": 5,
+    "2025": 13,
+    "2026": 106
+  }
+}
