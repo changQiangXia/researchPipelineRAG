@@ -226,7 +226,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Method comparison | complete | Five methods compared on the same medium Fresh-Hard split. |
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
 | Demo scale | partial | 40 chunks / 60 questions versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
-| Dense/rerank methods | deferred | Current AutoDL runtime has dependency conflicts; use isolated env before enabling. |
+| Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates; dense/rerank results are not yet generated. |
 | Final report | complete | This report and `rag-md-implementation-audit.json`. |
 
 See the structured form:
@@ -258,8 +258,8 @@ audit are repeated on a dataset at or near 1,000 chunks.
 
 ## Dense And Rerank Gap
 
-Dense retrieval and reranking are intentionally deferred. Phase 5E recorded
-that the current runtime has:
+Dense retrieval and reranking are no longer only an open-ended deferral. Phase
+5E recorded that the current runtime has:
 
 - PyTorch 2.1.2+cu121 while the installed transformers path expects PyTorch >=
   2.4 for some model-backed paths
@@ -269,6 +269,20 @@ that the current runtime has:
 BM25 is safe in the current environment and has already produced useful
 retrieval-recall differences. Dense/rerank work should be isolated in a fresh
 environment rather than mutating the current AutoDL stack late in the project.
+
+Phase 7A commits that isolated-readiness package:
+
+- `benchmark/domainrag/dense_rerank_readiness.py`
+- `requirements/flashrag-dense-rerank.txt`
+- `outputs/phase7a/dense_rerank_readiness/readiness.json`
+- `outputs/phase7a/dense_rerank_readiness/summary.md`
+- `docs/verification/dense-rerank-isolated-readiness.md`
+
+This is a partial implementation state. It defines the Python 3.10 isolated
+environment, target methods, dependency list, and acceptance gates for
+`flashrag_dense`, `flashrag_reranker`, and
+`flashrag_bm25_plus_reranker`. It does not claim dense/rerank benchmark
+results yet.
 
 ## What I Would Hand Over Now
 
@@ -290,7 +304,7 @@ the full `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase: Phase 7A scale path decision.
+Recommended next phase: Phase 7B scale path decision.
 
 Two practical options:
 
