@@ -29,6 +29,7 @@ from domainrag.report_generator import generate_report
 from domainrag.source_acquisition import acquire_demo_scale_sources, build_query_plan
 from domainrag.source_decisions import build_decision_outputs
 from domainrag.source_finalization_packet import build_manual_finalization_outputs
+from domainrag.source_human_signoff import build_human_signoff_outputs
 from domainrag.source_screening import build_screening_outputs
 from domainrag.source_verification import build_verification_outputs
 from domainrag.validator import validate_dataset
@@ -171,6 +172,16 @@ def build_parser() -> argparse.ArgumentParser:
     finalization_packet.add_argument(
         "--output",
         default="outputs/phase7i/manual_finalization_packet",
+    )
+    human_signoff = subparsers.add_parser("build-human-signoff")
+    human_signoff.add_argument(
+        "--candidate-queue",
+        default="outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl",
+    )
+    human_signoff.add_argument("--labels", default=None)
+    human_signoff.add_argument(
+        "--output",
+        default="outputs/phase7j/human_signoff",
     )
     return parser
 
@@ -482,6 +493,23 @@ def main(argv: list[str] | None = None) -> int:
         print(f"manual finalization packet written to {packet_path}")
         print(f"candidate final whitelist queue written to {queue_path}")
         print(f"manual finalization summary written to {summary_path}")
+        print(f"markdown summary written to {markdown_path}")
+        return 0
+    if args.command == "build-human-signoff":
+        try:
+            template_path, final_path, summary_path, markdown_path = (
+                build_human_signoff_outputs(
+                    Path(args.candidate_queue),
+                    output_dir=Path(args.output),
+                    labels_path=Path(args.labels) if args.labels else None,
+                )
+            )
+        except (OSError, ValidationError) as exc:
+            print(str(exc))
+            return 1
+        print(f"human sign-off template written to {template_path}")
+        print(f"final source whitelist written to {final_path}")
+        print(f"human sign-off summary written to {summary_path}")
         print(f"markdown summary written to {markdown_path}")
         return 0
     parser.error(f"unknown command: {args.command}")

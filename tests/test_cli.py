@@ -1181,3 +1181,33 @@ def test_build_finalization_packet_cli_writes_review_package(tmp_path: Path):
     assert (output / "candidate_final_whitelist_queue.jsonl").exists()
     assert (output / "manual_finalization_summary.json").exists()
     assert (output / "summary.md").exists()
+
+
+def test_build_human_signoff_cli_writes_template_without_final_claim(tmp_path: Path):
+    queue = tmp_path / "candidate_final_whitelist_queue.jsonl"
+    output = tmp_path / "human_signoff"
+    row = {
+        **_source_row_for_verification(),
+        "manual_finalization_action": "human_review_ready_source",
+        "candidate_final_whitelist_queue_status": "candidate_for_final_whitelist_review",
+        "final_inclusion_status": "not_finalized",
+        "manual_review_fields": ["venue_metric"],
+    }
+    write_jsonl(queue, [row])
+
+    result = _run_cli(
+        "build-human-signoff",
+        "--candidate-queue",
+        str(queue),
+        "--output",
+        str(output),
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "human sign-off template written to" in result.stdout
+    assert "sk-" not in result.stdout
+    assert "ghp_" not in result.stdout
+    assert (output / "human_signoff_template.jsonl").exists()
+    assert (output / "final_source_whitelist.jsonl").exists()
+    assert (output / "human_signoff_summary.json").exists()
+    assert (output / "summary.md").exists()

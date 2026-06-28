@@ -58,5 +58,5 @@ def test_phase7h_source_verification_keeps_final_manual_status_open():
     assert summary["verification_status"] == "machine_assisted_not_human_final"
     assert "Phase 7H" in doc
     assert "not final manual verification" in doc
-    assert audit["phase"] == "Phase 7I"
+    assert audit["phase"] == "Phase 7J"
     assert audit["phase7h_full_text_intake"]["accepted_final_verification"] == 0

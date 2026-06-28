@@ -1,5 +1,5 @@
 {
-  "phase": "Phase 7I",
+  "phase": "Phase 7J",
   "report": "docs/reports/domainrag-medium-pilot-final-report.md",
   "blueprint": "/root/autodl-tmp/RAG/RAG.md",
   "dataset": {
@@ -50,14 +50,14 @@
   },
   "completion_estimate": {
     "excluding_final_scale": "about 99%",
-    "including_rag_md_demo_scale": "93%-94%",
-    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7B raises the current best validated dataset to 100 chunks and 150 questions with Fresh-Hard retrieval evidence. Phase 7C adds a bounded real DeepSeek answer/Judge subset on the medium-plus Fresh-Hard split. Phase 7D adds a real OpenAlex-backed 124-paper candidate pool across 8 subtopics. Phase 7E converts those candidates into a machine pre-screening and full-text processing queue. Phase 7F adds provisional source decisions and a 115-row provisional source whitelist. Phase 7G refreshes OpenAlex metadata and probes the first 25 rows. Phase 7H expands full-text access/processability probing to all 115 provisional whitelist rows. Phase 7I converts that evidence into a 115-row human-review packet and a 108-row candidate final whitelist queue inside the RAG.md 100-180 source target range. The main hard gap remains actual human sign-off, chunk extraction, and 300-500 question generation; dense/rerank methods have isolated readiness evidence but have not yet been executed."
+    "including_rag_md_demo_scale": "94%-95%",
+    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7I provides a 108-row candidate final whitelist queue inside the RAG.md 100-180 source target range. Phase 7J adds the human sign-off workflow and pending sign-off template that can promote only human-labeled accepted sources into final_source_whitelist.jsonl. The remaining hard gap is external to machine-only automation: real human labels/sign-off, followed by chunk extraction and 300-500 question generation; dense/rerank methods have isolated readiness evidence but have not yet been executed."
   },
   "requirements": [
     {
       "id": "literature_source_policy",
       "status": "partial",
-      "summary": "The project uses source-backed nickel-superalloy high-temperature failure chunks, source manifests, a 124-paper OpenAlex candidate pool, Phase 7F provisional source decisions, Phase 7H full-text intake, and Phase 7I human-review packet with a 108-row candidate final whitelist queue. It does not yet contain the final manually signed-off 100-180 paper top-venue whitelist required by RAG.md.",
+      "summary": "The project now has source manifests, a 108-row candidate final whitelist queue, and a Phase 7J human sign-off workflow. It still does not contain real human labels or a final manually signed-off 100-180 paper whitelist.",
       "evidence": [
         "data/real_pilot_sources/nickel_superalloy_high_temp_failure_medium_plus/sources.jsonl",
         "outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl",
@@ -82,7 +82,11 @@
         "outputs/phase7i/manual_finalization_packet/manual_finalization_packet.jsonl",
         "outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl",
         "outputs/phase7i/manual_finalization_packet/manual_finalization_summary.json",
-        "docs/verification/manual-finalization-packet.md"
+        "docs/verification/manual-finalization-packet.md",
+        "outputs/phase7j/human_signoff/human_signoff_template.jsonl",
+        "outputs/phase7j/human_signoff/final_source_whitelist.jsonl",
+        "outputs/phase7j/human_signoff/human_signoff_summary.json",
+        "docs/verification/human-signoff-workflow.md"
       ]
     },
     {
@@ -222,7 +226,7 @@
     {
       "id": "demo_scale",
       "status": "partial",
-      "summary": "The current best validated dataset is 100 chunks and 150 questions. Phase 7I provides a 108-row candidate final whitelist queue inside the RAG.md source-count range, but the public benchmark still remains below the RAG.md demo target of 1,000-3,000 chunks and 300-500 questions.",
+      "summary": "The current best validated dataset is 100 chunks and 150 questions. Phase 7J prepares a 108-row human sign-off template for the candidate final whitelist, but no final human-accepted source whitelist, 1,000-3,000 chunks, or 300-500 questions exist yet.",
       "evidence": [
         "data/real_pilot_nickel_superalloy_medium_plus/statistics.json",
         "outputs/phase7f/source_decisions/decision_summary.json",
@@ -238,7 +242,9 @@
         "outputs/phase7h/source_verification_combined115/verification_summary.json",
         "docs/verification/full-text-intake-combined115.md",
         "outputs/phase7i/manual_finalization_packet/manual_finalization_summary.json",
-        "docs/verification/manual-finalization-packet.md"
+        "docs/verification/manual-finalization-packet.md",
+        "outputs/phase7j/human_signoff/human_signoff_summary.json",
+        "docs/verification/human-signoff-workflow.md"
       ]
     },
     {
@@ -257,7 +263,7 @@
     {
       "id": "final_report",
       "status": "complete",
-      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B-7H update the structured RAG.md implementation audit with medium-plus, live, source, metadata, and full-text evidence; Phase 7I adds a manual finalization packet and candidate final whitelist queue.",
+      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B-7I update source and full-text evidence; Phase 7J adds the human sign-off workflow needed before a real final source whitelist can be claimed.",
       "evidence": [
         "docs/reports/domainrag-medium-pilot-final-report.md",
         "docs/reports/rag-md-implementation-audit.json",
@@ -276,7 +282,9 @@
         "docs/verification/full-text-intake-combined115.md",
         "tests/test_phase7h_outputs.py",
         "docs/verification/manual-finalization-packet.md",
-        "tests/test_phase7i_outputs.py"
+        "tests/test_phase7i_outputs.py",
+        "docs/verification/human-signoff-workflow.md",
+        "tests/test_phase7j_outputs.py"
       ]
     }
   ],
@@ -644,18 +652,16 @@
     ]
   },
   "next_phase_recommendation": {
-    "name": "Phase 7J human sign-off handoff, chunk extraction, and demo-scale question generation",
-    "recommended_path": "Use the Phase 7I 108-row candidate final whitelist queue for real human sign-off. If at least 100 sources remain accepted, extract chunks only from accepted sources and generate 300-500 questions with qrels; if fewer than 100 remain, run targeted replacement acquisition for the missing subtopics first.",
+    "name": "Phase 7K final-source labels, chunk extraction, and demo-scale question generation",
+    "recommended_path": "Supply real human_signoff_labels.jsonl for the 108-row template. If at least 100 sources are accepted, generate final_source_whitelist.jsonl, then extract chunks only from accepted sources and generate 300-500 questions with qrels. If fewer than 100 are accepted, run targeted replacement acquisition before chunk extraction.",
     "minimum_next_scale": {
-      "candidate_final_whitelist_queue_count": 108,
+      "human_signoff_template_rows": 108,
       "target_final_source_whitelist_min": 100,
-      "rejection_buffer_before_replacement_needed": 8,
       "target_demo_chunks": 1000,
       "target_demo_questions": 300
     },
     "must_not_claim_yet": [
       "final manually verified 100-180 paper whitelist",
-      "manual venue/JCR/CiteScore verification complete",
       "1,000-3,000 chunk demo dataset",
       "300-500 question demo benchmark"
     ]
@@ -706,6 +712,20 @@
       "outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl",
       "outputs/phase7i/manual_finalization_packet/manual_finalization_summary.json",
       "docs/verification/manual-finalization-packet.md"
+    ]
+  },
+  "phase7j_human_signoff_workflow": {
+    "candidate_queue_count": 108,
+    "human_signoff_template_rows": 108,
+    "accepted_final_source_count": 0,
+    "pending_human_review_count": 108,
+    "final_whitelist_claim": "not_complete",
+    "verification_status": "human_signoff_required",
+    "outputs": [
+      "outputs/phase7j/human_signoff/human_signoff_template.jsonl",
+      "outputs/phase7j/human_signoff/final_source_whitelist.jsonl",
+      "outputs/phase7j/human_signoff/human_signoff_summary.json",
+      "docs/verification/human-signoff-workflow.md"
     ]
   }
 }

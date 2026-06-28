@@ -1,0 +1,22 @@
+{
+  "accepted_final_source_count": 0,
+  "candidate_queue_count": 108,
+  "final_whitelist_claim": "not_complete",
+  "human_signoff_decision_counts": {
+    "pending_human_review": 108
+  },
+  "pending_human_review_count": 108,
+  "rejected_final_source_count": 0,
+  "remaining_gaps": [
+    "human source sign-off",
+    "chunk extraction from human-accepted sources",
+    "300-500 question generation from accepted chunks"
+  ],
+  "subtopic_count": 0,
+  "subtopics": {},
+  "target_final_source_whitelist": [
+    100,
+    180
+  ],
+  "verification_status": "human_signoff_required"
+}

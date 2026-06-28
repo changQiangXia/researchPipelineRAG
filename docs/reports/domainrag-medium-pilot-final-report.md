@@ -4,7 +4,7 @@ Recorded: 2026-06-28
 
 Blueprint: `/root/autodl-tmp/RAG/RAG.md`
 
-Repository milestone: Phase 7I manual finalization packet checkpoint
+Repository milestone: Phase 7J human sign-off workflow checkpoint
 
 ## Executive Summary
 
@@ -56,6 +56,11 @@ Phase 7I turns the 115-row verification matrix into a human-review packet and a
 100-180 source-paper target range, but it remains a handoff for real human
 sign-off rather than a final accepted whitelist.
 
+Phase 7J adds the sign-off workflow for that 108-row queue. It generates a
+pending `human_signoff_template.jsonl` and an empty `final_source_whitelist.jsonl`
+until real human labels are supplied. This is the correct stopping boundary for
+machine-only source verification.
+
 The current project is not yet a full `RAG.md` demo-scale dataset. The best
 dataset has 100 corpus chunks and 150 questions; `RAG.md` calls for 1,000-3,000
 chunks and 300-500 questions for the demo tier. Phase 7D/7E/7F/7G/7H/7I materially
@@ -66,7 +71,7 @@ extraction, and question generation are still open.
 Completion estimate:
 
 - Excluding final scale: about 99%
-- Including `RAG.md` demo scale: 93%-94%
+- Including `RAG.md` demo scale: 94%-95%
 
 The structured audit behind this report is committed at:
 
@@ -526,6 +531,34 @@ source acquisition is needed before chunk extraction should be treated as
 demo-scale. The next high-value work is human sign-off followed by chunk
 extraction from accepted sources only.
 
+## Phase 7J Human Sign-Off Workflow
+
+Phase 7J creates the workflow boundary for real human labels. It writes the
+108-row sign-off template and keeps the final whitelist empty until labels are
+supplied.
+
+Output evidence:
+
+- `outputs/phase7j/human_signoff/human_signoff_template.jsonl`
+- `outputs/phase7j/human_signoff/final_source_whitelist.jsonl`
+- `outputs/phase7j/human_signoff/human_signoff_summary.json`
+- `docs/verification/human-signoff-workflow.md`
+
+Human sign-off status:
+
+| metric | value |
+| --- | ---: |
+| candidate queue rows | 108 |
+| human sign-off template rows | 108 |
+| pending human review | 108 |
+| accepted final sources | 0 |
+| final whitelist claim | not_complete |
+
+Interpretation: the automated source-side work has reached a clear boundary.
+The next step requires human labels. Once labels exist, the same workflow can
+produce `final_source_whitelist.jsonl`; chunk extraction should not treat the
+current pending template as final accepted literature.
+
 Historical medium dataset:
 
 ```text
@@ -622,7 +655,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 
 | requirement | status | evidence |
 | --- | --- | --- |
-| Literature source policy | partial | Source manifests, a 124-paper OpenAlex candidate pool, Phase 7F provisional decisions, Phase 7H 115-row full-text intake, and Phase 7I 108-row candidate final whitelist queue exist, but no final manually signed-off 100-180-paper top-venue whitelist is committed. |
+| Literature source policy | partial | Source manifests, a 108-row candidate final whitelist queue, and Phase 7J human sign-off template exist, but no final manually signed-off 100-180-paper top-venue whitelist is committed. |
 | Easy Dataset intake | complete | Easy Dataset-style export adapter and copyable integration assets are tested. |
 | DomainRAG data contract | complete | Contract, schema, validator, real datasets, and tests are present. |
 | Public metadata safety | complete | Validator and tests enforce forbidden metadata rules. |
@@ -633,9 +666,9 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Human calibration | complete | 15-row manual audit over Phase 6E calibration packet. |
 | Method comparison | complete | Five methods compared on the same medium Fresh-Hard split. |
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
-| Demo scale | partial | 100 chunks / 150 questions plus a 108-row candidate final whitelist queue versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
+| Demo scale | partial | 100 chunks / 150 questions plus a 108-row pending human sign-off template versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
 | Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates; dense/rerank results are not yet generated. |
-| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I verification documentation. |
+| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I/7J verification documentation. |
 
 See the structured form:
 
@@ -663,6 +696,7 @@ Current medium-plus pilot:
 - 115 source rows with machine full-text access/processability evidence
 - 2 verified source candidates and 106 rows ready for manual finalization after machine checks
 - 108 source rows in the candidate final whitelist queue
+- 108 source rows in the pending human sign-off template
 - 0 final manually verified source inclusions
 
 The implementation path is ready for more scale, but the dataset itself is
@@ -720,6 +754,7 @@ The current handoff package is coherent as a medium pilot:
 - A Phase 7G OpenAlex metadata refresh and 25-row full-text/processability checkpoint.
 - A Phase 7H 115-row full-text/processability checkpoint and machine finalization queue.
 - A Phase 7I 115-row human-review packet and 108-row candidate final whitelist queue.
+- A Phase 7J 108-row pending human sign-off template.
 - Deterministic diagnostic baselines.
 - Live DeepSeek answer generation and Judge evaluation.
 - A five-method Fresh-Hard comparison.
@@ -732,12 +767,12 @@ yet strong enough to claim the full `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase if work resumes: Phase 7J human sign-off handoff, chunk
+Recommended next phase if work resumes: Phase 7K final-source labels, chunk
 extraction, and demo-scale question generation.
 
 If work resumes, the high-value path is:
 
-1. Use the 108-row candidate final whitelist queue for real human sign-off.
+1. Fill `human_signoff_template.jsonl` with real human labels.
 2. Fill subtopic review gaps for coatings, life prediction, and
    microstructure characterization.
 3. Promote human-accepted rows into a final 100-180 source whitelist, with

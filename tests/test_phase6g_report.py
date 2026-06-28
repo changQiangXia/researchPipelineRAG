@@ -26,6 +26,7 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert "Phase 7G Source Verification And Full-Text Intake" in report
     assert "Phase 7H Full-Text Intake Combined115" in report
     assert "Phase 7I Manual Finalization Packet" in report
+    assert "Phase 7J Human Sign-Off Workflow" in report
     assert "outputs/phase6e/medium_fresh_hard_comparison/summary.json" in report
     assert "outputs/phase6f/medium_human_calibration_audit/summary.json" in report
     assert "outputs/phase7b/medium_plus_bm25s/" in report
@@ -34,7 +35,7 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert "outputs/phase7e/source_screening_queue/screening_summary.json" in report
     assert "outputs/phase7f/source_decisions/decision_summary.json" in report
 
-    assert audit["phase"] == "Phase 7I"
+    assert audit["phase"] == "Phase 7J"
     assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_medium_plus"
     assert audit["dataset"]["corpus_chunks"] == 100
     assert audit["dataset"]["questions"] == 150
@@ -42,7 +43,7 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert audit["rag_md_targets"]["demo"]["corpus_chunks"] == [1000, 3000]
     assert audit["rag_md_targets"]["demo"]["questions"] == [300, 500]
     assert audit["completion_estimate"]["excluding_final_scale"] == "about 99%"
-    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "93%-94%"
+    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "94%-95%"
 
 
 def test_phase6g_audit_tracks_core_requirements_and_gaps():
