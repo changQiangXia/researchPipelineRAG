@@ -18,18 +18,20 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert "Scale Gap" in report
     assert "Dense And Rerank Gap" in report
     assert "Next Phase Recommendation" in report
+    assert "Phase 7B Medium-Plus Update" in report
     assert "outputs/phase6e/medium_fresh_hard_comparison/summary.json" in report
     assert "outputs/phase6f/medium_human_calibration_audit/summary.json" in report
+    assert "outputs/phase7b/medium_plus_bm25s/" in report
 
-    assert audit["phase"] == "Phase 6G"
-    assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_medium"
-    assert audit["dataset"]["corpus_chunks"] == 40
-    assert audit["dataset"]["questions"] == 60
-    assert audit["dataset"]["fresh_hard_questions"] == 20
+    assert audit["phase"] == "Phase 7B"
+    assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_medium_plus"
+    assert audit["dataset"]["corpus_chunks"] == 100
+    assert audit["dataset"]["questions"] == 150
+    assert audit["dataset"]["fresh_hard_questions"] == 50
     assert audit["rag_md_targets"]["demo"]["corpus_chunks"] == [1000, 3000]
     assert audit["rag_md_targets"]["demo"]["questions"] == [300, 500]
     assert audit["completion_estimate"]["excluding_final_scale"] == "98%-99%"
-    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "78%-80%"
+    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "82%-84%"
 
 
 def test_phase6g_audit_tracks_core_requirements_and_gaps():
