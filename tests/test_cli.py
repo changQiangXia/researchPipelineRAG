@@ -870,3 +870,83 @@ def test_acquire_sources_cli_dry_run_lists_query_plan(capsys):
     assert "OpenAlex query plan" in captured.out
     assert "per-page=2" in captured.out
     assert "fatigue" in captured.out
+
+
+def test_screen_sources_cli_writes_screening_queue(tmp_path: Path):
+    candidates = tmp_path / "candidates.jsonl"
+    output = tmp_path / "screening"
+    write_jsonl(
+        candidates,
+        [
+            {
+                "source_id": "openalex_W1",
+                "doi": "10.1234/example",
+                "title": "High-temperature oxidation of nickel superalloy",
+                "year": 2026,
+                "subtopic": "oxidation",
+                "work_kind": "research_article_candidate",
+                "venue_whitelist_status": "candidate_top_venue_or_domain_flagship",
+                "open_access": True,
+                "oa_url": "https://publisher.example/paper.pdf",
+                "official_url": "https://doi.org/10.1234/example",
+                "domain_relevance_terms": ["nickel", "superalloy"],
+            }
+        ],
+    )
+
+    result = _run_cli(
+        "screen-sources",
+        "--candidates",
+        str(candidates),
+        "--output",
+        str(output),
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "source screening queue written to" in result.stdout
+    assert (output / "screening_queue.jsonl").exists()
+    assert (output / "screening_summary.json").exists()
+    assert (output / "summary.md").exists()
+
+
+def test_screen_phase7d_sources_script_writes_queue_without_secrets(tmp_path: Path):
+    candidates = tmp_path / "candidates.jsonl"
+    output = tmp_path / "screening"
+    write_jsonl(
+        candidates,
+        [
+            {
+                "source_id": "openalex_W1",
+                "doi": "10.1234/example",
+                "title": "High-temperature oxidation of nickel superalloy",
+                "year": 2026,
+                "subtopic": "oxidation",
+                "work_kind": "research_article_candidate",
+                "venue_whitelist_status": "candidate_top_venue_or_domain_flagship",
+                "open_access": True,
+                "oa_url": "https://publisher.example/paper.pdf",
+                "official_url": "https://doi.org/10.1234/example",
+                "domain_relevance_terms": ["nickel", "superalloy"],
+            }
+        ],
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/screen_phase7d_sources.py",
+            "--candidates",
+            str(candidates),
+            "--output",
+            str(output),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "source screening queue written to" in result.stdout
+    assert "sk-" not in result.stdout
+    assert "ghp_" not in result.stdout
+    assert (output / "screening_queue.jsonl").exists()
