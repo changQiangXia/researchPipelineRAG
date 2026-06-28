@@ -56,12 +56,12 @@ def test_phase7g_source_verification_matrix_tracks_not_final_status():
     assert len(final_queue) == 0
     assert summary["source_count"] == 115
     assert summary["accepted_final_verification_count"] == 0
-    assert summary["ready_for_manual_finalization_count"] == 15
-    assert summary["rejected_verification_count"] == 15
+    assert summary["ready_for_manual_finalization_count"] == 23
+    assert summary["rejected_verification_count"] == 7
     assert summary["status_counts"] == {
         "needs_evidence": 84,
-        "ready_for_manual_finalization": 15,
-        "rejected_verification": 15,
+        "ready_for_manual_finalization": 23,
+        "rejected_verification": 7,
         "verified_source_candidate": 1,
     }
     assert summary["final_whitelist_claim"] == "not_complete"

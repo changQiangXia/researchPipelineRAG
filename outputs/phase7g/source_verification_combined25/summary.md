@@ -4,15 +4,15 @@
 - Final whitelist claim: not_complete
 - Source rows checked: 115
 - Accepted final verification rows: 0
-- Ready for manual finalization rows: 15
-- Rejected after verification rows: 15
+- Ready for manual finalization rows: 23
+- Rejected after verification rows: 7
 
 ## Status Counts
 
 | status | count |
 | --- | ---: |
-| ready_for_manual_finalization | 15 |
-| rejected_verification | 15 |
+| ready_for_manual_finalization | 23 |
+| rejected_verification | 7 |
 | verified_source_candidate | 1 |
 | needs_evidence | 84 |
 

@@ -1,5 +1,5 @@
 {
-  "phase": "Phase 7G",
+  "phase": "Phase 7H",
   "report": "docs/reports/domainrag-medium-pilot-final-report.md",
   "blueprint": "/root/autodl-tmp/RAG/RAG.md",
   "dataset": {
@@ -50,14 +50,14 @@
   },
   "completion_estimate": {
     "excluding_final_scale": "about 99%",
-    "including_rag_md_demo_scale": "90%-91%",
-    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7B raises the current best validated dataset to 100 chunks and 150 questions with Fresh-Hard retrieval evidence. Phase 7C adds a bounded real DeepSeek answer/Judge subset on the medium-plus Fresh-Hard split. Phase 7D adds a real OpenAlex-backed 124-paper candidate pool across 8 subtopics. Phase 7E converts those candidates into a machine pre-screening and full-text processing queue. Phase 7F adds provisional source decisions and a 115-row provisional source whitelist. Phase 7G refreshes OpenAlex metadata for all 115 provisional rows, probes real full-text access for the first 25 rows, and builds a combined machine-assisted source verification matrix. The main hard gap remains final RAG.md demo scale: human source finalization, full-batch full-text parsing, chunk extraction, and 300-500 question generation are still partial; dense/rerank methods have isolated readiness evidence but have not yet been executed."
+    "including_rag_md_demo_scale": "92%-93%",
+    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7B raises the current best validated dataset to 100 chunks and 150 questions with Fresh-Hard retrieval evidence. Phase 7C adds a bounded real DeepSeek answer/Judge subset on the medium-plus Fresh-Hard split. Phase 7D adds a real OpenAlex-backed 124-paper candidate pool across 8 subtopics. Phase 7E converts those candidates into a machine pre-screening and full-text processing queue. Phase 7F adds provisional source decisions and a 115-row provisional source whitelist. Phase 7G refreshes OpenAlex metadata for all 115 provisional rows and probes real full-text access for the first 25 rows. Phase 7H expands full-text access/processability probing to all 115 provisional whitelist rows and builds a combined machine-assisted source verification matrix. The main hard gap remains final RAG.md demo scale: human source finalization, chunk extraction, and 300-500 question generation are still partial; dense/rerank methods have isolated readiness evidence but have not yet been executed."
   },
   "requirements": [
     {
       "id": "literature_source_policy",
       "status": "partial",
-      "summary": "The project uses source-backed nickel-superalloy high-temperature failure chunks, source manifests, a 124-paper OpenAlex candidate pool, a Phase 7E screening queue, Phase 7F provisional source decisions, and a Phase 7G machine-assisted source verification matrix. It does not yet contain the final manually verified 100-180 paper top-venue whitelist required by RAG.md.",
+      "summary": "The project uses source-backed nickel-superalloy high-temperature failure chunks, source manifests, a 124-paper OpenAlex candidate pool, a Phase 7E screening queue, Phase 7F provisional source decisions, a Phase 7G machine-assisted source verification matrix, and Phase 7H 115-row full-text intake. It does not yet contain the final manually verified 100-180 paper top-venue whitelist required by RAG.md.",
       "evidence": [
         "data/real_pilot_sources/nickel_superalloy_high_temp_failure_medium_plus/sources.jsonl",
         "outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl",
@@ -75,7 +75,10 @@
         "docs/verification/source-decisions-and-stop-point.md",
         "docs/verification/source-verification-and-full-text-intake.md",
         "docs/verification/medium-plus-scale-expansion.md",
-        "/root/autodl-tmp/RAG/RAG.md"
+        "/root/autodl-tmp/RAG/RAG.md",
+        "outputs/phase7h/full_text_access_combined115/full_text_access.jsonl",
+        "outputs/phase7h/source_verification_combined115/source_verification_matrix.jsonl",
+        "docs/verification/full-text-intake-combined115.md"
       ]
     },
     {
@@ -215,7 +218,7 @@
     {
       "id": "demo_scale",
       "status": "partial",
-      "summary": "The current best validated dataset is 100 chunks and 150 questions. Phase 7F adds a 115-row provisional source whitelist inside the RAG.md source-count range, and Phase 7G adds full-text/processability evidence for the first 25 rows, but the public benchmark still remains below the RAG.md demo target of 1,000-3,000 chunks and 300-500 questions.",
+      "summary": "The current best validated dataset is 100 chunks and 150 questions. Phase 7F adds a 115-row provisional source whitelist inside the RAG.md source-count range, and Phase 7H adds full-text/processability evidence for all 115 provisional rows, but the public benchmark still remains below the RAG.md demo target of 1,000-3,000 chunks and 300-500 questions.",
       "evidence": [
         "data/real_pilot_nickel_superalloy_medium_plus/statistics.json",
         "outputs/phase7f/source_decisions/decision_summary.json",
@@ -226,7 +229,10 @@
         "docs/verification/demo-scale-source-acquisition.md",
         "docs/verification/source-screening-queue.md",
         "docs/verification/medium-plus-scale-expansion.md",
-        "/root/autodl-tmp/RAG/RAG.md"
+        "/root/autodl-tmp/RAG/RAG.md",
+        "outputs/phase7h/full_text_access_combined115/full_text_access_summary.json",
+        "outputs/phase7h/source_verification_combined115/verification_summary.json",
+        "docs/verification/full-text-intake-combined115.md"
       ]
     },
     {
@@ -245,7 +251,7 @@
     {
       "id": "final_report",
       "status": "complete",
-      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B updates this structured RAG.md implementation audit with medium-plus scale evidence; Phase 7C adds medium-plus live subset evidence; Phase 7D adds demo-scale source acquisition evidence; Phase 7E adds source screening queue evidence; Phase 7F adds provisional source decisions; Phase 7G adds machine-assisted source verification and full-text intake documentation.",
+      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B updates this structured RAG.md implementation audit with medium-plus scale evidence; Phase 7C adds medium-plus live subset evidence; Phase 7D adds demo-scale source acquisition evidence; Phase 7E adds source screening queue evidence; Phase 7F adds provisional source decisions; Phase 7G adds machine-assisted source verification; Phase 7H adds full 115-row full-text intake documentation.",
       "evidence": [
         "docs/reports/domainrag-medium-pilot-final-report.md",
         "docs/reports/rag-md-implementation-audit.json",
@@ -260,7 +266,9 @@
         "tests/test_phase7d_outputs.py",
         "tests/test_phase7e_outputs.py",
         "tests/test_phase7f_outputs.py",
-        "tests/test_phase7g_outputs.py"
+        "tests/test_phase7g_outputs.py",
+        "docs/verification/full-text-intake-combined115.md",
+        "tests/test_phase7h_outputs.py"
       ]
     }
   ],
@@ -604,8 +612,8 @@
     "total_extracted_chars_counted": 1120613,
     "source_verification_rows": 115,
     "verified_source_candidates": 1,
-    "ready_for_manual_finalization": 15,
-    "rejected_verification": 15,
+    "ready_for_manual_finalization": 23,
+    "rejected_verification": 7,
     "needs_evidence": 84,
     "accepted_final_verification": 0,
     "verification_status": "machine_assisted_not_human_final",
@@ -628,14 +636,13 @@
     ]
   },
   "next_phase_recommendation": {
-    "name": "Phase 7H continued full-text intake, manual source finalization, and demo-scale extraction",
-    "recommended_path": "Continue from Phase 7G by probing the remaining provisional rows in small full-text batches, manually finalizing the 1 verified source candidate and 15 ready rows first, spot-checking rejected rows, filling review-paper gaps, then extracting chunks and questions toward true RAG.md demo scale.",
+    "name": "Phase 7I manual source finalization, chunk extraction, and demo-scale question generation",
+    "recommended_path": "Continue from Phase 7H by manually finalizing the 2 verified source candidates and 106 ready rows first, spot-checking the 7 rejected rows, filling review-paper gaps or replacement sources if final accepted count falls below 100, then extracting chunks and questions toward true RAG.md demo scale.",
     "minimum_next_scale": {
       "provisional_whitelist_to_verify": 115,
-      "accepted_provisional": 82,
-      "pending_manual_review": 33,
-      "machine_verified_source_candidates": 1,
-      "machine_ready_for_manual_finalization": 15,
+      "machine_verified_source_candidates": 2,
+      "machine_ready_for_manual_finalization": 106,
+      "machine_rejected_verification": 7,
       "target_final_source_whitelist": 100
     },
     "demo_scale_path": {
@@ -645,9 +652,39 @@
     "must_not_claim_yet": [
       "final manually verified 100-180 paper whitelist",
       "manual venue/JCR/CiteScore verification complete",
-      "full-text parsing complete",
       "1,000-3,000 chunk demo dataset",
       "300-500 question demo benchmark"
+    ]
+  },
+  "phase7h_full_text_intake": {
+    "full_text_rows_checked": 115,
+    "full_text_downloaded_rows": 71,
+    "full_text_not_accessible_rows": 37,
+    "full_text_download_failed_rows": 6,
+    "full_text_download_truncated_rows": 1,
+    "full_text_parseable_rows": 71,
+    "full_text_not_attempted_rows": 44,
+    "total_extracted_chars_counted": 4366176,
+    "source_verification_rows": 115,
+    "verified_source_candidates": 2,
+    "ready_for_manual_finalization": 106,
+    "rejected_verification": 7,
+    "needs_evidence": 0,
+    "accepted_final_verification": 0,
+    "verification_status": "machine_assisted_not_human_final",
+    "final_whitelist_claim": "not_complete",
+    "outputs": [
+      "outputs/phase7h/full_text_access_combined115/full_text_access.jsonl",
+      "outputs/phase7h/full_text_access_combined115/full_text_access_summary.json",
+      "outputs/phase7h/source_verification_combined115/source_verification_matrix.jsonl",
+      "outputs/phase7h/source_verification_combined115/verification_summary.json",
+      "docs/verification/full-text-intake-combined115.md"
+    ],
+    "remaining_gaps": [
+      "manual venue metric or flagship verification",
+      "human final inclusion sign-off",
+      "alternate access/manual handling for not-accessible, failed, or truncated full-text rows",
+      "full 1,000-3,000 chunk and 300-500 question demo-scale production"
     ]
   }
 }

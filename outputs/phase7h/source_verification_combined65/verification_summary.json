@@ -1,0 +1,74 @@
+{
+  "accepted_final_verification_count": 0,
+  "final_whitelist_claim": "not_complete",
+  "ready_for_manual_finalization_count": 62,
+  "rejected_verification_count": 7,
+  "remaining_gaps": [
+    "manual JCR/CiteScore or flagship venue confirmation for pending rows",
+    "human final inclusion sign-off",
+    "full 1,000-3,000 chunk and 300-500 question demo-scale production"
+  ],
+  "source_count": 115,
+  "status_counts": {
+    "needs_evidence": 44,
+    "ready_for_manual_finalization": 62,
+    "rejected_verification": 7,
+    "verified_source_candidate": 2
+  },
+  "subtopic_count": 8,
+  "subtopics": {
+    "additive_manufacturing": {
+      "accepted_final_verification": 0,
+      "ready_for_manual_finalization": 3,
+      "rejected_verification": 1,
+      "source_count": 6
+    },
+    "coatings": {
+      "accepted_final_verification": 0,
+      "ready_for_manual_finalization": 6,
+      "rejected_verification": 0,
+      "source_count": 9
+    },
+    "creep": {
+      "accepted_final_verification": 0,
+      "ready_for_manual_finalization": 24,
+      "rejected_verification": 1,
+      "source_count": 27
+    },
+    "fatigue": {
+      "accepted_final_verification": 0,
+      "ready_for_manual_finalization": 8,
+      "rejected_verification": 1,
+      "source_count": 9
+    },
+    "hot_corrosion": {
+      "accepted_final_verification": 0,
+      "ready_for_manual_finalization": 8,
+      "rejected_verification": 1,
+      "source_count": 14
+    },
+    "life_prediction": {
+      "accepted_final_verification": 0,
+      "ready_for_manual_finalization": 5,
+      "rejected_verification": 0,
+      "source_count": 11
+    },
+    "microstructure_characterization": {
+      "accepted_final_verification": 0,
+      "ready_for_manual_finalization": 8,
+      "rejected_verification": 1,
+      "source_count": 15
+    },
+    "oxidation": {
+      "accepted_final_verification": 0,
+      "ready_for_manual_finalization": 0,
+      "rejected_verification": 2,
+      "source_count": 24
+    }
+  },
+  "target_final_source_whitelist": [
+    100,
+    180
+  ],
+  "verification_status": "machine_assisted_not_human_final"
+}

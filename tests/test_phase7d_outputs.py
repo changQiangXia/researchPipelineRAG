@@ -71,7 +71,7 @@ def test_phase7d_updates_verification_doc_and_audit_without_closing_scale_gap():
     assert "candidate_for_manual_verification" in doc
     assert "not a final inclusion list" in doc
     assert "outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl" in doc
-    assert audit["phase"] == "Phase 7G"
+    assert audit["phase"] == "Phase 7H"
     assert acquisition["candidate_count"] >= 100
     assert acquisition["subtopic_count"] == 8
     assert acquisition["final_included_sources"] == 0

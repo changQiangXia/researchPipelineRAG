@@ -148,6 +148,18 @@ def test_verify_source_does_not_accept_tiny_landing_page_as_full_text():
     assert verified["source_verification_status"] == "ready_for_manual_finalization"
 
 
+def test_verify_source_keeps_inaccessible_full_text_pending_for_manual_access_review():
+    verified = verify_source(
+        _source_row(),
+        metadata=_openalex_record(),
+        access=_access_record(access_status="not_accessible", parse_status="not_attempted", extracted_chars=0),
+    )
+
+    assert verified["verification_checks"]["full_text_processability"] == "pending_manual"
+    assert verified["source_verification_status"] == "ready_for_manual_finalization"
+    assert verified["final_inclusion_status"] == "not_finalized"
+
+
 def test_summarize_verifications_tracks_final_ready_and_pending_counts():
     rows = [
         verify_source(_source_row(source_id="openalex_W1"), metadata=_openalex_record(), access=_access_record()),

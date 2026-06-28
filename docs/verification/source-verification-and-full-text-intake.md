@@ -153,8 +153,8 @@ Verification matrix:
 | source rows in matrix | 115 |
 | accepted final verification | 0 |
 | verified source candidate | 1 |
-| ready for manual finalization | 15 |
-| rejected after verification | 15 |
+| ready for manual finalization | 23 |
+| rejected after verification | 7 |
 | needs evidence | 84 |
 | final whitelist claim | not_complete |
 
@@ -169,7 +169,7 @@ This checkpoint makes the next work more concrete:
   reviewed before any final whitelist claim.
 - Full-text processing is real but still incomplete: 17 of the first 25 rows are
   parseable, while 403 rows and timeout rows need alternate access or manual
-  handling.
+  handling rather than automatic source rejection.
 - One row has all machine checks verified, but it is still only a verified
   source candidate until human final sign-off.
 - Rows with `ready_for_manual_finalization` still need human venue/JCR/CiteScore

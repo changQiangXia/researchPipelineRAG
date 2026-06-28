@@ -1,0 +1,23 @@
+{
+  "access_status_counts": {
+    "download_failed": 6,
+    "download_truncated": 1,
+    "downloaded": 71,
+    "not_accessible": 37
+  },
+  "content_type_counts": {
+    "application/pdf": 57,
+    "text/html": 23,
+    "text/html; charset=UTF-8": 19,
+    "text/html; charset=utf-8": 4,
+    "text/html;charset=UTF-8": 6,
+    "unknown": 6
+  },
+  "parse_status_counts": {
+    "not_attempted": 44,
+    "parseable": 71
+  },
+  "parseable_count": 71,
+  "source_count": 115,
+  "total_extracted_chars": 4366176
+}

@@ -200,8 +200,6 @@ def _verify_full_text(access: dict[str, Any] | None) -> str:
         and int(access.get("extracted_chars") or 0) >= MIN_FULL_TEXT_CHARS
     ):
         return "verified"
-    if access.get("access_status") in {"download_failed", "not_accessible"}:
-        return "failed"
     return "pending_manual"
 
 

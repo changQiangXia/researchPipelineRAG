@@ -1,0 +1,18 @@
+{
+  "access_status_counts": {
+    "downloaded": 1,
+    "not_accessible": 4
+  },
+  "content_type_counts": {
+    "text/html": 1,
+    "text/html; charset=UTF-8": 3,
+    "text/html; charset=utf-8": 1
+  },
+  "parse_status_counts": {
+    "not_attempted": 4,
+    "parseable": 1
+  },
+  "parseable_count": 1,
+  "source_count": 5,
+  "total_extracted_chars": 74972
+}
