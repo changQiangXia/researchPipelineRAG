@@ -1,25 +1,28 @@
 {
-  "phase": "Phase 7L",
+  "phase": "Phase 7M",
   "report": "docs/reports/domainrag-medium-pilot-final-report.md",
   "blueprint": "/root/autodl-tmp/RAG/RAG.md",
   "dataset": {
-    "name": "real_pilot_nickel_superalloy_medium_plus",
+    "name": "real_pilot_nickel_superalloy_demo_questions",
+    "source_dataset": "real_pilot_nickel_superalloy_medium_plus",
+    "provenance_status": "provisional_machine_generated_not_human_final",
     "domain": "nickel-superalloy high-temperature failure",
     "corpus_chunks": 100,
-    "questions": 150,
-    "dev_questions": 50,
-    "test_questions": 50,
-    "fresh_hard_questions": 50,
+    "questions": 300,
+    "dev_questions": 100,
+    "test_questions": 100,
+    "fresh_hard_questions": 100,
     "question_type_counts": {
-      "single_choice": 38,
-      "multiple_choice": 38,
-      "fill_blank": 37,
-      "short_answer": 37
+      "single_choice": 75,
+      "multiple_choice": 75,
+      "fill_blank": 75,
+      "short_answer": 75
     },
     "source_records": 32,
     "evidence": [
-      "data/real_pilot_nickel_superalloy_medium_plus/statistics.json",
-      "docs/verification/medium-plus-scale-expansion.md"
+      "data/real_pilot_nickel_superalloy_demo_questions/statistics.json",
+      "outputs/phase7m/demo_question_generation/demo_question_summary.json",
+      "docs/verification/demo-question-generation.md"
     ]
   },
   "rag_md_targets": {
@@ -50,8 +53,8 @@
   },
   "completion_estimate": {
     "excluding_final_scale": "about 99%",
-    "including_rag_md_demo_scale": "96%-97%",
-    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7I provides a 108-row candidate final whitelist queue inside the RAG.md 100-180 source target range. Phase 7J adds the human sign-off workflow and pending sign-off template that can promote only human-labeled accepted sources into final_source_whitelist.jsonl. Phase 7K adds a formal local hashed dense benchmark on the real medium-plus Fresh-Hard split. Phase 7L adds full-text chunk extraction over the Phase 7H parseable rows and produces 2,196 machine-parseable chunk manifests, inside the RAG.md 1,000-3,000 demo chunk target. The remaining hard gaps are real human source labels/sign-off and 300-500 question generation from accepted-source chunks. Neural dense/rerank methods still require the isolated dependency plan from Phase 7A."
+    "including_rag_md_demo_scale": "97%-98%",
+    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7I provides a 108-row candidate final whitelist queue inside the RAG.md 100-180 source target range. Phase 7J adds the human sign-off workflow and pending sign-off template that can promote only human-labeled accepted sources into final_source_whitelist.jsonl. Phase 7K adds a formal local hashed dense benchmark on the real medium-plus Fresh-Hard split. Phase 7L adds full-text chunk extraction over the Phase 7H parseable rows and produces 2,196 machine-parseable chunk manifests, inside the RAG.md 1,000-3,000 demo chunk target. Phase 7M adds a validated 300-question provisional demo-question dataset, FlashRAG bundle, Fresh-Hard baseline, and local hashed dense diagnostics. The remaining hard gaps are real human source labels/sign-off, filtering or regeneration from human-accepted sources, and optional live DeepSeek/Judge plus human calibration on the 300-question provisional set if a final demo benchmark is required. Neural dense/rerank methods still require the isolated dependency plan from Phase 7A."
   },
   "requirements": [
     {
@@ -226,7 +229,7 @@
     {
       "id": "demo_scale",
       "status": "partial",
-      "summary": "The current best validated public benchmark dataset is still 100 chunks and 150 questions. Phase 7L produces 2,196 full-text chunk manifests from machine-parseable sources, meeting the RAG.md demo chunk-count range, but they are not filtered to human-accepted final sources and no 300-500 question demo benchmark exists yet.",
+      "summary": "Phase 7L produces 2,196 full-text chunk manifests from machine-parseable sources, meeting the RAG.md demo chunk-count range. Phase 7M adds 300 provisional questions over the validated 100-chunk medium-plus corpus, meeting the RAG.md question-count range provisionally. The remaining gap is that neither the chunks nor the questions are filtered or regenerated from final human-accepted sources.",
       "evidence": [
         "data/real_pilot_nickel_superalloy_medium_plus/statistics.json",
         "outputs/phase7f/source_decisions/decision_summary.json",
@@ -247,7 +250,12 @@
         "docs/verification/human-signoff-workflow.md",
         "outputs/phase7l/full_text_chunk_extraction/chunk_extraction_summary.json",
         "outputs/phase7l/full_text_chunk_extraction/full_text_chunks.jsonl",
-        "docs/verification/full-text-chunk-extraction.md"
+        "docs/verification/full-text-chunk-extraction.md",
+        "data/real_pilot_nickel_superalloy_demo_questions/statistics.json",
+        "outputs/phase7m/demo_question_generation/demo_question_summary.json",
+        "outputs/phase7m/demo_question_generation/baseline/report_fresh_hard/summary.json",
+        "outputs/phase7m/demo_question_generation/hashed_dense/report_fresh_hard/summary.json",
+        "docs/verification/demo-question-generation.md"
       ]
     },
     {
@@ -269,7 +277,7 @@
     {
       "id": "final_report",
       "status": "complete",
-      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B-7I update source and full-text evidence; Phase 7J adds the human sign-off workflow needed before a real final source whitelist can be claimed; Phase 7K adds a formal non-neural local hashed dense benchmark; Phase 7L adds full-text chunk extraction manifests.",
+      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B-7I update source and full-text evidence; Phase 7J adds the human sign-off workflow needed before a real final source whitelist can be claimed; Phase 7K adds a formal non-neural local hashed dense benchmark; Phase 7L adds full-text chunk extraction manifests; Phase 7M adds a provisional 300-question dataset and local diagnostics.",
       "evidence": [
         "docs/reports/domainrag-medium-pilot-final-report.md",
         "docs/reports/rag-md-implementation-audit.json",
@@ -294,7 +302,9 @@
         "docs/verification/hashed-dense-formal-benchmark.md",
         "tests/test_phase7k_outputs.py",
         "docs/verification/full-text-chunk-extraction.md",
-        "tests/test_phase7l_outputs.py"
+        "tests/test_phase7l_outputs.py",
+        "docs/verification/demo-question-generation.md",
+        "tests/test_phase7m_outputs.py"
       ]
     }
   ],
@@ -662,8 +672,8 @@
     ]
   },
   "next_phase_recommendation": {
-    "name": "Phase 7M final-source labels and demo-scale question generation",
-    "recommended_path": "Supply real human_signoff_labels.jsonl for the 108-row template. If at least 100 sources are accepted, filter the Phase 7L chunk manifests to human-accepted sources and generate 300-500 questions with qrels. If fewer than 100 are accepted, run targeted replacement acquisition before treating the chunks as final demo-scale evidence. If human labels remain unavailable, the next machine-only route is provisional question generation from Phase 7L chunks or a neural dense/rerank run in the isolated dependency environment described by Phase 7A.",
+    "name": "Post-Phase 7M final-source labels or stop",
+    "recommended_path": "If a defensible near-term deliverable is enough, stop at Phase 7M and label the 300-question dataset as provisional. For strict RAG.md completion, supply real human_signoff_labels.jsonl for the 108-row template. If at least 100 sources are accepted, filter the Phase 7L chunk manifests to human-accepted sources and regenerate or verify 300-500 questions with qrels. If fewer than 100 are accepted, run targeted replacement acquisition before treating the chunks as final demo-scale evidence. Neural dense/rerank should still run only in the isolated dependency environment described by Phase 7A.",
     "minimum_next_scale": {
       "human_signoff_template_rows": 108,
       "target_final_source_whitelist_min": 100,
@@ -673,7 +683,7 @@
     "must_not_claim_yet": [
       "final manually verified 100-180 paper whitelist",
       "human-final 1,000-3,000 chunk demo dataset",
-      "300-500 question demo benchmark"
+      "human-final 300-500 question demo benchmark"
     ]
   },
   "phase7h_full_text_intake": {
@@ -770,6 +780,36 @@
       "outputs/phase7l/full_text_chunk_extraction/chunk_source_manifest.jsonl",
       "outputs/phase7l/full_text_chunk_extraction/chunk_extraction_summary.json",
       "docs/verification/full-text-chunk-extraction.md"
+    ]
+  },
+  "phase7m_demo_question_generation": {
+    "dataset": "real_pilot_nickel_superalloy_demo_questions",
+    "source_dataset": "real_pilot_nickel_superalloy_medium_plus",
+    "corpus_chunks": 100,
+    "questions": 300,
+    "question_target_status": "meets_demo_question_count_target_provisionally",
+    "split_counts": {
+      "dev": 100,
+      "fresh_hard": 100,
+      "test": 100
+    },
+    "question_type_counts": {
+      "fill_blank": 75,
+      "multiple_choice": 75,
+      "short_answer": 75,
+      "single_choice": 75
+    },
+    "provenance_status": "provisional_machine_generated_not_human_final",
+    "final_demo_dataset_claim": "not_complete",
+    "fresh_hard_baseline_rows": 300,
+    "fresh_hard_hashed_dense_rows": 200,
+    "live_api_calls": 0,
+    "outputs": [
+      "data/real_pilot_nickel_superalloy_demo_questions",
+      "outputs/phase7m/demo_question_generation/demo_question_summary.json",
+      "outputs/phase7m/demo_question_generation/baseline/report_fresh_hard/summary.json",
+      "outputs/phase7m/demo_question_generation/hashed_dense/report_fresh_hard/summary.json",
+      "docs/verification/demo-question-generation.md"
     ]
   }
 }

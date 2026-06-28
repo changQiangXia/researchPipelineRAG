@@ -1,0 +1,75 @@
+# DomainRAG-Bench Summary
+
+## Diagnostics
+
+- Fresh-Hard candidates: 100
+- Fresh-Hard candidate ids: real_pilot_nickel_superalloy_demo_questions_q0201, real_pilot_nickel_superalloy_demo_questions_q0202, real_pilot_nickel_superalloy_demo_questions_q0203, real_pilot_nickel_superalloy_demo_questions_q0204, real_pilot_nickel_superalloy_demo_questions_q0205, real_pilot_nickel_superalloy_demo_questions_q0206, real_pilot_nickel_superalloy_demo_questions_q0207, real_pilot_nickel_superalloy_demo_questions_q0208, real_pilot_nickel_superalloy_demo_questions_q0209, real_pilot_nickel_superalloy_demo_questions_q0210, real_pilot_nickel_superalloy_demo_questions_q0211, real_pilot_nickel_superalloy_demo_questions_q0212, real_pilot_nickel_superalloy_demo_questions_q0213, real_pilot_nickel_superalloy_demo_questions_q0214, real_pilot_nickel_superalloy_demo_questions_q0215, real_pilot_nickel_superalloy_demo_questions_q0216, real_pilot_nickel_superalloy_demo_questions_q0217, real_pilot_nickel_superalloy_demo_questions_q0218, real_pilot_nickel_superalloy_demo_questions_q0219, real_pilot_nickel_superalloy_demo_questions_q0220, real_pilot_nickel_superalloy_demo_questions_q0221, real_pilot_nickel_superalloy_demo_questions_q0222, real_pilot_nickel_superalloy_demo_questions_q0223, real_pilot_nickel_superalloy_demo_questions_q0224, real_pilot_nickel_superalloy_demo_questions_q0225, real_pilot_nickel_superalloy_demo_questions_q0226, real_pilot_nickel_superalloy_demo_questions_q0227, real_pilot_nickel_superalloy_demo_questions_q0228, real_pilot_nickel_superalloy_demo_questions_q0229, real_pilot_nickel_superalloy_demo_questions_q0230, real_pilot_nickel_superalloy_demo_questions_q0231, real_pilot_nickel_superalloy_demo_questions_q0232, real_pilot_nickel_superalloy_demo_questions_q0233, real_pilot_nickel_superalloy_demo_questions_q0234, real_pilot_nickel_superalloy_demo_questions_q0235, real_pilot_nickel_superalloy_demo_questions_q0236, real_pilot_nickel_superalloy_demo_questions_q0237, real_pilot_nickel_superalloy_demo_questions_q0238, real_pilot_nickel_superalloy_demo_questions_q0239, real_pilot_nickel_superalloy_demo_questions_q0240, real_pilot_nickel_superalloy_demo_questions_q0241, real_pilot_nickel_superalloy_demo_questions_q0242, real_pilot_nickel_superalloy_demo_questions_q0243, real_pilot_nickel_superalloy_demo_questions_q0244, real_pilot_nickel_superalloy_demo_questions_q0245, real_pilot_nickel_superalloy_demo_questions_q0246, real_pilot_nickel_superalloy_demo_questions_q0247, real_pilot_nickel_superalloy_demo_questions_q0248, real_pilot_nickel_superalloy_demo_questions_q0249, real_pilot_nickel_superalloy_demo_questions_q0250, real_pilot_nickel_superalloy_demo_questions_q0251, real_pilot_nickel_superalloy_demo_questions_q0252, real_pilot_nickel_superalloy_demo_questions_q0253, real_pilot_nickel_superalloy_demo_questions_q0254, real_pilot_nickel_superalloy_demo_questions_q0255, real_pilot_nickel_superalloy_demo_questions_q0256, real_pilot_nickel_superalloy_demo_questions_q0257, real_pilot_nickel_superalloy_demo_questions_q0258, real_pilot_nickel_superalloy_demo_questions_q0259, real_pilot_nickel_superalloy_demo_questions_q0260, real_pilot_nickel_superalloy_demo_questions_q0261, real_pilot_nickel_superalloy_demo_questions_q0262, real_pilot_nickel_superalloy_demo_questions_q0263, real_pilot_nickel_superalloy_demo_questions_q0264, real_pilot_nickel_superalloy_demo_questions_q0265, real_pilot_nickel_superalloy_demo_questions_q0266, real_pilot_nickel_superalloy_demo_questions_q0267, real_pilot_nickel_superalloy_demo_questions_q0268, real_pilot_nickel_superalloy_demo_questions_q0269, real_pilot_nickel_superalloy_demo_questions_q0270, real_pilot_nickel_superalloy_demo_questions_q0271, real_pilot_nickel_superalloy_demo_questions_q0272, real_pilot_nickel_superalloy_demo_questions_q0273, real_pilot_nickel_superalloy_demo_questions_q0274, real_pilot_nickel_superalloy_demo_questions_q0275, real_pilot_nickel_superalloy_demo_questions_q0276, real_pilot_nickel_superalloy_demo_questions_q0277, real_pilot_nickel_superalloy_demo_questions_q0278, real_pilot_nickel_superalloy_demo_questions_q0279, real_pilot_nickel_superalloy_demo_questions_q0280, real_pilot_nickel_superalloy_demo_questions_q0281, real_pilot_nickel_superalloy_demo_questions_q0282, real_pilot_nickel_superalloy_demo_questions_q0283, real_pilot_nickel_superalloy_demo_questions_q0284, real_pilot_nickel_superalloy_demo_questions_q0285, real_pilot_nickel_superalloy_demo_questions_q0286, real_pilot_nickel_superalloy_demo_questions_q0287, real_pilot_nickel_superalloy_demo_questions_q0288, real_pilot_nickel_superalloy_demo_questions_q0289, real_pilot_nickel_superalloy_demo_questions_q0290, real_pilot_nickel_superalloy_demo_questions_q0291, real_pilot_nickel_superalloy_demo_questions_q0292, real_pilot_nickel_superalloy_demo_questions_q0293, real_pilot_nickel_superalloy_demo_questions_q0294, real_pilot_nickel_superalloy_demo_questions_q0295, real_pilot_nickel_superalloy_demo_questions_q0296, real_pilot_nickel_superalloy_demo_questions_q0297, real_pilot_nickel_superalloy_demo_questions_q0298, real_pilot_nickel_superalloy_demo_questions_q0299, real_pilot_nickel_superalloy_demo_questions_q0300
+
+## lexical_rag
+
+- Questions: 100
+- Mean latency ms: 0.000
+- Mean input tokens: 45.860
+- Mean output tokens: 4.190
+- Total input tokens: 4586
+- Total output tokens: 419
+- Total tokens: 5005
+- API calls: 0
+- Errors: 0
+- fill_blank_alias_match: 0.0400
+- fill_blank_normalized_em: 0.0400
+- key_point_coverage: 0.8400
+- multiple_choice_exact_match: 1.0000
+- multiple_choice_jaccard: 1.0000
+- multiple_choice_micro_f1: 1.0000
+- retrieval_hit: 0.7200
+- retrieval_mrr: 0.5550
+- retrieval_recall: 0.7200
+- short_answer_token_f1: 0.8400
+- single_choice_accuracy: 1.0000
+
+## no_rag
+
+- Questions: 100
+- Mean latency ms: 0.000
+- Mean input tokens: 45.860
+- Mean output tokens: 0.000
+- Total input tokens: 4586
+- Total output tokens: 0
+- Total tokens: 4586
+- API calls: 0
+- Errors: 0
+- fill_blank_alias_match: 0.0000
+- fill_blank_normalized_em: 0.0000
+- key_point_coverage: 0.0000
+- multiple_choice_exact_match: 0.0000
+- multiple_choice_jaccard: 0.0000
+- multiple_choice_micro_f1: 0.0000
+- retrieval_hit: 0.0000
+- retrieval_mrr: 0.0000
+- retrieval_recall: 0.0000
+- short_answer_token_f1: 0.0000
+- single_choice_accuracy: 0.0000
+
+## oracle_context
+
+- Questions: 100
+- Mean latency ms: 0.000
+- Mean input tokens: 45.860
+- Mean output tokens: 5.280
+- Total input tokens: 4586
+- Total output tokens: 528
+- Total tokens: 5114
+- API calls: 0
+- Errors: 0
+- fill_blank_alias_match: 1.0000
+- fill_blank_normalized_em: 1.0000
+- key_point_coverage: 1.0000
+- multiple_choice_exact_match: 1.0000
+- multiple_choice_jaccard: 1.0000
+- multiple_choice_micro_f1: 1.0000
+- retrieval_hit: 1.0000
+- retrieval_mrr: 1.0000
+- retrieval_recall: 1.0000
+- short_answer_token_f1: 1.0000
+- single_choice_accuracy: 1.0000

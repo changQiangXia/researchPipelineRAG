@@ -19,6 +19,7 @@ from domainrag.deepseek_judge_runner import (
     run_deepseek_judge,
 )
 from domainrag.deepseek_pipeline import DEFAULT_BASE_URL, DEFAULT_MODEL
+from domainrag.demo_question_generation import build_demo_question_dataset
 from domainrag.dense_rerank_readiness import generate_dense_rerank_readiness
 from domainrag.easy_dataset_adapter import export_domainrag_bundle
 from domainrag.errors import ValidationError
@@ -124,6 +125,15 @@ def build_parser() -> argparse.ArgumentParser:
     run_hashed_dense.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
     run_hashed_dense.add_argument("--top-k", type=int, default=5)
     run_hashed_dense.add_argument("--dimensions", type=int, default=512)
+    build_demo_questions = subparsers.add_parser("build-demo-questions")
+    build_demo_questions.add_argument("--source-dataset", required=True)
+    build_demo_questions.add_argument("--output", required=True)
+    build_demo_questions.add_argument(
+        "--dataset-name",
+        default="real_pilot_nickel_superalloy_demo_questions",
+    )
+    build_demo_questions.add_argument("--target-questions", type=int, default=300)
+    build_demo_questions.add_argument("--fixture-output", default=None)
     probe_flashrag_methods = subparsers.add_parser("probe-flashrag-methods")
     probe_flashrag_methods.add_argument("--flashrag-path", required=True)
     probe_flashrag_methods.add_argument("--output", required=True)
@@ -401,6 +411,20 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"hashed dense results written to {result_path}")
+        return 0
+    if args.command == "build-demo-questions":
+        try:
+            bundle = build_demo_question_dataset(
+                Path(args.source_dataset),
+                Path(args.output),
+                dataset_name=args.dataset_name,
+                target_questions=args.target_questions,
+                fixture_output_dir=Path(args.fixture_output) if args.fixture_output else None,
+            )
+        except (OSError, ValidationError, ValueError) as exc:
+            print(str(exc))
+            return 1
+        print(f"demo question dataset written to {bundle.dataset_dir}")
         return 0
     if args.command == "probe-flashrag-methods":
         try:

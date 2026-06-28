@@ -502,6 +502,30 @@ def test_extract_fulltext_chunks_command_writes_empty_outputs(tmp_path: Path):
     assert (output / "chunk_extraction_summary.json").exists()
 
 
+def test_build_demo_questions_command_writes_dataset(tmp_path: Path):
+    from tests.test_validator import _write_minimal_dataset
+
+    source = tmp_path / "source"
+    output = tmp_path / "data"
+    _write_minimal_dataset(source)
+
+    result = _run_cli(
+        "build-demo-questions",
+        "--source-dataset",
+        str(source),
+        "--output",
+        str(output),
+        "--dataset-name",
+        "demo_questions",
+        "--target-questions",
+        "300",
+    )
+
+    assert result.returncode == 0
+    assert "demo question dataset written" in result.stdout
+    assert (output / "demo_questions" / "canonical_dataset.jsonl").exists()
+
+
 def test_dense_rerank_readiness_module_entrypoint_writes_manifest_and_summary(tmp_path: Path):
     feasibility = tmp_path / "feasibility.json"
     output = tmp_path / "readiness"

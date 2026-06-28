@@ -37,15 +37,16 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert "outputs/phase7e/source_screening_queue/screening_summary.json" in report
     assert "outputs/phase7f/source_decisions/decision_summary.json" in report
 
-    assert audit["phase"] == "Phase 7L"
-    assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_medium_plus"
+    assert audit["phase"] == "Phase 7M"
+    assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_demo_questions"
+    assert audit["dataset"]["source_dataset"] == "real_pilot_nickel_superalloy_medium_plus"
     assert audit["dataset"]["corpus_chunks"] == 100
-    assert audit["dataset"]["questions"] == 150
-    assert audit["dataset"]["fresh_hard_questions"] == 50
+    assert audit["dataset"]["questions"] == 300
+    assert audit["dataset"]["fresh_hard_questions"] == 100
     assert audit["rag_md_targets"]["demo"]["corpus_chunks"] == [1000, 3000]
     assert audit["rag_md_targets"]["demo"]["questions"] == [300, 500]
     assert audit["completion_estimate"]["excluding_final_scale"] == "about 99%"
-    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "96%-97%"
+    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "97%-98%"
 
 
 def test_phase6g_audit_tracks_core_requirements_and_gaps():

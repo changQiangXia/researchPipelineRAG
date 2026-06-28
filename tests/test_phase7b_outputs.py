@@ -62,9 +62,10 @@ def test_phase7b_updates_audit_and_verification_doc_for_medium_plus_scale():
 
     assert "Phase 7B" in doc
     assert "100 chunks / 150 questions" in doc
-    assert audit["dataset"]["name"] == DATASET_NAME
+    assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_demo_questions"
+    assert audit["dataset"]["source_dataset"] == DATASET_NAME
     assert audit["dataset"]["corpus_chunks"] == 100
-    assert audit["dataset"]["questions"] == 150
+    assert audit["dataset"]["questions"] == 300
     assert demo_scale["status"] == "partial"
-    assert "100 chunks and 150 questions" in demo_scale["summary"]
+    assert "300 provisional questions" in demo_scale["summary"]
     assert "data/real_pilot_nickel_superalloy_medium_plus/statistics.json" in demo_scale["evidence"]

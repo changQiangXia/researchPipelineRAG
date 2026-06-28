@@ -52,7 +52,7 @@ def test_phase7l_updates_docs_and_audit_without_claiming_final_demo_dataset():
     assert "2,196" in doc
     assert "machine_parseable_not_human_final" in doc
     assert "chunk text omitted" in doc
-    assert audit["phase"] == "Phase 7L"
+    assert audit["phase"] == "Phase 7M"
     assert audit["phase7l_full_text_chunk_extraction"] == {
         "access_rows": 115,
         "parseable_access_rows": 71,

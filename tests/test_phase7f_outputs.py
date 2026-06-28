@@ -78,8 +78,8 @@ def test_phase7f_updates_report_audit_and_stop_point_documentation():
     assert "not final manual verification" in doc
     assert "outputs/phase7f/source_decisions/source_decisions.jsonl" in doc
     assert "Phase 7F Source Decisions" in report
-    assert audit["phase"] == "Phase 7L"
-    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "96%-97%"
+    assert audit["phase"] == "Phase 7M"
+    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "97%-98%"
     assert decisions["candidate_count"] == 124
     assert decisions["provisional_whitelist_count"] == 115
     assert decisions["verification_status"] == "provisional_not_final"

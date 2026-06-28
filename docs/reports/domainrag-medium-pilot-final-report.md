@@ -4,7 +4,7 @@ Recorded: 2026-06-28
 
 Blueprint: `/root/autodl-tmp/RAG/RAG.md`
 
-Repository milestone: Phase 7L full-text chunk extraction checkpoint
+Repository milestone: Phase 7M provisional demo-question generation checkpoint
 
 ## Executive Summary
 
@@ -75,20 +75,27 @@ the RAG.md demo chunk-count target of 1,000-3,000 chunks. The committed output
 does not store raw chunk text; it stores chunk ids, token boundaries, counts,
 hashes, and `machine_parseable_not_human_final` provenance.
 
-The current project is not yet a full `RAG.md` demo-scale dataset. The best
-dataset has 100 corpus chunks and 150 questions; `RAG.md` calls for 1,000-3,000
-chunks and 300-500 questions for the demo tier. Phase 7D/7E/7F/7G/7H/7I materially
-advance the paper acquisition, screening, and provisional decision
-prerequisites, but final manual source verification, human-final filtered chunk
-extraction, and question generation are still open. Phase 7K closes a local
-dense-style benchmark gap; Phase 7L reaches the demo chunk-count range with
-machine-parseable chunk manifests; neural dense/rerank remains an isolated
-environment task.
+Phase 7M adds a deterministic provisional 300-question dataset over the
+validated 100-chunk medium-plus corpus. It writes a DomainRAG dataset, prepares
+a FlashRAG bundle, runs `no_rag`, `oracle_context`, and `lexical_rag` on the
+100-question Fresh-Hard split, and runs the local hashed dense diagnostics over
+the same split. This closes the immediate question-count engineering gap
+provisionally, with 0 live API calls.
+
+The current project is still not a final `RAG.md` demo-scale dataset. It now has
+2,196 machine-parseable full-text chunk manifests and 300 provisional questions,
+but the chunks and questions are not filtered or regenerated from real
+human-accepted final sources. Phase 7D/7E/7F/7G/7H/7I materially advance the
+paper acquisition, screening, and provisional decision prerequisites; Phase 7J
+keeps the final source gate open for real human labels; Phase 7K closes a local
+dense-style benchmark gap; Phase 7L reaches the chunk-count range as manifests;
+Phase 7M reaches the question-count range provisionally. Neural dense/rerank
+remains an isolated environment task.
 
 Completion estimate:
 
 - Excluding final scale: about 99%
-- Including `RAG.md` demo scale: 94%-95%
+- Including `RAG.md` demo scale: 97%-98%
 
 The structured audit behind this report is committed at:
 
@@ -645,6 +652,60 @@ only as machine-parseable chunk manifests. These chunks are not yet filtered to
 human-final accepted sources, do not include raw text in committed outputs, and
 do not yet have a generated 300-500 question benchmark.
 
+## Phase 7M Provisional Demo-Question Generation
+
+Phase 7M adds the first 300-question dataset over the validated medium-plus
+corpus. It consumes:
+
+```text
+data/real_pilot_nickel_superalloy_medium_plus
+```
+
+Output evidence:
+
+- `benchmark/domainrag/demo_question_generation.py`
+- `data/real_pilot_nickel_superalloy_demo_questions/`
+- `outputs/phase7m/demo_question_generation/demo_question_summary.json`
+- `outputs/phase7m/demo_question_generation/baseline/report_fresh_hard/summary.json`
+- `outputs/phase7m/demo_question_generation/hashed_dense/report_fresh_hard/summary.json`
+- `outputs/flashrag/real_pilot_nickel_superalloy_demo_questions/`
+- `docs/verification/demo-question-generation.md`
+
+Dataset shape:
+
+| item | count |
+| --- | ---: |
+| corpus chunks | 100 |
+| total questions | 300 |
+| dev questions | 100 |
+| test questions | 100 |
+| fresh_hard questions | 100 |
+| single_choice | 75 |
+| multiple_choice | 75 |
+| fill_blank | 75 |
+| short_answer | 75 |
+
+Fresh-Hard baseline:
+
+| method | questions | retrieval_hit | retrieval_recall | retrieval_mrr | api_calls |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `no_rag` | 100 | 0.0000 | 0.0000 | 0.0000 | 0 |
+| `oracle_context` | 100 | 1.0000 | 1.0000 | 1.0000 | 0 |
+| `lexical_rag` | 100 | 0.7200 | 0.7200 | 0.5550 | 0 |
+
+Fresh-Hard local hashed dense diagnostics:
+
+| method | questions | retrieval_hit | retrieval_recall | retrieval_mrr | api_calls |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `hashed_dense_oracle_reader` | 100 | 0.7000 | 0.7000 | 0.5445 | 0 |
+| `hashed_dense_lexical_rerank_oracle_reader` | 100 | 0.7200 | 0.7200 | 0.5557 | 0 |
+
+Interpretation: Phase 7M reaches the RAG.md 300-question lower bound
+provisionally and verifies the generated data through the same DomainRAG,
+FlashRAG bundle, baseline, and local hashed dense paths. It is still marked
+`provisional_machine_generated_not_human_final`; it is not a human-final demo
+benchmark and should not be used as evidence of final source sign-off.
+
 Historical medium dataset:
 
 ```text
@@ -752,9 +813,9 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Human calibration | complete | 15-row manual audit over Phase 6E calibration packet. |
 | Method comparison | complete | Five methods compared on the same medium Fresh-Hard split. |
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
-| Demo scale | partial | 100 curated benchmark chunks / 150 questions plus a 108-row pending human sign-off template. Phase 7L adds 2,196 machine-parseable chunk manifests, meeting the chunk-count target, but no final human-accepted source filter or 300-500 question demo benchmark exists yet. |
+| Demo scale | partial | Phase 7L adds 2,196 machine-parseable chunk manifests and Phase 7M adds 300 provisional questions, so the chunk and question counts are reached provisionally. The final human-accepted source filter and human-final demo benchmark remain open. |
 | Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates for neural dense/rerank. Phase 7K adds a formal local hashed dense benchmark, but it is non-neural and does not close the neural dense/rerank target. |
-| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I/7J/7K verification documentation. |
+| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I/7J/7K/7L/7M verification documentation. |
 
 See the structured form:
 
@@ -784,17 +845,20 @@ Current medium-plus pilot:
 - 108 source rows in the candidate final whitelist queue
 - 108 source rows in the pending human sign-off template
 - 2,196 machine-parseable full-text chunk manifests from 60 sources
+- 300 provisional demo questions over the validated 100-chunk medium-plus corpus
+- 100 provisional Fresh-Hard questions with local baseline and hashed dense diagnostics
 - 0 final manually verified source inclusions
 
 The implementation path is ready for more scale, but the dataset itself is
-still missing the final question side. A true demo-scale benchmark should not be
-claimed until the chunk manifests are filtered to human-final accepted sources,
-300-500 questions with qrels are generated, and the same validation, FlashRAG
-preparation, retrieval comparison, live answer/Judge evaluation, calibration
-packet, and at least sampled human audit are repeated on that generated dataset.
-The Phase 7D candidate pool, Phase 7E queue, Phase 7F provisional decisions,
-Phase 7J sign-off template, and Phase 7L chunk manifests are the handoff for
-that route, not the completed demo benchmark.
+still missing the final human-source side. A true demo-scale benchmark should
+not be claimed until the chunk manifests are filtered to human-final accepted
+sources, 300-500 questions with qrels are regenerated or verified against those
+accepted-source chunks, and the same validation, FlashRAG preparation, retrieval
+comparison, live answer/Judge evaluation, calibration packet, and at least
+sampled human audit are repeated on that final dataset. The Phase 7D candidate
+pool, Phase 7E queue, Phase 7F provisional decisions, Phase 7J sign-off
+template, Phase 7L chunk manifests, and Phase 7M provisional questions are the
+handoff for that route, not the completed final demo benchmark.
 
 ## Dense And Rerank Gap
 
@@ -857,6 +921,8 @@ The current handoff package is coherent as a medium pilot:
 - A Phase 7J 108-row pending human sign-off template.
 - A Phase 7K non-neural local hashed dense benchmark on medium-plus Fresh-Hard.
 - A Phase 7L full-text chunk extraction workflow with 2,196 chunk manifests.
+- A Phase 7M provisional 300-question dataset with FlashRAG bundle, Fresh-Hard
+  baseline, and local hashed dense diagnostics.
 - Deterministic diagnostic baselines.
 - Live DeepSeek answer generation and Judge evaluation.
 - A five-method Fresh-Hard comparison.
@@ -864,15 +930,18 @@ The current handoff package is coherent as a medium pilot:
 - A structured `RAG.md` implementation audit.
 
 The project is strong enough to support a report or demo focused on method
-diagnostics, benchmark engineering, and source-screening readiness. It is not
-yet strong enough to claim the full `RAG.md` dataset scale.
+diagnostics, benchmark engineering, provisional question-scale rehearsal, and
+source-screening readiness. It is not yet strong enough to claim final
+human-verified `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase if work resumes: Phase 7M final-source labels and
-demo-scale question generation.
+Recommended next phase if work resumes: final-source labels or stop.
 
-If work resumes, the high-value path is:
+If this is a near-term deliverable, Phase 7M is a reasonable stop point because
+it reaches the 300-question lower bound provisionally and keeps all final-source
+claims honest. If strict `RAG.md` completion is still required, the high-value
+path is:
 
 1. Fill `human_signoff_template.jsonl` with real human labels.
 2. Fill subtopic review gaps for coatings, life prediction, and
@@ -880,8 +949,8 @@ If work resumes, the high-value path is:
 3. Promote human-accepted rows into a final 100-180 source whitelist, with
    targeted replacement acquisition if manual review removes more than 8 queue
    rows.
-4. Filter Phase 7L chunk manifests to human-accepted sources and expand toward
-   at least 300 questions.
+4. Filter Phase 7L chunk manifests to human-accepted sources and regenerate or
+   verify 300-500 questions against accepted-source chunks.
 5. Keep the same validation, FlashRAG bundle preparation, retrieval comparison,
    live answer/Judge, and sampled human calibration gates.
 6. Run neural dense/rerank only in the isolated environment described by Phase
@@ -889,8 +958,9 @@ If work resumes, the high-value path is:
    non-neural local hashed dense baseline.
 
 If the goal is a defensible near-term project deliverable, finish with this
-medium-plus report and append a scale roadmap. If the goal is strict `RAG.md`
-completion, the next work must be dataset scale, not another evaluator feature.
+Phase 7M report and append a scale roadmap. If the goal is strict `RAG.md`
+completion, the next work must be human source labels and human-final dataset
+production, not another evaluator feature.
 
 ## Verification Commands
 
@@ -906,6 +976,7 @@ PYTHONPATH=benchmark pytest tests/test_phase7g_outputs.py tests/test_source_veri
 PYTHONPATH=benchmark pytest
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium_plus
 PYTHONPATH=benchmark pytest tests/test_real_pilot_medium_plus_assets.py tests/test_phase7b_outputs.py
+PYTHONPATH=benchmark pytest tests/test_demo_question_generation.py tests/test_phase7m_outputs.py
 grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs benchmark scripts tests README.md docs data fixtures pyproject.toml || true
 git diff --check
 ```
