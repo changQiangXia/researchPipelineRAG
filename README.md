@@ -2,13 +2,13 @@
 
 DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据生产、标准化、检索评测和审计流水线。它的核心目标是：从领域文献和证据材料出发，构建带有 `gold evidence` 与 `qrels` 的标准化数据资产，并在同一评测协议下比较不同 RAG 方法的检索、答题、忠实度和效率表现。
 
-当前示例领域是 **镍基高温合金高温失效**。换句话说，当前实现领域是“镍基高温合金高温失效”；这个领域足够专业、知识更新快，适合构造基础模型不能完全依赖常识回答、但可以通过领域知识库回答的 `Fresh-Hard` 问题。
+当前示例领域是 **镍基高温合金高温失效**。这个领域足够专业、知识更新快，适合构造基础模型不能完全依赖常识回答、但可以通过领域知识库回答的 `Fresh-Hard` 问题。
 
-当前仓库已经形成一条可复现的工程流水线：从 Easy Dataset 风格输入，到 DomainRAG 标准数据集，再到 FlashRAG bundle、本地检索 baseline、DeepSeek answer/Judge、人工审核 workflow 和结构化审计。当前数据集仍是 `provisional`，不是 `human-final` benchmark。
+当前仓库已经形成一条流水线：从 Easy Dataset 风格输入，到 DomainRAG 标准数据集，再到 FlashRAG bundle、本地检索 baseline、DeepSeek answer/Judge、人工审核 workflow 和结构化审计。当前数据集仍是 `provisional`，不是 `human-final` benchmark。
 
 ## 项目亮点
 
-- 从领域材料构建 literature-grounded RAG benchmark，而不是只做孤立 demo。
+- 从领域材料构建 literature-grounded RAG benchmark。
 - 使用 Easy Dataset 风格输入：`chunks.jsonl` + `items.jsonl`。
 - 定义 DomainRAG 标准数据契约：`corpus.jsonl`、`canonical_dataset.jsonl`、splits 和 `qrels`。
 - 每道题绑定 `source_chunk_ids`，保留 `gold evidence` 和 `gold context`。
@@ -75,11 +75,11 @@ Answer、Judge、reports、audit、human sign-off workflow
 | 来源审核 workflow | `outputs/current/source_review.md` | 108 条 pending human sign-off candidates |
 | 结构化审计 | `docs/reports/rag-md-implementation-audit.json` | 对照 `RAG.md` 的状态记录 |
 
-当前状态可以概括为：
+当前状态：
 
 ```text
 工程流水线：基本完成
-严格 human-final benchmark：等待真实人工来源签核
+严格 human-final benchmark：等待真实人工审核
 ```
 
 ## 当前评测快照
@@ -135,7 +135,7 @@ fresh_hard_test.jsonl
 qrels/*.tsv
 ```
 
-这个契约由 validators、runners、reports 和 FlashRAG adapters 共同消费。
+这个契约由 validators、runners、reports 和 FlashRAG adapters 共同遵守。
 
 **FlashRAG**
 
@@ -215,20 +215,19 @@ real_pilot_nickel_superalloy_demo_questions_q0201	ns_ht_oxidation_lpbf_gh3536_00
 
 ### 输出入口
 
-当前成果先看：
+当前成果报告：
 
 ```text
 outputs/README.md
 outputs/current/README.md
 ```
 
-历史运行证据在：
+历史运行（存档备份）：
 
 ```text
 outputs/archive/provenance/
 ```
 
-不要从历史执行顺序理解项目。当前归档已经按成果主题收束，用于复现和审计。
 
 ## 仓库导览
 
@@ -289,7 +288,7 @@ PYTHONPATH=benchmark python -m domainrag.cli prepare-flashrag \
 PYTHONPATH=benchmark pytest
 ```
 
-## 如何迁移到另一个领域
+## 领域迁移
 
 迁移时优先换数据，不要先改评测器。
 
@@ -301,9 +300,9 @@ PYTHONPATH=benchmark pytest
 6. 运行 `no_rag`、`oracle_context`、`lexical_rag`。
 7. 增加 FlashRAG/BM25 或 dense retrieval 路径。
 8. 小样本本地 baseline 稳定后，再接入 DeepSeek answer/Judge。
-9. 做人工校准和来源签核，再声明最终 benchmark。
+9. **做人工校准和来源签核，再声明最终 benchmark**。
 
-研究型文献和综述型文献在工作流中的作用不同：
+研究型文献和综述型文献在工作流中的作用不同（后续将逐步使用全综述型文献）：
 
 | 来源类型 | 主要作用 |
 | --- | --- |
@@ -344,7 +343,7 @@ PYTHONPATH=benchmark python -m domainrag.cli run \
 - DeepSeek answer/Judge 记录 API 使用和错误状态。
 - 人工 sign-off workflow 与机器筛选明确分离。
 
-当前边界也必须明确：
+当前边界：
 
 - 300 题数据集是 `provisional`，不是 `human-final`。
 - 2,196 条全文 chunk manifests 是 machine-parseable 结果，不是 human-final accepted-source corpus。
