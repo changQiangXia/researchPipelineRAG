@@ -1,0 +1,26 @@
+{
+  "corpus_count": 40,
+  "dataset_name": "real_pilot_nickel_superalloy_medium",
+  "difficulty_counts": {
+    "easy": 1,
+    "hard": 39,
+    "medium": 20
+  },
+  "question_count": 60,
+  "question_type_counts": {
+    "fill_blank": 15,
+    "multiple_choice": 15,
+    "short_answer": 15,
+    "single_choice": 15
+  },
+  "required_splits": [
+    "dev",
+    "fresh_hard",
+    "test"
+  ],
+  "split_counts": {
+    "dev": 20,
+    "fresh_hard": 20,
+    "test": 20
+  }
+}
