@@ -301,6 +301,62 @@ def test_calibration_packet_command_writes_review_files(tmp_path: Path, capsys):
     assert (output / "review_packet.md").exists()
 
 
+def test_calibration_audit_module_entrypoint_writes_summary(tmp_path: Path):
+    packet = tmp_path / "review_packet.jsonl"
+    labels = tmp_path / "human_labels.jsonl"
+    output = tmp_path / "audit"
+    write_jsonl(
+        packet,
+        [
+            {
+                "review_id": "fresh_hard::no_rag::q1",
+                "id": "q1",
+                "method": "no_rag",
+                "split": "fresh_hard",
+                "question": "Which claim is supported?",
+                "judge_scores": {
+                    "correctness": 2.0,
+                    "context_support": 0.0,
+                    "faithfulness": 1.0,
+                },
+                "judge": {"unsupported_claims": ["unsupported"], "reason": "unsupported"},
+                "priority": "high",
+                "priority_reasons": ["unsupported_claims"],
+            }
+        ],
+    )
+    write_jsonl(
+        labels,
+        [
+            {
+                "review_id": "fresh_hard::no_rag::q1",
+                "human_review": {
+                    "correctness": 3.0,
+                    "context_support": 0.0,
+                    "faithfulness": 2.0,
+                    "decision": "mostly_agree_with_judge",
+                    "notes": "Partly correct but unsupported.",
+                },
+            }
+        ],
+    )
+
+    result = _run_cli(
+        "calibration-audit",
+        "--packet",
+        str(packet),
+        "--labels",
+        str(labels),
+        "--output",
+        str(output),
+    )
+
+    assert result.returncode == 0
+    assert "calibration audit written" in result.stdout
+    assert (output / "summary.json").exists()
+    assert (output / "summary.md").exists()
+
+
 def test_run_flashrag_bm25_command(tmp_path: Path, capsys):
     flashrag = tmp_path / "flashrag-fork"
     bundle = tmp_path / "bundle"
