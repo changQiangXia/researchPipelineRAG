@@ -1,5 +1,5 @@
 {
-  "phase": "Phase 7B",
+  "phase": "Phase 7C",
   "report": "docs/reports/domainrag-medium-pilot-final-report.md",
   "blueprint": "/root/autodl-tmp/RAG/RAG.md",
   "dataset": {
@@ -49,9 +49,9 @@
     }
   },
   "completion_estimate": {
-    "excluding_final_scale": "98%-99%",
-    "including_rag_md_demo_scale": "82%-84%",
-    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7B raises the current best validated dataset to 100 chunks and 150 questions with Fresh-Hard retrieval evidence. The main hard gap remains final RAG.md demo scale; dense/rerank methods have isolated readiness evidence but have not yet been executed."
+    "excluding_final_scale": "about 99%",
+    "including_rag_md_demo_scale": "84%-85%",
+    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7B raises the current best validated dataset to 100 chunks and 150 questions with Fresh-Hard retrieval evidence. Phase 7C adds a bounded real DeepSeek answer/Judge subset on the medium-plus Fresh-Hard split. The main hard gap remains final RAG.md demo scale; dense/rerank methods have isolated readiness evidence but have not yet been executed."
   },
   "requirements": [
     {
@@ -154,12 +154,14 @@
     {
       "id": "live_deepseek_judge",
       "status": "complete",
-      "summary": "The medium Fresh-Hard run contains live DeepSeek answers and live DeepSeek Judge rows for five methods with 180 recorded API calls and no recorded errors.",
+      "summary": "The medium Fresh-Hard run contains live DeepSeek answers and live DeepSeek Judge rows for five methods with 180 recorded API calls and no recorded errors. Phase 7C adds a medium-plus bounded live DeepSeek answer/Judge subset with 36 answer rows, 36 judge rows, 75 total API calls, and 0 recorded errors.",
       "evidence": [
         "outputs/phase6e/medium_live_deepseek_fresh_hard/",
         "outputs/phase6e/medium_deepseek_judge_fresh_hard/",
         "outputs/phase6e/medium_deepseek_judge_flashrag_bm25_live_fresh_hard/",
+        "outputs/phase7c/medium_plus_live_subset/",
         "docs/verification/medium-live-deepseek-eval.md",
+        "docs/verification/medium-plus-live-subset.md",
         "tests/test_phase6e_outputs.py"
       ]
     },
@@ -177,10 +179,11 @@
     {
       "id": "method_comparison",
       "status": "complete",
-      "summary": "The medium pilot compares no_rag, oracle_context, lexical_rag, flashrag_bm25_oracle_reader, and flashrag_bm25_live_deepseek on the same Fresh-Hard split.",
+      "summary": "The medium pilot compares no_rag, oracle_context, lexical_rag, flashrag_bm25_oracle_reader, and flashrag_bm25_live_deepseek on the same Fresh-Hard split. Phase 7C adds a medium-plus three-method live comparison over a bounded Fresh-Hard subset.",
       "evidence": [
         "outputs/phase6e/medium_fresh_hard_comparison/summary.json",
         "outputs/phase6e/medium_fresh_hard_comparison/summary.md",
+        "outputs/phase7c/medium_plus_live_subset/comparison/summary.json",
         "docs/verification/medium-live-deepseek-eval.md"
       ]
     },
@@ -190,6 +193,7 @@
       "summary": "Rows and comparison summaries include latency, input/output token totals, total token totals, API calls, and error counts. Cost is not converted to currency because pricing was not frozen in the repo.",
       "evidence": [
         "outputs/phase6e/medium_fresh_hard_comparison/summary.json",
+        "outputs/phase7c/medium_plus_live_subset/comparison/summary.json",
         "benchmark/domainrag/comparison_report.py",
         "tests/test_comparison_report.py"
       ]
@@ -220,11 +224,12 @@
     {
       "id": "final_report",
       "status": "complete",
-      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B updates this structured RAG.md implementation audit with medium-plus scale evidence.",
+      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B updates this structured RAG.md implementation audit with medium-plus scale evidence; Phase 7C adds medium-plus live subset evidence.",
       "evidence": [
         "docs/reports/domainrag-medium-pilot-final-report.md",
         "docs/reports/rag-md-implementation-audit.json",
         "docs/verification/medium-plus-scale-expansion.md",
+        "docs/verification/medium-plus-live-subset.md",
         "tests/test_phase6g_report.py",
         "tests/test_phase7b_outputs.py"
       ]
@@ -339,9 +344,78 @@
     },
     "runtime_note": "The Phase 7B FlashRAG bundle is generated, but current-environment retrieval uses direct bm25s because FlashRAG retriever imports are killed by the PyTorch/transformers mismatch documented in Phase 7A."
   },
+  "phase7c_medium_plus_live_subset": {
+    "dataset": "real_pilot_nickel_superalloy_medium_plus",
+    "split": "fresh_hard",
+    "questions": 12,
+    "methods": [
+      "no_rag",
+      "lexical_rag",
+      "flashrag_bm25_live_deepseek"
+    ],
+    "answer_rows": 36,
+    "judge_rows": 36,
+    "answer_errors": 0,
+    "judge_errors": 0,
+    "answer_api_calls": 39,
+    "judge_api_calls": 36,
+    "total_api_calls": 75,
+    "total_tokens": 99653,
+    "unsupported_claims": 18,
+    "outputs": [
+      "outputs/phase7c/medium_plus_live_subset/answers/real_pilot_nickel_superalloy_medium_plus/fresh_hard_deepseek_results.jsonl",
+      "outputs/phase7c/medium_plus_live_subset/judge/real_pilot_nickel_superalloy_medium_plus/fresh_hard_judge_results.jsonl",
+      "outputs/phase7c/medium_plus_live_subset/comparison/summary.json",
+      "docs/verification/medium-plus-live-subset.md"
+    ],
+    "leaderboard": [
+      {
+        "method": "flashrag_bm25_live_deepseek",
+        "answer_score": 0.8554,
+        "retrieval_hit": 0.9167,
+        "retrieval_recall": 0.7569,
+        "retrieval_mrr": 0.4028,
+        "correctness": 5.0,
+        "context_support": 5.0,
+        "faithfulness": 5.0,
+        "hallucination_risk": 0.0,
+        "unsupported_claims": 0,
+        "api_calls": 24,
+        "tokens": 32147
+      },
+      {
+        "method": "lexical_rag",
+        "answer_score": 0.854,
+        "retrieval_hit": 0.9167,
+        "retrieval_recall": 0.7361,
+        "retrieval_mrr": 0.4097,
+        "correctness": 5.0,
+        "context_support": 5.0,
+        "faithfulness": 5.0,
+        "hallucination_risk": 0.0,
+        "unsupported_claims": 0,
+        "api_calls": 24,
+        "tokens": 31399
+      },
+      {
+        "method": "no_rag",
+        "answer_score": 0.3074,
+        "retrieval_hit": 0.0,
+        "retrieval_recall": 0.0,
+        "retrieval_mrr": 0.0,
+        "correctness": 2.5833,
+        "context_support": 0.0,
+        "faithfulness": 1.25,
+        "hallucination_risk": 3.75,
+        "unsupported_claims": 18,
+        "api_calls": 27,
+        "tokens": 36107
+      }
+    ]
+  },
   "next_phase_recommendation": {
-    "name": "Phase 7C medium-plus live subset or demo-scale source acquisition",
-    "recommended_path": "Either run a bounded live DeepSeek answer/Judge subset on the 50-question medium-plus Fresh-Hard split, or start the larger source-acquisition workflow needed for a true RAG.md demo-scale 1,000+ chunk build.",
+    "name": "Phase 7D demo-scale source acquisition",
+    "recommended_path": "Start the larger source-acquisition workflow needed for a true RAG.md demo-scale 1,000+ chunk build, while keeping dense/rerank execution isolated from the current AutoDL runtime.",
     "minimum_next_scale": {
       "corpus_chunks": 100,
       "questions": 150

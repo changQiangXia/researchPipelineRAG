@@ -19,19 +19,21 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert "Dense And Rerank Gap" in report
     assert "Next Phase Recommendation" in report
     assert "Phase 7B Medium-Plus Update" in report
+    assert "Phase 7C Medium-Plus Live Subset" in report
     assert "outputs/phase6e/medium_fresh_hard_comparison/summary.json" in report
     assert "outputs/phase6f/medium_human_calibration_audit/summary.json" in report
     assert "outputs/phase7b/medium_plus_bm25s/" in report
+    assert "outputs/phase7c/medium_plus_live_subset/comparison/summary.json" in report
 
-    assert audit["phase"] == "Phase 7B"
+    assert audit["phase"] == "Phase 7C"
     assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_medium_plus"
     assert audit["dataset"]["corpus_chunks"] == 100
     assert audit["dataset"]["questions"] == 150
     assert audit["dataset"]["fresh_hard_questions"] == 50
     assert audit["rag_md_targets"]["demo"]["corpus_chunks"] == [1000, 3000]
     assert audit["rag_md_targets"]["demo"]["questions"] == [300, 500]
-    assert audit["completion_estimate"]["excluding_final_scale"] == "98%-99%"
-    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "82%-84%"
+    assert audit["completion_estimate"]["excluding_final_scale"] == "about 99%"
+    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "84%-85%"
 
 
 def test_phase6g_audit_tracks_core_requirements_and_gaps():
@@ -86,3 +88,25 @@ def test_phase6g_audit_preserves_medium_live_and_calibration_results():
     assert calibration["agreement_rate_within_1"]["correctness"] == 1.0
     assert calibration["agreement_rate_within_1"]["context_support"] == 0.8667
     assert calibration["agreement_rate_within_1"]["faithfulness"] == 0.8667
+
+
+def test_phase6g_audit_tracks_phase7c_medium_plus_live_subset():
+    audit = json.loads(AUDIT.read_text(encoding="utf-8"))
+    subset = audit["phase7c_medium_plus_live_subset"]
+    leaderboard = {row["method"]: row for row in subset["leaderboard"]}
+
+    assert subset["questions"] == 12
+    assert subset["answer_rows"] == 36
+    assert subset["judge_rows"] == 36
+    assert subset["answer_errors"] == 0
+    assert subset["judge_errors"] == 0
+    assert subset["total_api_calls"] == 75
+    assert set(leaderboard) == {
+        "no_rag",
+        "lexical_rag",
+        "flashrag_bm25_live_deepseek",
+    }
+    assert leaderboard["flashrag_bm25_live_deepseek"]["retrieval_hit"] == 0.9167
+    assert leaderboard["lexical_rag"]["retrieval_hit"] == 0.9167
+    assert leaderboard["no_rag"]["hallucination_risk"] == 3.75
+    assert leaderboard["no_rag"]["unsupported_claims"] == 18
