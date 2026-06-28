@@ -27,6 +27,7 @@ from domainrag.flashrag_bm25_bridge import run_flashrag_bm25_bridge
 from domainrag.flashrag_method_feasibility import probe_flashrag_method_feasibility
 from domainrag.report_generator import generate_report
 from domainrag.source_acquisition import acquire_demo_scale_sources, build_query_plan
+from domainrag.source_decisions import build_decision_outputs
 from domainrag.source_screening import build_screening_outputs
 from domainrag.validator import validate_dataset
 
@@ -139,6 +140,15 @@ def build_parser() -> argparse.ArgumentParser:
     screen_sources.add_argument(
         "--output",
         default="outputs/phase7e/source_screening_queue",
+    )
+    decide_sources = subparsers.add_parser("decide-sources")
+    decide_sources.add_argument(
+        "--screening-queue",
+        default="outputs/phase7e/source_screening_queue/screening_queue.jsonl",
+    )
+    decide_sources.add_argument(
+        "--output",
+        default="outputs/phase7f/source_decisions",
     )
     return parser
 
@@ -400,6 +410,22 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"source screening queue written to {queue_path}")
         print(f"screening summary written to {summary_path}")
+        print(f"markdown summary written to {markdown_path}")
+        return 0
+    if args.command == "decide-sources":
+        try:
+            decisions_path, whitelist_path, summary_path, markdown_path = (
+                build_decision_outputs(
+                    Path(args.screening_queue),
+                    output_dir=Path(args.output),
+                )
+            )
+        except (OSError, ValidationError) as exc:
+            print(str(exc))
+            return 1
+        print(f"source decisions written to {decisions_path}")
+        print(f"provisional source whitelist written to {whitelist_path}")
+        print(f"decision summary written to {summary_path}")
         print(f"markdown summary written to {markdown_path}")
         return 0
     parser.error(f"unknown command: {args.command}")
