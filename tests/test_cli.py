@@ -950,3 +950,84 @@ def test_screen_phase7d_sources_script_writes_queue_without_secrets(tmp_path: Pa
     assert "sk-" not in result.stdout
     assert "ghp_" not in result.stdout
     assert (output / "screening_queue.jsonl").exists()
+
+
+def _screening_row_for_decision(
+    *,
+    source_id: str = "openalex_W1",
+    screening_priority: str = "high",
+    full_text_queue_status: str = "ready_for_full_text_download_attempt",
+) -> dict:
+    return {
+        "source_id": source_id,
+        "doi": "10.1234/example",
+        "title": "High-temperature oxidation of nickel superalloy",
+        "year": 2026,
+        "subtopic": "oxidation",
+        "work_kind": "research_article_candidate",
+        "screening_priority": screening_priority,
+        "full_text_queue_status": full_text_queue_status,
+        "full_text_status": "open_access_full_text_candidate",
+        "screening_status": "needs_manual_verification",
+        "verification_status": "machine_prescreen_only",
+        "venue_whitelist_status": "candidate_top_venue_or_domain_flagship",
+        "domain_relevance_terms": ["nickel", "superalloy"],
+        "oa_url": "https://publisher.example/paper.pdf",
+        "official_url": "https://doi.org/10.1234/example",
+    }
+
+
+def test_decide_sources_cli_writes_decision_package(tmp_path: Path):
+    queue = tmp_path / "screening_queue.jsonl"
+    output = tmp_path / "decisions"
+    write_jsonl(
+        queue,
+        [
+            _screening_row_for_decision(source_id="openalex_W1"),
+            _screening_row_for_decision(
+                source_id="openalex_W2",
+                screening_priority="low",
+            ),
+        ],
+    )
+
+    result = _run_cli(
+        "decide-sources",
+        "--screening-queue",
+        str(queue),
+        "--output",
+        str(output),
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "source decisions written to" in result.stdout
+    assert (output / "source_decisions.jsonl").exists()
+    assert (output / "provisional_source_whitelist.jsonl").exists()
+    assert (output / "decision_summary.json").exists()
+    assert (output / "summary.md").exists()
+
+
+def test_build_phase7f_source_decisions_script_writes_package_without_secrets(tmp_path: Path):
+    queue = tmp_path / "screening_queue.jsonl"
+    output = tmp_path / "decisions"
+    write_jsonl(queue, [_screening_row_for_decision()])
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/build_phase7f_source_decisions.py",
+            "--screening-queue",
+            str(queue),
+            "--output",
+            str(output),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "source decisions written to" in result.stdout
+    assert "sk-" not in result.stdout
+    assert "ghp_" not in result.stdout
+    assert (output / "source_decisions.jsonl").exists()
