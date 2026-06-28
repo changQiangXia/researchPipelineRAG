@@ -1,23 +1,332 @@
 # DomainRAG-Bench
 
-DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据契约和基准流水线项目。当前版本已经完成第一阶段最小闭环、Easy Dataset intake、FlashRAG 兼容输出、真实数据 pilot、DeepSeek 生成/复核候选题，以及 No-RAG / Oracle-Context / lexical RAG 的诊断评测。项目现在已经可以在真实 pilot 数据上调用 DeepSeek API 生成 live answer，并保留检索、答题、延迟和 token 指标。
+DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据契约、数据生产适配和基准评测流水线项目。它把上游的 Easy Dataset 风格数据生产、DomainRAG 标准数据契约、FlashRAG 检索/数据接口、DeepSeek 真实回答与 Judge、人工校准和文献来源筛选连接成一条可复现的研究流程。
 
-## 当前阶段范围
+当前实现领域是“镍基高温合金高温失效”。最新仓库里程碑是 **Phase 7F provisional source decisions and stop point**：
 
-第一阶段已经完成：
+- 当前最佳验证数据集：`data/real_pilot_nickel_superalloy_medium_plus/`
+- 当前公开 benchmark 规模：100 个 corpus chunks / 150 道问题
+- split：50 dev / 50 test / 50 fresh_hard
+- 题型：38 single_choice / 38 multiple_choice / 37 fill_blank / 37 short_answer
+- Phase 7D 文献候选池：124 篇候选文献，覆盖 8 个子方向
+- Phase 7F provisional whitelist：115 条候选来源，其中 104 条研究型候选、11 条综述型候选
+- 最新合并提交：`3aa0127`，PR #29
+- 当前停点：`pause_after_phase7f`
 
-- 定义公开数据契约：`canonical_dataset.jsonl`、`corpus.jsonl`、FlashRAG 风格 split、`qrels/*.tsv`
-- 构造示例领域数据：`data/example_domain`
-- 构造负例数据：`data/invalid_fixtures/missing_qrels`
-- 实现数据校验 CLI：`validate-data`
-- 实现最小 benchmark runner：`run`
-- 实现类型化答案归一化和评测指标
-- 实现 summary 报告生成：`report`
-- 加入回归测试，覆盖 schema、validator、prompt、normalizer、evaluator、runner、reporter 和 CLI
+需要明确的是：Phase 7F 是阶段性停点，不是最终完整 RAG.md demo-scale。项目还没有宣称完成最终人工验证的 100-180 篇文献白名单、1,000-3,000 chunks、300-500 questions、全文解析流水线或 dense/rerank 正式 benchmark。
 
-第一阶段不会调用真实模型 API，不会克隆或修改 Easy Dataset / FlashRAG，也不会处理真实论文。所有运行都在本地完成，benchmark 方法只包含 `no_rag` 和 `mock_rag`。
+## 项目流水线
 
-后续阶段同样遵守两个约束：测试不调用真实模型 API，仓库不保存 API key。
+端到端流程如下：
+
+```text
+目标领域和文献策略
+  -> 文献来源收集和人工/机器预筛
+  -> Easy Dataset 风格数据生产
+  -> chunks.jsonl + items.jsonl
+  -> DomainRAG export-domainrag 转换
+  -> validate-data 数据契约校验
+  -> FlashRAG bundle 准备
+  -> no_rag / oracle_context / lexical_rag / BM25 检索评测
+  -> DeepSeek live answer
+  -> DeepSeek Judge
+  -> comparison report
+  -> human calibration audit
+  -> RAG.md completion audit 和阶段报告
+```
+
+其中 source-side 扩展流程单独记录：
+
+```text
+OpenAlex source acquisition
+  -> 124-paper candidate pool
+  -> machine screening queue
+  -> provisional source decisions
+  -> 115-row provisional whitelist
+  -> pause_after_phase7f
+```
+
+这条线的目的不是直接生成最终数据，而是先把“来源是否足够、是否可访问、是否覆盖子方向、是否需要人工核验”做成可审查资产。
+
+## 输入是什么
+
+项目接受几类输入。
+
+**1. Easy Dataset 风格导出**
+
+最核心的上游输入是：
+
+```text
+chunks.jsonl
+items.jsonl
+```
+
+当前样例和真实 pilot 输入在：
+
+```text
+fixtures/easy_dataset/
+```
+
+`chunks.jsonl` 提供语料块：
+
+```json
+{"id": "chunk_id", "content": "chunk text"}
+```
+
+`items.jsonl` 提供题目和证据关联，必须包含问题、题型、答案、split、`source_chunk_ids`、子领域、知识类型、难度和质量分。`source_chunk_ids` 是 qrels 的来源，也是判断 RAG 是否真的检索到证据的关键字段。
+
+**2. DomainRAG 标准数据集**
+
+转换后的标准输入位于：
+
+```text
+data/<dataset_name>/
+```
+
+每个数据集包含：
+
+```text
+corpus.jsonl
+canonical_dataset.jsonl
+dev.jsonl
+test.jsonl
+fresh_hard_test.jsonl
+qrels/dev.tsv
+qrels/test.tsv
+qrels/fresh_hard.tsv
+dataset_card.md
+statistics.json
+```
+
+**3. 文献来源和候选池**
+
+内部 source manifest 和候选池用于溯源、扩展和人工核验：
+
+```text
+data/real_pilot_sources/
+outputs/phase7d/demo_scale_source_acquisition/
+outputs/phase7e/source_screening_queue/
+outputs/phase7f/source_decisions/
+```
+
+公开 benchmark 数据不携带 DOI、作者、venue、页码、原始 PDF 路径或论文题目等来源元数据；这些只留在内部 source-side 文件中。
+
+**4. DeepSeek API key**
+
+真实 DeepSeek answer/Judge 运行只从环境变量读取：
+
+```text
+DEEPSEEK_API_KEY
+```
+
+测试不会调用真实 DeepSeek API，仓库也不保存任何 API key。
+
+## 输出是什么
+
+主要输出分为六类。
+
+| 输出类别 | 位置 | 用途 |
+| --- | --- | --- |
+| DomainRAG 数据集 | `data/real_pilot_nickel_superalloy_medium_plus/` | 标准 benchmark 输入 |
+| Easy Dataset fixtures | `fixtures/easy_dataset/` | 上游导出样例和真实 pilot 输入 |
+| FlashRAG bundle | `outputs/flashrag/` | FlashRAG 兼容数据包 |
+| benchmark 结果 | `outputs/phase*/` | 检索、回答、Judge、comparison、calibration 输出 |
+| 报告和审计 | `docs/reports/`、`docs/verification/` | 项目状态、验证记录、RAG.md 对照 |
+| source-side 包 | `outputs/phase7d/`、`outputs/phase7e/`、`outputs/phase7f/` | 文献候选、筛选队列、provisional decisions |
+
+最新核心报告是：
+
+```text
+docs/reports/domainrag-medium-pilot-final-report.md
+docs/reports/rag-md-implementation-audit.json
+docs/verification/source-decisions-and-stop-point.md
+```
+
+## 研究这个项目应重点看哪里
+
+建议按下面顺序阅读。
+
+| 目的 | 重点文件或目录 |
+| --- | --- |
+| 快速理解项目状态 | `README.md`、`docs/reports/domainrag-medium-pilot-final-report.md` |
+| 对照原始需求 | `/root/autodl-tmp/RAG/RAG.md`、`docs/reports/rag-md-implementation-audit.json` |
+| 理解数据格式 | `docs/data-contract.md`、`benchmark/domainrag/schema.py`、`benchmark/domainrag/validator.py` |
+| 理解 Easy Dataset 如何接入 | `benchmark/domainrag/easy_dataset_adapter.py`、`integrations/easy-dataset/domainrag-export/`、`fixtures/easy_dataset/` |
+| 理解 FlashRAG 路径 | `benchmark/domainrag/flashrag_adapter.py`、`benchmark/domainrag/flashrag_runtime_intake.py`、`benchmark/domainrag/flashrag_bm25_bridge.py` |
+| 理解检索和评测 | `benchmark/domainrag/benchmark_runner.py`、`benchmark/domainrag/bm25s_retrieval.py`、`benchmark/domainrag/domain_evaluator.py`、`benchmark/domainrag/comparison_report.py` |
+| 理解 DeepSeek answer/Judge | `benchmark/domainrag/deepseek_answer_runner.py`、`benchmark/domainrag/deepseek_judge_runner.py`、`benchmark/domainrag/deepseek_pipeline.py` |
+| 理解人工校准 | `benchmark/domainrag/calibration_packet.py`、`benchmark/domainrag/calibration_audit.py`、`outputs/phase6f/` |
+| 理解文献来源路线 | `benchmark/domainrag/source_acquisition.py`、`benchmark/domainrag/source_screening.py`、`benchmark/domainrag/source_decisions.py`、`outputs/phase7f/source_decisions/` |
+| 看可复现命令 | `docs/verification/*.md`、`scripts/` |
+| 看测试保障 | `tests/` |
+
+## 如何复现当前核心状态
+
+在仓库根目录执行：
+
+```bash
+PYTHONPATH=benchmark python -m domainrag.cli validate-data \
+  --dataset data/real_pilot_nickel_superalloy_medium_plus
+
+PYTHONPATH=benchmark python -m domainrag.cli run \
+  --dataset data/real_pilot_nickel_superalloy_medium_plus \
+  --output outputs/local_readme_check \
+  --methods no_rag,oracle_context,lexical_rag \
+  --split fresh_hard
+
+PYTHONPATH=benchmark python -m domainrag.cli prepare-flashrag \
+  --dataset data/real_pilot_nickel_superalloy_medium_plus \
+  --output outputs/flashrag \
+  --dataset-name real_pilot_nickel_superalloy_medium_plus
+
+PYTHONPATH=benchmark python -m domainrag.cli decide-sources \
+  --screening-queue outputs/phase7e/source_screening_queue/screening_queue.jsonl \
+  --output outputs/phase7f/source_decisions
+
+PYTHONPATH=benchmark pytest
+```
+
+真实 DeepSeek answer/Judge 运行需要先设置 `DEEPSEEK_API_KEY`，并且不应放进常规测试。
+
+## 如何迁移到另一个领域
+
+迁移时不要先改评测器，先换数据和来源策略。推荐步骤如下。
+
+1. 定义领域和子方向。
+
+   例如从镍基高温合金换到“锂电池热失控”，需要先确定子方向，如材料体系、热安全、气体析出、老化机制、故障诊断、BMS 策略等。
+
+2. 建立来源策略。
+
+   如果只做小 pilot，可以先创建新的 source manifest：
+
+   ```text
+   data/real_pilot_sources/<new_domain>/sources.jsonl
+   ```
+
+   如果要走 OpenAlex 扩展，需要复制或修改：
+
+   ```text
+   benchmark/domainrag/source_acquisition.py
+   ```
+
+   重点替换：
+
+   - `DOMAIN_FLAGSHIP_VENUES`
+   - `DOMAIN_RELEVANCE_TERMS`
+   - `DEFAULT_SUBTOPIC_QUERIES`
+
+3. 生成 Easy Dataset 风格输入。
+
+   创建：
+
+   ```text
+   fixtures/easy_dataset/<new_domain>/chunks.jsonl
+   fixtures/easy_dataset/<new_domain>/items.jsonl
+   ```
+
+   每道题必须有 `source_chunk_ids`，否则不能形成 qrels，也无法严肃评测检索。
+
+4. 转换为 DomainRAG 数据集。
+
+   ```bash
+   PYTHONPATH=benchmark python -m domainrag.cli export-domainrag \
+     --input fixtures/easy_dataset/<new_domain> \
+     --output data \
+     --dataset-name <new_domain>
+   ```
+
+5. 校验数据契约。
+
+   ```bash
+   PYTHONPATH=benchmark python -m domainrag.cli validate-data \
+     --dataset data/<new_domain>
+   ```
+
+6. 准备 FlashRAG bundle。
+
+   ```bash
+   PYTHONPATH=benchmark python -m domainrag.cli prepare-flashrag \
+     --dataset data/<new_domain> \
+     --output outputs/flashrag \
+     --dataset-name <new_domain>
+   ```
+
+7. 先跑离线基线。
+
+   ```bash
+   PYTHONPATH=benchmark python -m domainrag.cli run \
+     --dataset data/<new_domain> \
+     --output outputs/<new_domain> \
+     --methods no_rag,oracle_context,lexical_rag \
+     --split fresh_hard
+   ```
+
+   只有当 Fresh-Hard 中出现“no_rag 低、oracle_context 高、RAG 方法受检索影响”的题目时，这个领域数据才开始有 RAG 评测价值。
+
+8. 再跑受控 live DeepSeek 子集。
+
+   live answer 和 Judge 应先跑小样本，确认提示词、上下文拼接、题型评分和错误处理稳定后再扩大。
+
+9. 做人工校准。
+
+   对 Judge 结果抽样人工复核，特别关注 partial evidence、unsupported claims 和模型是否引入上下文外推断。
+
+10. 最后再扩展到 demo-scale。
+
+   先做 source acquisition / screening / decisions，再做全文解析、chunk extraction 和 question generation。不要用未经人工核验的 provisional whitelist 直接宣称最终来源白名单。
+
+## 如何保证严谨性
+
+项目的严谨性不来自单一模型分数，而来自多层约束。
+
+- **数据契约约束**：所有公开数据必须通过 `validate-data`，并满足 `docs/data-contract.md`。
+- **qrels 约束**：每道题必须能追溯到一个或多个 `source_chunk_ids`。
+- **公开元数据安全**：公开 benchmark 不允许 DOI、作者、venue、页码、原始 PDF 路径或论文题目泄露。
+- **题型化评分**：单选、多选、填空、短答分别用不同规则评分，不把所有问题混成一个粗略准确率。
+- **Fresh-Hard 诊断**：重点看 No-RAG 低、Oracle-Context 高、RAG 受检索影响的问题。
+- **多方法对比**：同时看 no_rag、oracle_context、lexical_rag、BM25、live answer，而不是只看一个模型输出。
+- **真实 API 与测试隔离**：测试不调用 DeepSeek，真实运行单独记录输出和错误。
+- **DeepSeek answer 与 Judge 分离**：生成答案和评分是不同调用，避免同一过程自我确认。
+- **人工校准**：Phase 6F 对 Judge 结果做人工抽样审计，记录 Judge 在 partial evidence 上偏保守的风险。
+- **来源状态不夸大**：Phase 7D/7E/7F 明确区分 candidate、screening queue、provisional whitelist 和 final inclusion list。
+- **可复现证据**：每个阶段都有 `docs/verification/` 记录、`outputs/` 产物和 `tests/` 回归测试。
+- **密钥安全**：API key 只从环境变量读取，提交前使用 secret scan。
+
+当前最新验证门：
+
+```text
+PYTHONPATH=benchmark pytest -> 242 passed
+validate-data real_pilot_nickel_superalloy_medium_plus -> valid
+rag-md-implementation-audit.json -> valid JSON
+git diff --check -> clean
+secret scan -> no matches
+```
+
+## Codex 和 DeepSeek API 的角色
+
+**Codex 的角色**
+
+Codex 是这个项目中的工程执行和研究助理，不是 benchmark 里的被测模型。它承担：
+
+- 阅读 `RAG.md` 并拆解阶段计划；
+- 编写 Python adapter、CLI、测试、脚本和报告；
+- 运行验证命令；
+- 维护 README、audit、verification docs；
+- 根据输出判断下一步是否应扩大规模；
+- 在 Phase 7F 处停止，避免把 provisional 结果说成 final。
+
+Codex 不应该被记入 RAG 方法成绩，也不替代人工文献核验。
+
+**DeepSeek API 的角色**
+
+DeepSeek 是项目中的模型服务，承担三类运行时任务：
+
+- **候选题生成和独立复核**：早期用于从真实 chunks 生成候选题，并用独立复核过滤。
+- **live answer**：在 no_rag、oracle_context、lexical_rag、BM25 检索上下文等条件下生成真实答案。
+- **DeepSeek Judge**：对答案做 correctness、context_support、faithfulness、relevance、unsupported_claims 等辅助评分。
+
+DeepSeek Judge 不替代规则指标，也不替代人工校准。它是一个辅助评估器，必须和 qrels、检索指标、unsupported claims、人工抽查一起解释。
 
 ## 目录结构
 
@@ -37,9 +346,9 @@ scripts/                    数据生成脚本
 tests/                      自动化测试
 ```
 
-## 快速复现
+## 历史最小闭环快速复现
 
-在项目根目录执行：
+下面命令复现最早的 example_domain 最小闭环，不代表当前 Phase 7F 的完整状态：
 
 ```bash
 python scripts/create_example_domain.py
@@ -55,6 +364,8 @@ pytest
 - `outputs/example_domain/dev_results.jsonl` 被生成
 - `reports/example_domain/summary.md` 和 `summary.json` 被生成
 - 全量测试通过
+
+后续阶段同样遵守两个约束：测试不调用真实模型 API，仓库不保存 API key。
 
 ## Phase 2A: FlashRAG 兼容输出
 
