@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-READINESS = ROOT / "outputs" / "phase7a" / "dense_rerank_readiness" / "readiness.json"
-SUMMARY = ROOT / "outputs" / "phase7a" / "dense_rerank_readiness" / "summary.md"
+READINESS = ROOT / "outputs" / "archive" / "provenance" / "retrieval-diagnostics" / "dense-rerank-readiness" / "dense_rerank_readiness" / "readiness.json"
+SUMMARY = ROOT / "outputs" / "archive" / "provenance" / "retrieval-diagnostics" / "dense-rerank-readiness" / "dense_rerank_readiness" / "summary.md"
 DOC = ROOT / "docs" / "verification" / "dense-rerank-isolated-readiness.md"
 AUDIT = ROOT / "docs" / "reports" / "rag-md-implementation-audit.json"
 
@@ -41,6 +41,6 @@ def test_phase7a_updates_rag_md_audit_dense_rerank_evidence():
     dense = requirements["dense_rerank_methods"]
 
     assert dense["status"] == "partial"
-    assert "outputs/phase7a/dense_rerank_readiness/readiness.json" in dense["evidence"]
+    assert "outputs/archive/provenance/retrieval-diagnostics/dense-rerank-readiness/dense_rerank_readiness/readiness.json" in dense["evidence"]
     assert "docs/verification/dense-rerank-isolated-readiness.md" in dense["evidence"]
     assert "isolated readiness" in dense["summary"]

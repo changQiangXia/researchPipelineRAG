@@ -48,7 +48,7 @@ Dataset:
 
 Retrieval input for `flashrag_bm25_live_deepseek`:
 
-- `outputs/phase7b/medium_plus_bm25s/real_pilot_nickel_superalloy_medium_plus/fresh_hard_bm25s_results.jsonl`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-baseline-and-bm25/medium_plus_bm25s/real_pilot_nickel_superalloy_medium_plus/fresh_hard_bm25s_results.jsonl`
 
 The live subset uses the first 12 medium-plus Fresh-Hard questions. This range
 includes partial-recall rows and one BM25s retrieval miss, so it is more
@@ -56,12 +56,12 @@ diagnostic than the first 8-question sample.
 
 ## Outputs
 
-- `outputs/phase7c/medium_plus_live_subset/answers/real_pilot_nickel_superalloy_medium_plus/fresh_hard_deepseek_results.jsonl`
-- `outputs/phase7c/medium_plus_live_subset/judge/real_pilot_nickel_superalloy_medium_plus/fresh_hard_judge_results.jsonl`
-- `outputs/phase7c/medium_plus_live_subset/judge_report/summary.json`
-- `outputs/phase7c/medium_plus_live_subset/judge_report/summary.md`
-- `outputs/phase7c/medium_plus_live_subset/comparison/summary.json`
-- `outputs/phase7c/medium_plus_live_subset/comparison/summary.md`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/answers/real_pilot_nickel_superalloy_medium_plus/fresh_hard_deepseek_results.jsonl`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/judge/real_pilot_nickel_superalloy_medium_plus/fresh_hard_judge_results.jsonl`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/judge_report/summary.json`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/judge_report/summary.md`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/comparison/summary.json`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/comparison/summary.md`
 
 ## Run Shape
 

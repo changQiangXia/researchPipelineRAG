@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PHASE4C = ROOT / "outputs" / "phase4c" / "deepseek_judge_fresh_hard"
+PHASE4C = ROOT / "outputs" / "archive" / "provenance" / "pilot-benchmarks" / "deepseek-judge-fresh-hard" / "deepseek_judge_fresh_hard"
 
 
 def test_phase4c_judge_outputs_are_complete():

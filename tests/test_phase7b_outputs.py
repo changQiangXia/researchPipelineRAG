@@ -10,8 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 DATASET_NAME = "real_pilot_nickel_superalloy_medium_plus"
 DATASET = ROOT / "data" / DATASET_NAME
 FLASHRAG = ROOT / "outputs" / "flashrag" / DATASET_NAME
-BASELINE = ROOT / "outputs" / "phase7b" / "medium_plus_baseline"
-BM25 = ROOT / "outputs" / "phase7b" / "medium_plus_bm25s"
+BASELINE = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-plus-baseline-and-bm25" / "medium_plus_baseline"
+BM25 = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-plus-baseline-and-bm25" / "medium_plus_bm25s"
 DOC = ROOT / "docs" / "verification" / "medium-plus-scale-expansion.md"
 AUDIT = ROOT / "docs" / "reports" / "rag-md-implementation-audit.json"
 

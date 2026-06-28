@@ -44,7 +44,7 @@ Base answer command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy_medium \
-  --output outputs/phase6e/medium_live_deepseek_fresh_hard \
+  --output outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_live_deepseek_fresh_hard \
   --methods no_rag,oracle_context,lexical_rag \
   --split fresh_hard \
   --max-retries 2
@@ -55,8 +55,8 @@ Base Judge command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli judge-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy_medium \
-  --input outputs/phase6e/medium_live_deepseek_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_deepseek_results.jsonl \
-  --output outputs/phase6e/medium_deepseek_judge_fresh_hard \
+  --input outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_live_deepseek_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_deepseek_results.jsonl \
+  --output outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_fresh_hard \
   --split fresh_hard \
   --max-retries 1
 ```
@@ -66,8 +66,8 @@ BM25 oracle-reader Judge command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli judge-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy_medium \
-  --input outputs/phase6d/medium_flashrag_bm25_bridge/real_pilot_nickel_superalloy_medium/fresh_hard_flashrag_bm25_results.jsonl \
-  --output outputs/phase6e/medium_deepseek_judge_flashrag_bm25_fresh_hard \
+  --input outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_flashrag_bm25_bridge/real_pilot_nickel_superalloy_medium/fresh_hard_flashrag_bm25_results.jsonl \
+  --output outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_flashrag_bm25_fresh_hard \
   --split fresh_hard \
   --max-retries 1
 ```
@@ -77,10 +77,10 @@ BM25 live answer command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy_medium \
-  --output outputs/phase6e/medium_live_deepseek_flashrag_bm25_fresh_hard \
+  --output outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_live_deepseek_flashrag_bm25_fresh_hard \
   --methods flashrag_bm25_live_deepseek \
   --split fresh_hard \
-  --retrieval-results outputs/phase6d/medium_flashrag_bm25_bridge/real_pilot_nickel_superalloy_medium/fresh_hard_flashrag_bm25_results.jsonl \
+  --retrieval-results outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_flashrag_bm25_bridge/real_pilot_nickel_superalloy_medium/fresh_hard_flashrag_bm25_results.jsonl \
   --max-retries 2
 ```
 
@@ -89,8 +89,8 @@ BM25 live Judge command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli judge-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy_medium \
-  --input outputs/phase6e/medium_live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_deepseek_results.jsonl \
-  --output outputs/phase6e/medium_deepseek_judge_flashrag_bm25_live_fresh_hard \
+  --input outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_deepseek_results.jsonl \
+  --output outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_flashrag_bm25_live_fresh_hard \
   --split fresh_hard \
   --max-retries 1
 ```
@@ -109,31 +109,31 @@ total live API calls recorded in outputs: 180
 ## Outputs
 
 ```text
-outputs/phase6e/medium_live_deepseek_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_deepseek_results.jsonl
-outputs/phase6e/medium_deepseek_judge_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_judge_results.jsonl
-outputs/phase6e/medium_deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_judge_results.jsonl
-outputs/phase6e/medium_live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_deepseek_results.jsonl
-outputs/phase6e/medium_deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_judge_results.jsonl
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_live_deepseek_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_deepseek_results.jsonl
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_judge_results.jsonl
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_judge_results.jsonl
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_deepseek_results.jsonl
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy_medium/fresh_hard_judge_results.jsonl
 ```
 
 Judge reports:
 
 ```text
-outputs/phase6e/medium_deepseek_judge_fresh_hard/report_fresh_hard/summary.json
-outputs/phase6e/medium_deepseek_judge_fresh_hard/report_fresh_hard/summary.md
-outputs/phase6e/medium_deepseek_judge_flashrag_bm25_fresh_hard/report_fresh_hard/summary.json
-outputs/phase6e/medium_deepseek_judge_flashrag_bm25_fresh_hard/report_fresh_hard/summary.md
-outputs/phase6e/medium_deepseek_judge_flashrag_bm25_live_fresh_hard/report_fresh_hard/summary.json
-outputs/phase6e/medium_deepseek_judge_flashrag_bm25_live_fresh_hard/report_fresh_hard/summary.md
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_fresh_hard/report_fresh_hard/summary.json
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_fresh_hard/report_fresh_hard/summary.md
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_flashrag_bm25_fresh_hard/report_fresh_hard/summary.json
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_flashrag_bm25_fresh_hard/report_fresh_hard/summary.md
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_flashrag_bm25_live_fresh_hard/report_fresh_hard/summary.json
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_deepseek_judge_flashrag_bm25_live_fresh_hard/report_fresh_hard/summary.md
 ```
 
 Comparison and calibration:
 
 ```text
-outputs/phase6e/medium_fresh_hard_comparison/summary.json
-outputs/phase6e/medium_fresh_hard_comparison/summary.md
-outputs/phase6e/medium_human_calibration_fresh_hard/review_packet.jsonl
-outputs/phase6e/medium_human_calibration_fresh_hard/review_packet.md
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_fresh_hard_comparison/summary.json
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_fresh_hard_comparison/summary.md
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_human_calibration_fresh_hard/review_packet.jsonl
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_human_calibration_fresh_hard/review_packet.md
 ```
 
 Calibration packet rows:

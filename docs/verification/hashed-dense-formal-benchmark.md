@@ -59,22 +59,22 @@ quality from LLM generation quality.
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run-hashed-dense \
   --dataset data/real_pilot_nickel_superalloy_medium_plus \
-  --output outputs/phase7k/hashed_dense_benchmark \
+  --output outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark \
   --split fresh_hard \
   --top-k 5 \
   --dimensions 512
 
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl \
-  --output outputs/phase7k/hashed_dense_benchmark/report_fresh_hard
+  --input outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl \
+  --output outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/report_fresh_hard
 ```
 
 ## Outputs
 
 ```text
-outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl
-outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.json
-outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.md
+outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl
+outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/report_fresh_hard/summary.json
+outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/report_fresh_hard/summary.md
 ```
 
 The result file contains 100 rows:
@@ -150,5 +150,5 @@ PYTHONPATH=benchmark pytest
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium_plus
 python -m json.tool docs/reports/rag-md-implementation-audit.json >/tmp/phase7k-audit.json
 git diff --check
-grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs/phase7g outputs/phase7h outputs/phase7i outputs/phase7j outputs/phase7k benchmark scripts tests docs pyproject.toml README.md || true
+grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs/archive/provenance/source-workflow outputs/archive/provenance/retrieval-diagnostics benchmark scripts tests docs pyproject.toml README.md || true
 ```

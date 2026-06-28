@@ -6,24 +6,20 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ANSWER_RESULTS = (
-    ROOT
-    / "outputs"
-    / "phase6b"
+    ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "expanded-deepseek-evaluation"
     / "expanded_live_deepseek_fresh_hard"
     / "real_pilot_nickel_superalloy_expanded"
     / "fresh_hard_deepseek_results.jsonl"
 )
 JUDGE_RESULTS = (
-    ROOT
-    / "outputs"
-    / "phase6b"
+    ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "expanded-deepseek-evaluation"
     / "expanded_deepseek_judge_fresh_hard"
     / "real_pilot_nickel_superalloy_expanded"
     / "fresh_hard_judge_results.jsonl"
 )
-COMPARISON = ROOT / "outputs" / "phase6b" / "expanded_fresh_hard_comparison" / "summary.json"
-PACKET_JSONL = ROOT / "outputs" / "phase6b" / "expanded_human_calibration_fresh_hard" / "review_packet.jsonl"
-PACKET_MD = ROOT / "outputs" / "phase6b" / "expanded_human_calibration_fresh_hard" / "review_packet.md"
+COMPARISON = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "expanded-deepseek-evaluation" / "expanded_fresh_hard_comparison" / "summary.json"
+PACKET_JSONL = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "expanded-deepseek-evaluation" / "expanded_human_calibration_fresh_hard" / "review_packet.jsonl"
+PACKET_MD = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "expanded-deepseek-evaluation" / "expanded_human_calibration_fresh_hard" / "review_packet.md"
 
 
 def _read_jsonl(path: Path) -> list[dict]:

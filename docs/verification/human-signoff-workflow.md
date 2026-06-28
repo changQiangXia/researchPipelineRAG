@@ -29,17 +29,17 @@ Generate the pending template:
 
 ```bash
 PYTHONPATH=benchmark python scripts/build_phase7j_human_signoff.py \
-  --candidate-queue outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl \
-  --output outputs/phase7j/human_signoff
+  --candidate-queue outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/candidate_final_whitelist_queue.jsonl \
+  --output outputs/archive/provenance/source-workflow/human-signoff/human_signoff
 ```
 
 After human labels exist, rebuild with:
 
 ```bash
 PYTHONPATH=benchmark python scripts/build_phase7j_human_signoff.py \
-  --candidate-queue outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl \
+  --candidate-queue outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/candidate_final_whitelist_queue.jsonl \
   --labels <human_signoff_labels.jsonl> \
-  --output outputs/phase7j/human_signoff
+  --output outputs/archive/provenance/source-workflow/human-signoff/human_signoff
 ```
 
 Expected label shape:
@@ -59,10 +59,10 @@ Allowed decisions are `accepted_final`, `rejected_final`, and
 
 ## Output Files
 
-- `outputs/phase7j/human_signoff/human_signoff_template.jsonl`
-- `outputs/phase7j/human_signoff/final_source_whitelist.jsonl`
-- `outputs/phase7j/human_signoff/human_signoff_summary.json`
-- `outputs/phase7j/human_signoff/summary.md`
+- `outputs/archive/provenance/source-workflow/human-signoff/human_signoff/human_signoff_template.jsonl`
+- `outputs/archive/provenance/source-workflow/human-signoff/human_signoff/final_source_whitelist.jsonl`
+- `outputs/archive/provenance/source-workflow/human-signoff/human_signoff/human_signoff_summary.json`
+- `outputs/archive/provenance/source-workflow/human-signoff/human_signoff/summary.md`
 
 ## Results
 

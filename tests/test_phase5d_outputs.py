@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "outputs" / "phase5d" / "fresh_hard_comparison" / "summary.json"
-MARKDOWN = ROOT / "outputs" / "phase5d" / "fresh_hard_comparison" / "summary.md"
+SUMMARY = ROOT / "outputs" / "archive" / "provenance" / "flashrag-integration" / "fresh-hard-comparison" / "fresh_hard_comparison" / "summary.json"
+MARKDOWN = ROOT / "outputs" / "archive" / "provenance" / "flashrag-integration" / "fresh-hard-comparison" / "fresh_hard_comparison" / "summary.md"
 
 
 def test_phase5d_fresh_hard_comparison_contains_expected_methods():

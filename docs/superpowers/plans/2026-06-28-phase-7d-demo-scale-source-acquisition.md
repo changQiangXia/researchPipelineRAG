@@ -103,9 +103,9 @@ Expected: PASS.
 ### Task 3: Phase 7D Live Candidate Output
 
 **Files:**
-- Create: `outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl`
-- Create: `outputs/phase7d/demo_scale_source_acquisition/coverage.json`
-- Create: `outputs/phase7d/demo_scale_source_acquisition/summary.md`
+- Create: `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl`
+- Create: `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/coverage.json`
+- Create: `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/summary.md`
 - Create: `docs/verification/demo-scale-source-acquisition.md`
 - Modify: `docs/reports/rag-md-implementation-audit.json`
 - Modify: `docs/reports/domainrag-medium-pilot-final-report.md`
@@ -127,7 +127,7 @@ Expected: FAIL because outputs and docs do not exist.
 
 - [x] **Step 3: Run live acquisition**
 
-Run: `PYTHONPATH=benchmark python scripts/acquire_demo_scale_sources.py --output outputs/phase7d/demo_scale_source_acquisition --per-query 15`
+Run: `PYTHONPATH=benchmark python scripts/acquire_demo_scale_sources.py --output outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition --per-query 15`
 
 - [x] **Step 4: Update docs and audit**
 

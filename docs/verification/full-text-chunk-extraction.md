@@ -17,8 +17,8 @@ and no 300-500 question set has been generated from these chunks.
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli extract-fulltext-chunks \
-  --access outputs/phase7h/full_text_access_combined115/full_text_access.jsonl \
-  --output outputs/phase7l/full_text_chunk_extraction \
+  --access outputs/archive/provenance/source-workflow/source-verification-combined/full_text_access_combined115/full_text_access.jsonl \
+  --output outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction \
   --chunk-tokens 350 \
   --overlap-tokens 50 \
   --min-chunk-tokens 80
@@ -27,10 +27,10 @@ PYTHONPATH=benchmark python -m domainrag.cli extract-fulltext-chunks \
 ## Outputs
 
 ```text
-outputs/phase7l/full_text_chunk_extraction/full_text_chunks.jsonl
-outputs/phase7l/full_text_chunk_extraction/chunk_source_manifest.jsonl
-outputs/phase7l/full_text_chunk_extraction/chunk_extraction_summary.json
-outputs/phase7l/full_text_chunk_extraction/chunk_extraction_summary.md
+outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/full_text_chunks.jsonl
+outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_source_manifest.jsonl
+outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_extraction_summary.json
+outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_extraction_summary.md
 ```
 
 Default output policy:
@@ -116,7 +116,7 @@ Full verification before commit:
 PYTHONPATH=benchmark pytest
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium_plus
 python -m json.tool docs/reports/rag-md-implementation-audit.json >/tmp/phase7l-audit.json
-python -m json.tool outputs/phase7l/full_text_chunk_extraction/chunk_extraction_summary.json >/tmp/phase7l-summary.json
+python -m json.tool outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_extraction_summary.json >/tmp/phase7l-summary.json
 git diff --check
-grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs/phase7g outputs/phase7h outputs/phase7i outputs/phase7j outputs/phase7k outputs/phase7l benchmark scripts tests docs pyproject.toml README.md || true
+grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs/archive/provenance/source-workflow outputs/archive/provenance/retrieval-diagnostics benchmark scripts tests docs pyproject.toml README.md || true
 ```

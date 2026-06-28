@@ -29,8 +29,8 @@ PYTHONPATH=benchmark python -m domainrag.cli compare \
 Output files:
 
 ```text
-outputs/phase5d/fresh_hard_comparison/summary.json
-outputs/phase5d/fresh_hard_comparison/summary.md
+outputs/archive/provenance/flashrag-integration/fresh-hard-comparison/fresh_hard_comparison/summary.json
+outputs/archive/provenance/flashrag-integration/fresh-hard-comparison/fresh_hard_comparison/summary.md
 ```
 
 ## Inputs
@@ -38,17 +38,17 @@ outputs/phase5d/fresh_hard_comparison/summary.md
 Answer inputs:
 
 ```text
-outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
-outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl
-outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
+outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl
+outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
 ```
 
 Judge inputs:
 
 ```text
-outputs/phase4c/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
-outputs/phase5b/deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
-outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
+outputs/archive/provenance/pilot-benchmarks/deepseek-judge-fresh-hard/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
+outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
 ```
 
 The report covers these methods:
@@ -66,14 +66,14 @@ flashrag_bm25_live_deepseek
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli compare \
   --answer-inputs \
-    outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
-    outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
-    outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+    outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+    outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
+    outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
   --judge-inputs \
-    outputs/phase4c/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
-    outputs/phase5b/deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
-    outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
-  --output outputs/phase5d/fresh_hard_comparison
+    outputs/archive/provenance/pilot-benchmarks/deepseek-judge-fresh-hard/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+    outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+    outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/fresh-hard-comparison/fresh_hard_comparison
 ```
 
 ## Leaderboard Snapshot

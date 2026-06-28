@@ -98,21 +98,21 @@ lexical_rag
 for split in dev test fresh_hard; do
   PYTHONPATH=benchmark python -m domainrag.cli run \
     --dataset data/real_pilot_nickel_superalloy \
-    --output outputs/phase4/curated \
+    --output outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/curated \
     --methods no_rag,oracle_context,lexical_rag \
     --split "$split"
   PYTHONPATH=benchmark python -m domainrag.cli report \
-    --input "outputs/phase4/curated/real_pilot_nickel_superalloy/${split}_results.jsonl" \
-    --output "outputs/phase4/curated/report_${split}"
+    --input "outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/curated/real_pilot_nickel_superalloy/${split}_results.jsonl" \
+    --output "outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/curated/report_${split}"
 
   PYTHONPATH=benchmark python -m domainrag.cli run \
     --dataset outputs/deepseek/real_pilot_nickel_superalloy_full/domainrag_candidate/deepseek_real_pilot_full_candidates \
-    --output outputs/phase4/deepseek_candidate \
+    --output outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/deepseek_candidate \
     --methods no_rag,oracle_context,lexical_rag \
     --split "$split"
   PYTHONPATH=benchmark python -m domainrag.cli report \
-    --input "outputs/phase4/deepseek_candidate/deepseek_real_pilot_full_candidates/${split}_results.jsonl" \
-    --output "outputs/phase4/deepseek_candidate/report_${split}"
+    --input "outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/deepseek_candidate/deepseek_real_pilot_full_candidates/${split}_results.jsonl" \
+    --output "outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/deepseek_candidate/report_${split}"
 done
 ```
 
@@ -121,17 +121,17 @@ done
 Curated reports:
 
 ```text
-outputs/phase4/curated/report_dev/summary.json
-outputs/phase4/curated/report_test/summary.json
-outputs/phase4/curated/report_fresh_hard/summary.json
+outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/curated/report_dev/summary.json
+outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/curated/report_test/summary.json
+outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/curated/report_fresh_hard/summary.json
 ```
 
 DeepSeek candidate reports:
 
 ```text
-outputs/phase4/deepseek_candidate/report_dev/summary.json
-outputs/phase4/deepseek_candidate/report_test/summary.json
-outputs/phase4/deepseek_candidate/report_fresh_hard/summary.json
+outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/deepseek_candidate/report_dev/summary.json
+outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/deepseek_candidate/report_test/summary.json
+outputs/archive/provenance/pilot-benchmarks/curated-and-candidate-baselines/deepseek_candidate/report_fresh_hard/summary.json
 ```
 
 Curated `fresh_hard` result:

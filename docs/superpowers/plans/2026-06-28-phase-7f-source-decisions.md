@@ -123,8 +123,8 @@ Add command:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli decide-sources \
-  --screening-queue outputs/phase7e/source_screening_queue/screening_queue.jsonl \
-  --output outputs/phase7f/source_decisions
+  --screening-queue outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-decisions/source_decisions
 ```
 
 - [x] **Step 4: Verify GREEN**
@@ -136,10 +136,10 @@ Expected: PASS.
 ### Task 3: Phase 7F Outputs, Audit, And Stopping Point
 
 **Files:**
-- Create: `outputs/phase7f/source_decisions/source_decisions.jsonl`
-- Create: `outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl`
-- Create: `outputs/phase7f/source_decisions/decision_summary.json`
-- Create: `outputs/phase7f/source_decisions/summary.md`
+- Create: `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/source_decisions.jsonl`
+- Create: `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl`
+- Create: `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/decision_summary.json`
+- Create: `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/summary.md`
 - Create: `docs/verification/source-decisions-and-stop-point.md`
 - Modify: `docs/reports/rag-md-implementation-audit.json`
 - Modify: `docs/reports/domainrag-medium-pilot-final-report.md`
@@ -177,8 +177,8 @@ Run:
 
 ```bash
 PYTHONPATH=benchmark python scripts/build_phase7f_source_decisions.py \
-  --screening-queue outputs/phase7e/source_screening_queue/screening_queue.jsonl \
-  --output outputs/phase7f/source_decisions
+  --screening-queue outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-decisions/source_decisions
 ```
 
 - [x] **Step 4: Update docs and audit**

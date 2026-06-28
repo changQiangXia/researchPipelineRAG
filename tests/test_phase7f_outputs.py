@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "outputs" / "phase7f" / "source_decisions"
+OUTPUT = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "source-decisions" / "source_decisions"
 DECISIONS = OUTPUT / "source_decisions.jsonl"
 WHITELIST = OUTPUT / "provisional_source_whitelist.jsonl"
 SUMMARY = OUTPUT / "decision_summary.json"
@@ -76,7 +76,7 @@ def test_phase7f_updates_report_audit_and_stop_point_documentation():
     assert "Phase 7F" in doc
     assert "pause_after_phase7f" in doc
     assert "not final manual verification" in doc
-    assert "outputs/phase7f/source_decisions/source_decisions.jsonl" in doc
+    assert "outputs/archive/provenance/source-workflow/source-decisions/source_decisions/source_decisions.jsonl" in doc
     assert "Phase 7F Source Decisions" in report
     assert audit["phase"] == "Phase 7M"
     assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "97%-98%"
@@ -86,7 +86,7 @@ def test_phase7f_updates_report_audit_and_stop_point_documentation():
     assert decisions["stop_point_recommendation"] == "pause_after_phase7f"
     assert requirements["literature_source_policy"]["status"] == "partial"
     assert requirements["demo_scale"]["status"] == "partial"
-    assert "outputs/phase7f/source_decisions/decision_summary.json" in requirements[
+    assert "outputs/archive/provenance/source-workflow/source-decisions/source_decisions/decision_summary.json" in requirements[
         "literature_source_policy"
     ]["evidence"]
     assert audit["phase7g_source_verification"]["accepted_final_verification"] == 0

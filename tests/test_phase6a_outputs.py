@@ -9,7 +9,7 @@ from domainrag.validator import validate_dataset
 ROOT = Path(__file__).resolve().parents[1]
 DATASET = ROOT / "data" / "real_pilot_nickel_superalloy_expanded"
 FLASHRAG = ROOT / "outputs" / "flashrag" / "real_pilot_nickel_superalloy_expanded"
-BASELINE = ROOT / "outputs" / "phase6a" / "expanded_baseline"
+BASELINE = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "expanded-baseline" / "expanded_baseline"
 
 
 def _read_jsonl(path: Path) -> list[dict]:

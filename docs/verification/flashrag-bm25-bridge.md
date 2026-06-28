@@ -74,11 +74,11 @@ New CLI:
 PYTHONPATH=benchmark python -m domainrag.cli run-flashrag-bm25 \
   --flashrag-path benchmark/flashrag-fork \
   --dataset-bundle outputs/flashrag/real_pilot_nickel_superalloy \
-  --output outputs/phase5b/flashrag_bm25_bridge \
+  --output outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge \
   --dataset-name real_pilot_nickel_superalloy \
   --split fresh_hard \
   --top-k 5 \
-  --index-dir outputs/phase5b/flashrag_bm25_bridge/index \
+  --index-dir outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/index \
   --rebuild-index
 ```
 
@@ -88,36 +88,36 @@ Subsequent splits reuse the same BM25s index:
 PYTHONPATH=benchmark python -m domainrag.cli run-flashrag-bm25 \
   --flashrag-path benchmark/flashrag-fork \
   --dataset-bundle outputs/flashrag/real_pilot_nickel_superalloy \
-  --output outputs/phase5b/flashrag_bm25_bridge \
+  --output outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge \
   --dataset-name real_pilot_nickel_superalloy \
   --split dev \
   --top-k 5 \
-  --index-dir outputs/phase5b/flashrag_bm25_bridge/index
+  --index-dir outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/index
 
 PYTHONPATH=benchmark python -m domainrag.cli run-flashrag-bm25 \
   --flashrag-path benchmark/flashrag-fork \
   --dataset-bundle outputs/flashrag/real_pilot_nickel_superalloy \
-  --output outputs/phase5b/flashrag_bm25_bridge \
+  --output outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge \
   --dataset-name real_pilot_nickel_superalloy \
   --split test \
   --top-k 5 \
-  --index-dir outputs/phase5b/flashrag_bm25_bridge/index
+  --index-dir outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/index
 ```
 
 Reports:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/dev_flashrag_bm25_results.jsonl \
-  --output outputs/phase5b/flashrag_bm25_bridge/report_dev
+  --input outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/dev_flashrag_bm25_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/report_dev
 
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/test_flashrag_bm25_results.jsonl \
-  --output outputs/phase5b/flashrag_bm25_bridge/report_test
+  --input outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/test_flashrag_bm25_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/report_test
 
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
-  --output outputs/phase5b/flashrag_bm25_bridge/report_fresh_hard
+  --input outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/report_fresh_hard
 ```
 
 ## Outputs
@@ -125,23 +125,23 @@ PYTHONPATH=benchmark python -m domainrag.cli report \
 Result rows:
 
 ```text
-outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/dev_flashrag_bm25_results.jsonl
-outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/test_flashrag_bm25_results.jsonl
-outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/dev_flashrag_bm25_results.jsonl
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/test_flashrag_bm25_results.jsonl
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl
 ```
 
 Reports:
 
 ```text
-outputs/phase5b/flashrag_bm25_bridge/report_dev/summary.json
-outputs/phase5b/flashrag_bm25_bridge/report_test/summary.json
-outputs/phase5b/flashrag_bm25_bridge/report_fresh_hard/summary.json
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/report_dev/summary.json
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/report_test/summary.json
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/report_fresh_hard/summary.json
 ```
 
 BM25s index:
 
 ```text
-outputs/phase5b/flashrag_bm25_bridge/index/bm25/
+outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/index/bm25/
 ```
 
 The index is committed because the current pilot index is only about 44 KB and is useful evidence that the real FlashRAG BM25s build path ran successfully.
@@ -178,14 +178,14 @@ The `fresh_hard` Phase 5B output was also evaluated with live DeepSeek Judge:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli judge-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy \
-  --input outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
-  --output outputs/phase5b/deepseek_judge_flashrag_bm25_fresh_hard \
+  --input outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/deepseek_judge_flashrag_bm25_fresh_hard \
   --split fresh_hard \
   --max-retries 1
 
 PYTHONPATH=benchmark python -m domainrag.cli judge-report \
-  --input outputs/phase5b/deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
-  --output outputs/phase5b/deepseek_judge_flashrag_bm25_fresh_hard/report_fresh_hard
+  --input outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/deepseek_judge_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/deepseek_judge_flashrag_bm25_fresh_hard/report_fresh_hard
 ```
 
 Judge summary:

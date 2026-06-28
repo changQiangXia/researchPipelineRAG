@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AUDIT = ROOT / "outputs" / "phase6f" / "medium_human_calibration_audit"
+AUDIT = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-human-calibration-audit" / "medium_human_calibration_audit"
 LABELS = AUDIT / "human_labels.jsonl"
 SUMMARY = AUDIT / "summary.json"
 SUMMARY_MD = AUDIT / "summary.md"

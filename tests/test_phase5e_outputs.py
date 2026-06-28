@@ -6,14 +6,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FEASIBILITY = (
-    ROOT
-    / "outputs"
-    / "phase5e"
+    ROOT / "outputs" / "archive" / "provenance" / "flashrag-integration" / "method-feasibility-calibration"
     / "flashrag_method_feasibility"
     / "real_pilot_nickel_superalloy_manifest.json"
 )
-PACKET_JSONL = ROOT / "outputs" / "phase5e" / "human_calibration_fresh_hard" / "review_packet.jsonl"
-PACKET_MD = ROOT / "outputs" / "phase5e" / "human_calibration_fresh_hard" / "review_packet.md"
+PACKET_JSONL = ROOT / "outputs" / "archive" / "provenance" / "flashrag-integration" / "method-feasibility-calibration" / "human_calibration_fresh_hard" / "review_packet.jsonl"
+PACKET_MD = ROOT / "outputs" / "archive" / "provenance" / "flashrag-integration" / "method-feasibility-calibration" / "human_calibration_fresh_hard" / "review_packet.md"
 
 
 def _read_jsonl(path: Path) -> list[dict]:

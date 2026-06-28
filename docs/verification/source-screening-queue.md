@@ -15,23 +15,23 @@ Run from repository root:
 
 ```bash
 PYTHONPATH=benchmark python scripts/screen_phase7d_sources.py \
-  --candidates outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl \
-  --output outputs/phase7e/source_screening_queue
+  --candidates outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue
 ```
 
 Equivalent CLI entrypoint:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli screen-sources \
-  --candidates outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl \
-  --output outputs/phase7e/source_screening_queue
+  --candidates outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue
 ```
 
 ## Output Files
 
-- `outputs/phase7e/source_screening_queue/screening_queue.jsonl`
-- `outputs/phase7e/source_screening_queue/screening_summary.json`
-- `outputs/phase7e/source_screening_queue/summary.md`
+- `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl`
+- `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_summary.json`
+- `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/summary.md`
 
 ## Queue Summary
 

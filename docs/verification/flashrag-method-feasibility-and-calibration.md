@@ -34,13 +34,13 @@ New CLI commands:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli probe-flashrag-methods \
   --flashrag-path benchmark/flashrag-fork \
-  --output outputs/phase5e/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json
+  --output outputs/archive/provenance/flashrag-integration/method-feasibility-calibration/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json
 
 PYTHONPATH=benchmark python -m domainrag.cli calibration-packet \
   --dataset data/real_pilot_nickel_superalloy \
-  --answers outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
-  --judge outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
-  --output outputs/phase5e/human_calibration_fresh_hard \
+  --answers outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+  --judge outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/method-feasibility-calibration/human_calibration_fresh_hard \
   --split fresh_hard
 ```
 
@@ -49,7 +49,7 @@ PYTHONPATH=benchmark python -m domainrag.cli calibration-packet \
 Output:
 
 ```text
-outputs/phase5e/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json
+outputs/archive/provenance/flashrag-integration/method-feasibility-calibration/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json
 ```
 
 FlashRAG checkout:
@@ -114,16 +114,16 @@ Interpretation:
 Outputs:
 
 ```text
-outputs/phase5e/human_calibration_fresh_hard/review_packet.jsonl
-outputs/phase5e/human_calibration_fresh_hard/review_packet.md
+outputs/archive/provenance/flashrag-integration/method-feasibility-calibration/human_calibration_fresh_hard/review_packet.jsonl
+outputs/archive/provenance/flashrag-integration/method-feasibility-calibration/human_calibration_fresh_hard/review_packet.md
 ```
 
 Inputs:
 
 ```text
 data/real_pilot_nickel_superalloy
-outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
-outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
+outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
+outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
 ```
 
 Packet summary:

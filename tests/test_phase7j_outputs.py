@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SIGNOFF = ROOT / "outputs" / "phase7j" / "human_signoff"
+SIGNOFF = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "human-signoff" / "human_signoff"
 DOC = ROOT / "docs" / "verification" / "human-signoff-workflow.md"
 AUDIT = ROOT / "docs" / "reports" / "rag-md-implementation-audit.json"
 
@@ -45,9 +45,9 @@ def test_phase7j_updates_docs_and_audit_without_final_whitelist_claim():
         "final_whitelist_claim": "not_complete",
         "verification_status": "human_signoff_required",
         "outputs": [
-            "outputs/phase7j/human_signoff/human_signoff_template.jsonl",
-            "outputs/phase7j/human_signoff/final_source_whitelist.jsonl",
-            "outputs/phase7j/human_signoff/human_signoff_summary.json",
+            "outputs/archive/provenance/source-workflow/human-signoff/human_signoff/human_signoff_template.jsonl",
+            "outputs/archive/provenance/source-workflow/human-signoff/human_signoff/final_source_whitelist.jsonl",
+            "outputs/archive/provenance/source-workflow/human-signoff/human_signoff/human_signoff_summary.json",
             "docs/verification/human-signoff-workflow.md",
         ],
     }

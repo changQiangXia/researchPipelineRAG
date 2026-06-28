@@ -6,9 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = (
-    ROOT
-    / "outputs"
-    / "phase5a"
+    ROOT / "outputs" / "archive" / "provenance" / "flashrag-integration" / "runtime-intake"
     / "flashrag_runtime_intake"
     / "real_pilot_nickel_superalloy_manifest.json"
 )

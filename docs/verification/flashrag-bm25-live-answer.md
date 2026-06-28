@@ -28,10 +28,10 @@ Updated CLI:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy \
-  --output outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard \
+  --output outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/live_deepseek_flashrag_bm25_fresh_hard \
   --methods flashrag_bm25_live_deepseek \
   --split fresh_hard \
-  --retrieval-results outputs/phase5b/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
+  --retrieval-results outputs/archive/provenance/flashrag-integration/bm25-bridge-and-judge/flashrag_bm25_bridge/real_pilot_nickel_superalloy/fresh_hard_flashrag_bm25_results.jsonl \
   --max-retries 1
 ```
 
@@ -51,13 +51,13 @@ For multiple-choice questions, the prompt also states that an option is supporte
 Output:
 
 ```text
-outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
+outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
 ```
 
 Report:
 
 ```text
-outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/report_fresh_hard/summary.json
+outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/live_deepseek_flashrag_bm25_fresh_hard/report_fresh_hard/summary.json
 ```
 
 Summary:
@@ -91,14 +91,14 @@ Judge command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli judge-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy \
-  --input outputs/phase5c/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
-  --output outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard \
+  --input outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/live_deepseek_flashrag_bm25_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/deepseek_judge_flashrag_bm25_live_fresh_hard \
   --split fresh_hard \
   --max-retries 1
 
 PYTHONPATH=benchmark python -m domainrag.cli judge-report \
-  --input outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
-  --output outputs/phase5c/deepseek_judge_flashrag_bm25_live_fresh_hard/report_fresh_hard
+  --input outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/deepseek_judge_flashrag_bm25_live_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+  --output outputs/archive/provenance/flashrag-integration/live-bm25-answer-judge/deepseek_judge_flashrag_bm25_live_fresh_hard/report_fresh_hard
 ```
 
 Judge summary:

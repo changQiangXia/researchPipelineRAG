@@ -37,8 +37,8 @@ def fetcher(doi: str):
     return fetch_openalex_work_by_doi(doi, timeout_seconds=30, mailto='2454212515@qq.com')
 
 build_openalex_metadata_outputs(
-    Path('outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl'),
-    output_dir=Path('outputs/phase7g/source_metadata'),
+    Path('outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl'),
+    output_dir=Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/source_metadata'),
     fetcher=fetcher,
 )
 PY
@@ -55,8 +55,8 @@ def fetcher(url: str):
     return fetch_full_text(url, timeout_seconds=10, max_bytes=8_000_000)
 
 build_full_text_access_outputs(
-    Path('outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl'),
-    output_dir=Path('outputs/phase7g/full_text_access_batch5'),
+    Path('outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl'),
+    output_dir=Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_batch5'),
     fetcher=fetcher,
     limit=5,
 )
@@ -74,13 +74,13 @@ from domainrag.full_text_intake import combine_full_text_access_outputs
 
 combine_full_text_access_outputs(
     [
-        Path('outputs/phase7g/full_text_access_batch5/full_text_access.jsonl'),
-        Path('outputs/phase7g/full_text_access_offset5_limit5/full_text_access.jsonl'),
-        Path('outputs/phase7g/full_text_access_offset10_limit5/full_text_access.jsonl'),
-        Path('outputs/phase7g/full_text_access_offset15_limit5/full_text_access.jsonl'),
-        Path('outputs/phase7g/full_text_access_offset20_limit5/full_text_access.jsonl'),
+        Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_batch5/full_text_access.jsonl'),
+        Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_offset5_limit5/full_text_access.jsonl'),
+        Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_offset10_limit5/full_text_access.jsonl'),
+        Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_offset15_limit5/full_text_access.jsonl'),
+        Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_offset20_limit5/full_text_access.jsonl'),
     ],
-    output_dir=Path('outputs/phase7g/full_text_access_combined25'),
+    output_dir=Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_combined25'),
 )
 PY
 ```
@@ -89,31 +89,31 @@ The combined verification matrix was built with:
 
 ```bash
 PYTHONPATH=benchmark python scripts/build_phase7g_source_verification.py \
-  --whitelist outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl \
-  --metadata outputs/phase7g/source_metadata/openalex_metadata.jsonl \
-  --access outputs/phase7g/full_text_access_combined25/full_text_access.jsonl \
-  --output outputs/phase7g/source_verification_combined25
+  --whitelist outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl \
+  --metadata outputs/archive/provenance/source-workflow/source-verification-first-batches/source_metadata/openalex_metadata.jsonl \
+  --access outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_combined25/full_text_access.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-verification-first-batches/source_verification_combined25
 ```
 
 ## Output Files
 
-- `outputs/phase7g/source_metadata/openalex_metadata.jsonl`
-- `outputs/phase7g/source_metadata/openalex_metadata_summary.json`
-- `outputs/phase7g/source_metadata/openalex_metadata_summary.md`
-- `outputs/phase7g/full_text_access_batch5/full_text_access.jsonl`
-- `outputs/phase7g/full_text_access_batch5/full_text_access_summary.json`
-- `outputs/phase7g/full_text_access_batch5/full_text_access_summary.md`
-- `outputs/phase7g/full_text_access_offset5_limit5/full_text_access.jsonl`
-- `outputs/phase7g/full_text_access_offset10_limit5/full_text_access.jsonl`
-- `outputs/phase7g/full_text_access_offset15_limit5/full_text_access.jsonl`
-- `outputs/phase7g/full_text_access_offset20_limit5/full_text_access.jsonl`
-- `outputs/phase7g/full_text_access_combined25/full_text_access.jsonl`
-- `outputs/phase7g/full_text_access_combined25/full_text_access_summary.json`
-- `outputs/phase7g/full_text_access_combined25/full_text_access_summary.md`
-- `outputs/phase7g/source_verification_combined25/source_verification_matrix.jsonl`
-- `outputs/phase7g/source_verification_combined25/final_verification_queue.jsonl`
-- `outputs/phase7g/source_verification_combined25/verification_summary.json`
-- `outputs/phase7g/source_verification_combined25/summary.md`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_metadata/openalex_metadata.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_metadata/openalex_metadata_summary.json`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_metadata/openalex_metadata_summary.md`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_batch5/full_text_access.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_batch5/full_text_access_summary.json`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_batch5/full_text_access_summary.md`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_offset5_limit5/full_text_access.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_offset10_limit5/full_text_access.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_offset15_limit5/full_text_access.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_offset20_limit5/full_text_access.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_combined25/full_text_access.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_combined25/full_text_access_summary.json`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_combined25/full_text_access_summary.md`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_verification_combined25/source_verification_matrix.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_verification_combined25/final_verification_queue.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_verification_combined25/verification_summary.json`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_verification_combined25/summary.md`
 
 ## Results
 

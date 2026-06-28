@@ -165,9 +165,9 @@ def _acceptance_gates() -> list[dict[str, str]]:
             "name": "install_isolated_requirements",
             "command": (
                 "PYTHONPATH=benchmark python -m domainrag.cli dense-rerank-readiness "
-                "--feasibility outputs/phase5e/flashrag_method_feasibility/"
+                "--feasibility outputs/archive/provenance/flashrag-integration/method-feasibility-calibration/flashrag_method_feasibility/"
                 "real_pilot_nickel_superalloy_manifest.json "
-                "--output outputs/phase7a/dense_rerank_readiness"
+                "--output outputs/archive/provenance/retrieval-diagnostics/dense-rerank-readiness/dense_rerank_readiness"
             ),
             "expected": "readiness.json and summary.md are regenerated without mutating the base env",
         },
@@ -176,7 +176,7 @@ def _acceptance_gates() -> list[dict[str, str]]:
             "command": (
                 "PYTHONPATH=benchmark python -m domainrag.cli probe-flashrag-methods "
                 "--flashrag-path benchmark/flashrag-fork "
-                "--output outputs/phase7a/dense_rerank_readiness/isolated_feasibility.json"
+                "--output outputs/archive/provenance/retrieval-diagnostics/dense-rerank-readiness/dense_rerank_readiness/isolated_feasibility.json"
             ),
             "expected": "flashrag_dense and flashrag_reranker become feasible in the isolated env",
         },

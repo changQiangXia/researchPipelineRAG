@@ -29,16 +29,16 @@ It does not claim:
 
 ```bash
 PYTHONPATH=benchmark python scripts/build_phase7i_manual_finalization_packet.py \
-  --verification-matrix outputs/phase7h/source_verification_combined115/source_verification_matrix.jsonl \
-  --output outputs/phase7i/manual_finalization_packet
+  --verification-matrix outputs/archive/provenance/source-workflow/source-verification-combined/source_verification_combined115/source_verification_matrix.jsonl \
+  --output outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet
 ```
 
 ## Output Files
 
-- `outputs/phase7i/manual_finalization_packet/manual_finalization_packet.jsonl`
-- `outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl`
-- `outputs/phase7i/manual_finalization_packet/manual_finalization_summary.json`
-- `outputs/phase7i/manual_finalization_packet/summary.md`
+- `outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/manual_finalization_packet.jsonl`
+- `outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/candidate_final_whitelist_queue.jsonl`
+- `outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/manual_finalization_summary.json`
+- `outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/summary.md`
 
 ## Results
 

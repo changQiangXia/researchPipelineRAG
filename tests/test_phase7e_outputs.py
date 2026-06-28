@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "outputs" / "phase7e" / "source_screening_queue"
+OUTPUT = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "source-screening-queue" / "source_screening_queue"
 QUEUE = OUTPUT / "screening_queue.jsonl"
 SUMMARY = OUTPUT / "screening_summary.json"
 MARKDOWN = OUTPUT / "summary.md"
@@ -69,7 +69,7 @@ def test_phase7e_updates_verification_doc_report_and_audit_without_closing_scale
     assert "Phase 7E" in doc
     assert "machine_prescreen_only" in doc
     assert "not a final source whitelist" in doc
-    assert "outputs/phase7e/source_screening_queue/screening_queue.jsonl" in doc
+    assert "outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl" in doc
     assert "Phase 7E Source Screening Queue" in report
     assert "Phase 7F Source Decisions" in report
     assert audit["phase"] == "Phase 7M"
@@ -87,6 +87,6 @@ def test_phase7e_updates_verification_doc_report_and_audit_without_closing_scale
     )
     assert requirements["literature_source_policy"]["status"] == "partial"
     assert requirements["demo_scale"]["status"] == "partial"
-    assert "outputs/phase7e/source_screening_queue/screening_summary.json" in requirements[
+    assert "outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_summary.json" in requirements[
         "literature_source_policy"
     ]["evidence"]

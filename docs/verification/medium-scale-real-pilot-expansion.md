@@ -101,7 +101,7 @@ Command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run \
   --dataset data/real_pilot_nickel_superalloy_medium \
-  --output outputs/phase6d/medium_baseline \
+  --output outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_baseline \
   --methods no_rag,oracle_context,lexical_rag \
   --split fresh_hard
 ```
@@ -110,16 +110,16 @@ Report:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase6d/medium_baseline/real_pilot_nickel_superalloy_medium/fresh_hard_results.jsonl \
-  --output outputs/phase6d/medium_baseline/report_fresh_hard
+  --input outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_baseline/real_pilot_nickel_superalloy_medium/fresh_hard_results.jsonl \
+  --output outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_baseline/report_fresh_hard
 ```
 
 Outputs:
 
 ```text
-outputs/phase6d/medium_baseline/real_pilot_nickel_superalloy_medium/fresh_hard_results.jsonl
-outputs/phase6d/medium_baseline/report_fresh_hard/summary.json
-outputs/phase6d/medium_baseline/report_fresh_hard/summary.md
+outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_baseline/real_pilot_nickel_superalloy_medium/fresh_hard_results.jsonl
+outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_baseline/report_fresh_hard/summary.json
+outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_baseline/report_fresh_hard/summary.md
 ```
 
 Observed Fresh-Hard result:
@@ -152,18 +152,18 @@ Command:
 PYTHONPATH=benchmark python -m domainrag.cli run-flashrag-bm25 \
   --flashrag-path benchmark/flashrag-fork \
   --dataset-bundle outputs/flashrag/real_pilot_nickel_superalloy_medium \
-  --output outputs/phase6d/medium_flashrag_bm25_bridge \
+  --output outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_flashrag_bm25_bridge \
   --dataset-name real_pilot_nickel_superalloy_medium \
   --split fresh_hard \
   --top-k 5 \
-  --index-dir outputs/phase6d/medium_flashrag_bm25_bridge/index \
+  --index-dir outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_flashrag_bm25_bridge/index \
   --rebuild-index
 ```
 
 Output:
 
 ```text
-outputs/phase6d/medium_flashrag_bm25_bridge/real_pilot_nickel_superalloy_medium/fresh_hard_flashrag_bm25_results.jsonl
+outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_flashrag_bm25_bridge/real_pilot_nickel_superalloy_medium/fresh_hard_flashrag_bm25_results.jsonl
 ```
 
 Observed Fresh-Hard result:
@@ -184,7 +184,7 @@ BM25 and lexical both hit 19 of 20 questions, but BM25 has weaker full-evidence 
 A lexical-only comparison input was produced from the diagnostic baseline:
 
 ```text
-outputs/phase6d/medium_retrieval_comparison_inputs/lexical_fresh_hard_results.jsonl
+outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_retrieval_comparison_inputs/lexical_fresh_hard_results.jsonl
 ```
 
 Command:
@@ -192,16 +192,16 @@ Command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli compare \
   --answer-inputs \
-    outputs/phase6d/medium_retrieval_comparison_inputs/lexical_fresh_hard_results.jsonl \
-    outputs/phase6d/medium_flashrag_bm25_bridge/real_pilot_nickel_superalloy_medium/fresh_hard_flashrag_bm25_results.jsonl \
-  --output outputs/phase6d/medium_retrieval_comparison
+    outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_retrieval_comparison_inputs/lexical_fresh_hard_results.jsonl \
+    outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_flashrag_bm25_bridge/real_pilot_nickel_superalloy_medium/fresh_hard_flashrag_bm25_results.jsonl \
+  --output outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_retrieval_comparison
 ```
 
 Outputs:
 
 ```text
-outputs/phase6d/medium_retrieval_comparison/summary.json
-outputs/phase6d/medium_retrieval_comparison/summary.md
+outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_retrieval_comparison/summary.json
+outputs/archive/provenance/expanded-pilots/medium-baseline-and-bm25/medium_retrieval_comparison/summary.md
 ```
 
 Snapshot:

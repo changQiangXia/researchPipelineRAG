@@ -14,24 +14,24 @@ Run from repository root:
 
 ```bash
 PYTHONPATH=benchmark python scripts/build_phase7f_source_decisions.py \
-  --screening-queue outputs/phase7e/source_screening_queue/screening_queue.jsonl \
-  --output outputs/phase7f/source_decisions
+  --screening-queue outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-decisions/source_decisions
 ```
 
 Equivalent CLI entrypoint:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli decide-sources \
-  --screening-queue outputs/phase7e/source_screening_queue/screening_queue.jsonl \
-  --output outputs/phase7f/source_decisions
+  --screening-queue outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-decisions/source_decisions
 ```
 
 ## Output Files
 
-- `outputs/phase7f/source_decisions/source_decisions.jsonl`
-- `outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl`
-- `outputs/phase7f/source_decisions/decision_summary.json`
-- `outputs/phase7f/source_decisions/summary.md`
+- `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/source_decisions.jsonl`
+- `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl`
+- `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/decision_summary.json`
+- `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/summary.md`
 
 ## Decision Summary
 

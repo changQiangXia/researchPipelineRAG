@@ -13,7 +13,7 @@ METHODS = {
     "lexical_rag",
     "flashrag_bm25_live_deepseek",
 }
-LIVE_DIR = ROOT / "outputs" / "phase7c" / "medium_plus_live_subset"
+LIVE_DIR = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-plus-live-subset" / "medium_plus_live_subset"
 ANSWERS = LIVE_DIR / "answers" / DATASET_NAME / "fresh_hard_deepseek_results.jsonl"
 JUDGE = LIVE_DIR / "judge" / DATASET_NAME / "fresh_hard_judge_results.jsonl"
 JUDGE_SUMMARY = LIVE_DIR / "judge_report" / "summary.json"
@@ -46,7 +46,7 @@ def test_phase7c_script_dry_run_records_bounded_live_commands():
     assert "compare" in result.stdout
     assert "--limit 12" in result.stdout
     assert "--methods no_rag,lexical_rag,flashrag_bm25_live_deepseek" in result.stdout
-    assert "outputs/phase7b/medium_plus_bm25s" in result.stdout
+    assert "outputs/archive/provenance/expanded-pilots/medium-plus-baseline-and-bm25/medium_plus_bm25s" in result.stdout
     assert "DEEPSEEK_API_KEY" not in result.stdout
 
 
@@ -93,7 +93,7 @@ def test_phase7c_updates_docs_and_audit_without_claiming_final_scale():
     assert "12 Fresh-Hard questions" in doc
     assert "36 answer rows" in doc
     assert "36 judge rows" in doc
-    assert "outputs/phase7c/medium_plus_live_subset/comparison/summary.json" in doc
+    assert "outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/comparison/summary.json" in doc
     assert audit["phase"] == "Phase 7M"
     assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_demo_questions"
     assert audit["dataset"]["source_dataset"] == DATASET_NAME
@@ -113,6 +113,6 @@ def test_phase7c_updates_docs_and_audit_without_claiming_final_scale():
     )
     assert requirements["demo_scale"]["status"] == "partial"
     assert requirements["live_deepseek_judge"]["status"] == "complete"
-    assert "outputs/phase7c/medium_plus_live_subset/" in requirements[
+    assert "outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/" in requirements[
         "live_deepseek_judge"
     ]["evidence"]

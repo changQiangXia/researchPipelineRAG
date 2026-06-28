@@ -35,7 +35,7 @@ PYTHONPATH=benchmark python -m domainrag.cli build-demo-questions \
   --output data \
   --dataset-name real_pilot_nickel_superalloy_demo_questions \
   --target-questions 300 \
-  --fixture-output outputs/phase7m/demo_question_generation/easy_dataset_export
+  --fixture-output outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/easy_dataset_export
 
 PYTHONPATH=benchmark python -m domainrag.cli validate-data \
   --dataset data/real_pilot_nickel_superalloy_demo_questions
@@ -47,13 +47,13 @@ PYTHONPATH=benchmark python -m domainrag.cli prepare-flashrag \
 
 PYTHONPATH=benchmark python -m domainrag.cli run \
   --dataset data/real_pilot_nickel_superalloy_demo_questions \
-  --output outputs/phase7m/demo_question_generation/baseline \
+  --output outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/baseline \
   --methods no_rag,oracle_context,lexical_rag \
   --split fresh_hard
 
 PYTHONPATH=benchmark python -m domainrag.cli run-hashed-dense \
   --dataset data/real_pilot_nickel_superalloy_demo_questions \
-  --output outputs/phase7m/demo_question_generation/hashed_dense \
+  --output outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/hashed_dense \
   --split fresh_hard \
   --top-k 5 \
   --dimensions 512
@@ -63,24 +63,24 @@ Reports:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase7m/demo_question_generation/baseline/real_pilot_nickel_superalloy_demo_questions/fresh_hard_results.jsonl \
-  --output outputs/phase7m/demo_question_generation/baseline/report_fresh_hard
+  --input outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/baseline/real_pilot_nickel_superalloy_demo_questions/fresh_hard_results.jsonl \
+  --output outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/baseline/report_fresh_hard
 
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase7m/demo_question_generation/hashed_dense/real_pilot_nickel_superalloy_demo_questions/fresh_hard_hashed_dense_results.jsonl \
-  --output outputs/phase7m/demo_question_generation/hashed_dense/report_fresh_hard
+  --input outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/hashed_dense/real_pilot_nickel_superalloy_demo_questions/fresh_hard_hashed_dense_results.jsonl \
+  --output outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/hashed_dense/report_fresh_hard
 ```
 
 ## Outputs
 
 ```text
 data/real_pilot_nickel_superalloy_demo_questions/
-outputs/phase7m/demo_question_generation/easy_dataset_export/
+outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/easy_dataset_export/
 outputs/flashrag/real_pilot_nickel_superalloy_demo_questions/
 outputs/flashrag/real_pilot_nickel_superalloy_demo_questions_flashrag.yaml
-outputs/phase7m/demo_question_generation/baseline/
-outputs/phase7m/demo_question_generation/hashed_dense/
-outputs/phase7m/demo_question_generation/demo_question_summary.json
+outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/baseline/
+outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/hashed_dense/
+outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/demo_question_summary.json
 ```
 
 ## Dataset Shape
@@ -176,7 +176,7 @@ PYTHONPATH=benchmark pytest
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_demo_questions
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium_plus
 python -m json.tool docs/reports/rag-md-implementation-audit.json >/tmp/phase7m-audit.json
-python -m json.tool outputs/phase7m/demo_question_generation/demo_question_summary.json >/tmp/phase7m-summary.json
+python -m json.tool outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/demo_question_summary.json >/tmp/phase7m-summary.json
 git diff --check
-grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs/phase7g outputs/phase7h outputs/phase7i outputs/phase7j outputs/phase7k outputs/phase7l outputs/phase7m benchmark scripts tests docs pyproject.toml README.md || true
+grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs/archive/provenance/source-workflow outputs/archive/provenance/retrieval-diagnostics outputs/archive/provenance/demo-dataset benchmark scripts tests docs pyproject.toml README.md || true
 ```

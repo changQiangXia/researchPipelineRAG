@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATASET_NAME = "real_pilot_nickel_superalloy_demo_questions"
 DATASET = ROOT / "data" / DATASET_NAME
-PHASE_OUTPUT = ROOT / "outputs" / "phase7m" / "demo_question_generation"
+PHASE_OUTPUT = ROOT / "outputs" / "archive" / "provenance" / "demo-dataset" / "demo-question-generation" / "demo_question_generation"
 SUMMARY = PHASE_OUTPUT / "demo_question_summary.json"
 FLASHRAG = ROOT / "outputs" / "flashrag" / DATASET_NAME
 FLASHRAG_CONFIG = ROOT / "outputs" / "flashrag" / f"{DATASET_NAME}_flashrag.yaml"
@@ -138,9 +138,9 @@ def test_phase7m_updates_docs_and_audit_without_final_source_claim():
         "live_api_calls": 0,
         "outputs": [
             "data/real_pilot_nickel_superalloy_demo_questions",
-            "outputs/phase7m/demo_question_generation/demo_question_summary.json",
-            "outputs/phase7m/demo_question_generation/baseline/report_fresh_hard/summary.json",
-            "outputs/phase7m/demo_question_generation/hashed_dense/report_fresh_hard/summary.json",
+            "outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/demo_question_summary.json",
+            "outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/baseline/report_fresh_hard/summary.json",
+            "outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/hashed_dense/report_fresh_hard/summary.json",
             "docs/verification/demo-question-generation.md",
         ],
     }

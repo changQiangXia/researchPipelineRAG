@@ -12,7 +12,7 @@ Run from repository root:
 
 ```bash
 PYTHONPATH=benchmark python scripts/acquire_demo_scale_sources.py \
-  --output outputs/phase7d/demo_scale_source_acquisition \
+  --output outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition \
   --per-query 25 \
   --timeout-seconds 60
 ```
@@ -21,7 +21,7 @@ Equivalent CLI entrypoint:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli acquire-sources \
-  --output outputs/phase7d/demo_scale_source_acquisition \
+  --output outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition \
   --per-query 25 \
   --timeout-seconds 60
 ```
@@ -34,9 +34,9 @@ PYTHONPATH=benchmark python scripts/acquire_demo_scale_sources.py --dry-run --pe
 
 ## Output Files
 
-- `outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl`
-- `outputs/phase7d/demo_scale_source_acquisition/coverage.json`
-- `outputs/phase7d/demo_scale_source_acquisition/summary.md`
+- `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl`
+- `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/coverage.json`
+- `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/summary.md`
 
 ## Coverage
 

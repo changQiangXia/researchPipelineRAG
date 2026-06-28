@@ -5,9 +5,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-METADATA = ROOT / "outputs" / "phase7g" / "source_metadata"
-FULL_TEXT = ROOT / "outputs" / "phase7g" / "full_text_access_combined25"
-VERIFICATION = ROOT / "outputs" / "phase7g" / "source_verification_combined25"
+METADATA = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "source-verification-first-batches" / "source_metadata"
+FULL_TEXT = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "source-verification-first-batches" / "full_text_access_combined25"
+VERIFICATION = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "source-verification-first-batches" / "source_verification_combined25"
 DOC = ROOT / "docs" / "verification" / "source-verification-and-full-text-intake.md"
 
 
@@ -68,5 +68,5 @@ def test_phase7g_source_verification_matrix_tracks_not_final_status():
     assert summary["verification_status"] == "machine_assisted_not_human_final"
     assert "Phase 7G" in doc
     assert "not final manual verification" in doc
-    assert "outputs/phase7g/source_metadata/openalex_metadata.jsonl" in doc
-    assert "outputs/phase7g/full_text_access_combined25/full_text_access.jsonl" in doc
+    assert "outputs/archive/provenance/source-workflow/source-verification-first-batches/source_metadata/openalex_metadata.jsonl" in doc
+    assert "outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_combined25/full_text_access.jsonl" in doc

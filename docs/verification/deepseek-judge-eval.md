@@ -82,7 +82,7 @@ Judge result schema:
 Input answer results:
 
 ```text
-outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
+outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
 ```
 
 Command:
@@ -91,8 +91,8 @@ Command:
 DEEPSEEK_API_KEY=<set in environment> PYTHONPATH=benchmark \
 python -m domainrag.cli judge-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy \
-  --input outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
-  --output outputs/phase4c/deepseek_judge_fresh_hard \
+  --input outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+  --output outputs/archive/provenance/pilot-benchmarks/deepseek-judge-fresh-hard/deepseek_judge_fresh_hard \
   --split fresh_hard \
   --max-retries 1 \
   --timeout-seconds 120
@@ -102,16 +102,16 @@ Report command:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli judge-report \
-  --input outputs/phase4c/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
-  --output outputs/phase4c/deepseek_judge_fresh_hard/report_fresh_hard
+  --input outputs/archive/provenance/pilot-benchmarks/deepseek-judge-fresh-hard/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl \
+  --output outputs/archive/provenance/pilot-benchmarks/deepseek-judge-fresh-hard/deepseek_judge_fresh_hard/report_fresh_hard
 ```
 
 Output:
 
 ```text
-outputs/phase4c/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
-outputs/phase4c/deepseek_judge_fresh_hard/report_fresh_hard/summary.json
-outputs/phase4c/deepseek_judge_fresh_hard/report_fresh_hard/summary.md
+outputs/archive/provenance/pilot-benchmarks/deepseek-judge-fresh-hard/deepseek_judge_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_judge_results.jsonl
+outputs/archive/provenance/pilot-benchmarks/deepseek-judge-fresh-hard/deepseek_judge_fresh_hard/report_fresh_hard/summary.json
+outputs/archive/provenance/pilot-benchmarks/deepseek-judge-fresh-hard/deepseek_judge_fresh_hard/report_fresh_hard/summary.md
 ```
 
 Final live run:

@@ -155,7 +155,7 @@ def build_parser() -> argparse.ArgumentParser:
     acquire_sources = subparsers.add_parser("acquire-sources")
     acquire_sources.add_argument(
         "--output",
-        default="outputs/phase7d/demo_scale_source_acquisition",
+        default="outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition",
     )
     acquire_sources.add_argument("--per-query", type=int, default=15)
     acquire_sources.add_argument("--mailto", default=None)
@@ -164,50 +164,50 @@ def build_parser() -> argparse.ArgumentParser:
     screen_sources = subparsers.add_parser("screen-sources")
     screen_sources.add_argument(
         "--candidates",
-        default="outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl",
+        default="outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl",
     )
     screen_sources.add_argument(
         "--output",
-        default="outputs/phase7e/source_screening_queue",
+        default="outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue",
     )
     decide_sources = subparsers.add_parser("decide-sources")
     decide_sources.add_argument(
         "--screening-queue",
-        default="outputs/phase7e/source_screening_queue/screening_queue.jsonl",
+        default="outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl",
     )
     decide_sources.add_argument(
         "--output",
-        default="outputs/phase7f/source_decisions",
+        default="outputs/archive/provenance/source-workflow/source-decisions/source_decisions",
     )
     verify_sources = subparsers.add_parser("verify-sources")
     verify_sources.add_argument(
         "--whitelist",
-        default="outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl",
+        default="outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl",
     )
     verify_sources.add_argument("--metadata", default=None)
     verify_sources.add_argument("--access", default=None)
     verify_sources.add_argument(
         "--output",
-        default="outputs/phase7g/source_verification",
+        default="outputs/archive/provenance/source-workflow/source-verification-first-batches/source_verification",
     )
     finalization_packet = subparsers.add_parser("build-finalization-packet")
     finalization_packet.add_argument(
         "--verification-matrix",
-        default="outputs/phase7h/source_verification_combined115/source_verification_matrix.jsonl",
+        default="outputs/archive/provenance/source-workflow/source-verification-combined/source_verification_combined115/source_verification_matrix.jsonl",
     )
     finalization_packet.add_argument(
         "--output",
-        default="outputs/phase7i/manual_finalization_packet",
+        default="outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet",
     )
     human_signoff = subparsers.add_parser("build-human-signoff")
     human_signoff.add_argument(
         "--candidate-queue",
-        default="outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl",
+        default="outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/candidate_final_whitelist_queue.jsonl",
     )
     human_signoff.add_argument("--labels", default=None)
     human_signoff.add_argument(
         "--output",
-        default="outputs/phase7j/human_signoff",
+        default="outputs/archive/provenance/source-workflow/human-signoff/human_signoff",
     )
     return parser
 

@@ -17,49 +17,39 @@ ALL_METHODS = {
 }
 
 BASE_ANSWERS = (
-    ROOT
-    / "outputs"
-    / "phase6e"
+    ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge"
     / "medium_live_deepseek_fresh_hard"
     / DATASET_NAME
     / "fresh_hard_deepseek_results.jsonl"
 )
 BASE_JUDGE = (
-    ROOT
-    / "outputs"
-    / "phase6e"
+    ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge"
     / "medium_deepseek_judge_fresh_hard"
     / DATASET_NAME
     / "fresh_hard_judge_results.jsonl"
 )
 BM25_ORACLE_JUDGE = (
-    ROOT
-    / "outputs"
-    / "phase6e"
+    ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge"
     / "medium_deepseek_judge_flashrag_bm25_fresh_hard"
     / DATASET_NAME
     / "fresh_hard_judge_results.jsonl"
 )
 BM25_LIVE_ANSWERS = (
-    ROOT
-    / "outputs"
-    / "phase6e"
+    ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge"
     / "medium_live_deepseek_flashrag_bm25_fresh_hard"
     / DATASET_NAME
     / "fresh_hard_deepseek_results.jsonl"
 )
 BM25_LIVE_JUDGE = (
-    ROOT
-    / "outputs"
-    / "phase6e"
+    ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge"
     / "medium_deepseek_judge_flashrag_bm25_live_fresh_hard"
     / DATASET_NAME
     / "fresh_hard_judge_results.jsonl"
 )
-COMPARISON = ROOT / "outputs" / "phase6e" / "medium_fresh_hard_comparison" / "summary.json"
-COMPARISON_MD = ROOT / "outputs" / "phase6e" / "medium_fresh_hard_comparison" / "summary.md"
-PACKET_JSONL = ROOT / "outputs" / "phase6e" / "medium_human_calibration_fresh_hard" / "review_packet.jsonl"
-PACKET_MD = ROOT / "outputs" / "phase6e" / "medium_human_calibration_fresh_hard" / "review_packet.md"
+COMPARISON = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge" / "medium_fresh_hard_comparison" / "summary.json"
+COMPARISON_MD = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge" / "medium_fresh_hard_comparison" / "summary.md"
+PACKET_JSONL = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge" / "medium_human_calibration_fresh_hard" / "review_packet.jsonl"
+PACKET_MD = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-live-and-judge" / "medium_human_calibration_fresh_hard" / "review_packet.md"
 
 
 def _read_jsonl(path: Path) -> list[dict]:

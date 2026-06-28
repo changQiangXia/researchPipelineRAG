@@ -117,7 +117,7 @@ Command:
 DEEPSEEK_API_KEY=<set in environment> PYTHONPATH=benchmark \
 python -m domainrag.cli run-deepseek-answers \
   --dataset data/real_pilot_nickel_superalloy \
-  --output outputs/phase4b/live_deepseek_fresh_hard \
+  --output outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard \
   --methods no_rag,oracle_context,lexical_rag \
   --split fresh_hard \
   --max-retries 1 \
@@ -128,16 +128,16 @@ Report command:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
-  --output outputs/phase4b/live_deepseek_fresh_hard/report_fresh_hard
+  --input outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl \
+  --output outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/report_fresh_hard
 ```
 
 Output:
 
 ```text
-outputs/phase4b/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
-outputs/phase4b/live_deepseek_fresh_hard/report_fresh_hard/summary.json
-outputs/phase4b/live_deepseek_fresh_hard/report_fresh_hard/summary.md
+outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/real_pilot_nickel_superalloy/fresh_hard_deepseek_results.jsonl
+outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/report_fresh_hard/summary.json
+outputs/archive/provenance/pilot-benchmarks/live-deepseek-fresh-hard/live_deepseek_fresh_hard/report_fresh_hard/summary.md
 ```
 
 Final live run:

@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "outputs" / "phase7l" / "full_text_chunk_extraction"
+OUTPUT = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "full-text-chunk-extraction" / "full_text_chunk_extraction"
 CHUNKS = OUTPUT / "full_text_chunks.jsonl"
 MANIFEST = OUTPUT / "chunk_source_manifest.jsonl"
 SUMMARY = OUTPUT / "chunk_extraction_summary.json"
@@ -64,14 +64,14 @@ def test_phase7l_updates_docs_and_audit_without_claiming_final_demo_dataset():
         "provenance_status": "machine_parseable_not_human_final",
         "final_demo_dataset_claim": "not_complete",
         "outputs": [
-            "outputs/phase7l/full_text_chunk_extraction/full_text_chunks.jsonl",
-            "outputs/phase7l/full_text_chunk_extraction/chunk_source_manifest.jsonl",
-            "outputs/phase7l/full_text_chunk_extraction/chunk_extraction_summary.json",
+            "outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/full_text_chunks.jsonl",
+            "outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_source_manifest.jsonl",
+            "outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_extraction_summary.json",
             "docs/verification/full-text-chunk-extraction.md",
         ],
     }
     assert requirements["demo_scale"]["status"] == "partial"
     assert "2,196 full-text chunk manifests" in requirements["demo_scale"]["summary"]
-    assert "outputs/phase7l/full_text_chunk_extraction/chunk_extraction_summary.json" in requirements[
+    assert "outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_extraction_summary.json" in requirements[
         "demo_scale"
     ]["evidence"]

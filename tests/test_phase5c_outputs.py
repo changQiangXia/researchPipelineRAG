@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PHASE5C = ROOT / "outputs" / "phase5c"
+PHASE5C = ROOT / "outputs" / "archive" / "provenance" / "flashrag-integration" / "live-bm25-answer-judge"
 ANSWERS = PHASE5C / "live_deepseek_flashrag_bm25_fresh_hard"
 JUDGE = PHASE5C / "deepseek_judge_flashrag_bm25_live_fresh_hard"
 

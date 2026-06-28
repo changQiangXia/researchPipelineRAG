@@ -137,16 +137,16 @@ Add parser command:
 
 ```bash
 domainrag screen-sources \
-  --candidates outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl \
-  --output outputs/phase7e/source_screening_queue
+  --candidates outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue
 ```
 
 Add script wrapper:
 
 ```bash
 PYTHONPATH=benchmark python scripts/screen_phase7d_sources.py \
-  --candidates outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl \
-  --output outputs/phase7e/source_screening_queue
+  --candidates outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue
 ```
 
 - [x] **Step 4: Verify GREEN**
@@ -158,9 +158,9 @@ Expected: PASS.
 ### Task 3: Phase 7E Real Queue Outputs And Audit
 
 **Files:**
-- Create: `outputs/phase7e/source_screening_queue/screening_queue.jsonl`
-- Create: `outputs/phase7e/source_screening_queue/screening_summary.json`
-- Create: `outputs/phase7e/source_screening_queue/summary.md`
+- Create: `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl`
+- Create: `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_summary.json`
+- Create: `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/summary.md`
 - Create: `docs/verification/source-screening-queue.md`
 - Modify: `docs/reports/rag-md-implementation-audit.json`
 - Modify: `docs/reports/domainrag-medium-pilot-final-report.md`
@@ -203,8 +203,8 @@ Run:
 
 ```bash
 PYTHONPATH=benchmark python scripts/screen_phase7d_sources.py \
-  --candidates outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl \
-  --output outputs/phase7e/source_screening_queue
+  --candidates outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue
 ```
 
 - [x] **Step 4: Update docs and audit**

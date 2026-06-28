@@ -11,11 +11,22 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 DATASET = ROOT / "data" / "real_pilot_nickel_superalloy_medium_plus"
 DATASET_NAME = DATASET.name
-DEFAULT_OUTPUT = ROOT / "outputs" / "phase7c" / "medium_plus_live_subset"
+DEFAULT_OUTPUT = (
+    ROOT
+    / "outputs"
+    / "archive"
+    / "provenance"
+    / "expanded-pilots"
+    / "medium-plus-live-subset"
+    / "medium_plus_live_subset"
+)
 DEFAULT_RETRIEVAL_RESULTS = (
     ROOT
     / "outputs"
-    / "phase7b"
+    / "archive"
+    / "provenance"
+    / "expanded-pilots"
+    / "medium-plus-baseline-and-bm25"
     / "medium_plus_bm25s"
     / DATASET_NAME
     / "fresh_hard_bm25s_results.jsonl"

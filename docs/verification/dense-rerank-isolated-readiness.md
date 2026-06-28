@@ -8,8 +8,8 @@ Command surface:
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli dense-rerank-readiness \
-  --feasibility outputs/phase5e/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json \
-  --output outputs/phase7a/dense_rerank_readiness
+  --feasibility outputs/archive/provenance/flashrag-integration/method-feasibility-calibration/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json \
+  --output outputs/archive/provenance/retrieval-diagnostics/dense-rerank-readiness/dense_rerank_readiness
 ```
 
 This phase converts the Phase 5E FlashRAG method feasibility manifest into an
@@ -42,8 +42,8 @@ in a separate Python 3.10 environment.
 
 The readiness command writes:
 
-- `outputs/phase7a/dense_rerank_readiness/readiness.json`
-- `outputs/phase7a/dense_rerank_readiness/summary.md`
+- `outputs/archive/provenance/retrieval-diagnostics/dense-rerank-readiness/dense_rerank_readiness/readiness.json`
+- `outputs/archive/provenance/retrieval-diagnostics/dense-rerank-readiness/dense_rerank_readiness/summary.md`
 
 The isolated dependency list is committed at:
 

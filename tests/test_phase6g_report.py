@@ -29,13 +29,13 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert "Phase 7J Human Sign-Off Workflow" in report
     assert "Phase 7K Hashed Dense Formal Benchmark" in report
     assert "Phase 7L Full-Text Chunk Extraction" in report
-    assert "outputs/phase6e/medium_fresh_hard_comparison/summary.json" in report
-    assert "outputs/phase6f/medium_human_calibration_audit/summary.json" in report
-    assert "outputs/phase7b/medium_plus_bm25s/" in report
-    assert "outputs/phase7c/medium_plus_live_subset/comparison/summary.json" in report
-    assert "outputs/phase7d/demo_scale_source_acquisition/coverage.json" in report
-    assert "outputs/phase7e/source_screening_queue/screening_summary.json" in report
-    assert "outputs/phase7f/source_decisions/decision_summary.json" in report
+    assert "outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_fresh_hard_comparison/summary.json" in report
+    assert "outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit/summary.json" in report
+    assert "outputs/archive/provenance/expanded-pilots/medium-plus-baseline-and-bm25/medium_plus_bm25s/" in report
+    assert "outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/comparison/summary.json" in report
+    assert "outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/coverage.json" in report
+    assert "outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_summary.json" in report
+    assert "outputs/archive/provenance/source-workflow/source-decisions/source_decisions/decision_summary.json" in report
 
     assert audit["phase"] == "Phase 7M"
     assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_demo_questions"
@@ -177,6 +177,6 @@ def test_phase6g_audit_tracks_phase7f_source_decisions_as_stop_point():
     assert decisions["stop_point_recommendation"] == "pause_after_phase7f"
     assert requirements["literature_source_policy"]["status"] == "partial"
     assert requirements["demo_scale"]["status"] == "partial"
-    assert "outputs/phase7f/source_decisions/decision_summary.json" in requirements[
+    assert "outputs/archive/provenance/source-workflow/source-decisions/source_decisions/decision_summary.json" in requirements[
         "literature_source_policy"
     ]["evidence"]

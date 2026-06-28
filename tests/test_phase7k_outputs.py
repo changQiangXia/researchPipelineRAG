@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATASET_NAME = "real_pilot_nickel_superalloy_medium_plus"
-OUTPUT = ROOT / "outputs" / "phase7k" / "hashed_dense_benchmark"
+OUTPUT = ROOT / "outputs" / "archive" / "provenance" / "retrieval-diagnostics" / "hashed-dense-benchmark" / "hashed_dense_benchmark"
 RESULTS = OUTPUT / DATASET_NAME / "fresh_hard_hashed_dense_results.jsonl"
 REPORT = OUTPUT / "report_fresh_hard" / "summary.json"
 DOC = ROOT / "docs" / "verification" / "hashed-dense-formal-benchmark.md"
@@ -73,14 +73,14 @@ def test_phase7k_updates_docs_and_audit_without_claiming_neural_dense_done():
         "benchmark_family": "local_hashed_dense",
         "neural_dense_or_reranker_claim": "not_claimed",
         "outputs": [
-            "outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl",
-            "outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.json",
+            "outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl",
+            "outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/report_fresh_hard/summary.json",
             "docs/verification/hashed-dense-formal-benchmark.md",
         ],
     }
     assert dense["status"] == "partial"
     assert "local hashed dense benchmark" in dense["summary"]
     assert (
-        "outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl"
+        "outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl"
         in dense["evidence"]
     )

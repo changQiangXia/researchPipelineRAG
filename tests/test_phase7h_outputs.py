@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FULL_TEXT = ROOT / "outputs" / "phase7h" / "full_text_access_combined115"
-VERIFICATION = ROOT / "outputs" / "phase7h" / "source_verification_combined115"
+FULL_TEXT = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "source-verification-combined" / "full_text_access_combined115"
+VERIFICATION = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "source-verification-combined" / "source_verification_combined115"
 DOC = ROOT / "docs" / "verification" / "full-text-intake-combined115.md"
 AUDIT = ROOT / "docs" / "reports" / "rag-md-implementation-audit.json"
 

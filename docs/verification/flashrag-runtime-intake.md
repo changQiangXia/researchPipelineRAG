@@ -94,14 +94,14 @@ python scripts/verify_flashrag_runtime_intake.py \
   --flashrag-path benchmark/flashrag-fork \
   --dataset-bundle outputs/flashrag/real_pilot_nickel_superalloy \
   --dataset-name real_pilot_nickel_superalloy \
-  --output outputs/phase5a/flashrag_runtime_intake/real_pilot_nickel_superalloy_manifest.json \
+  --output outputs/archive/provenance/flashrag-integration/runtime-intake/flashrag_runtime_intake/real_pilot_nickel_superalloy_manifest.json \
   --splits dev,test,fresh_hard
 ```
 
 Output manifest:
 
 ```text
-outputs/phase5a/flashrag_runtime_intake/real_pilot_nickel_superalloy_manifest.json
+outputs/archive/provenance/flashrag-integration/runtime-intake/flashrag_runtime_intake/real_pilot_nickel_superalloy_manifest.json
 ```
 
 Runtime result:

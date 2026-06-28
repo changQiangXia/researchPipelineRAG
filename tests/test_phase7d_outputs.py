@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "outputs" / "phase7d" / "demo_scale_source_acquisition"
+OUTPUT = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "demo-scale-source-acquisition" / "demo_scale_source_acquisition"
 CANDIDATES = OUTPUT / "candidates.jsonl"
 COVERAGE = OUTPUT / "coverage.json"
 SUMMARY = OUTPUT / "summary.md"
@@ -70,7 +70,7 @@ def test_phase7d_updates_verification_doc_and_audit_without_closing_scale_gap():
     assert "Phase 7D" in doc
     assert "candidate_for_manual_verification" in doc
     assert "not a final inclusion list" in doc
-    assert "outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl" in doc
+    assert "outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl" in doc
     assert audit["phase"] == "Phase 7M"
     assert acquisition["candidate_count"] >= 100
     assert acquisition["subtopic_count"] == 8
@@ -83,7 +83,7 @@ def test_phase7d_updates_verification_doc_and_audit_without_closing_scale_gap():
         "provisional_not_final"
     )
     assert requirements["literature_source_policy"]["status"] == "partial"
-    assert "outputs/phase7d/demo_scale_source_acquisition/coverage.json" in requirements[
+    assert "outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/coverage.json" in requirements[
         "literature_source_policy"
     ]["evidence"]
     assert requirements["demo_scale"]["status"] == "partial"

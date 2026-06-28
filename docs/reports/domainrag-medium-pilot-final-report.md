@@ -194,9 +194,9 @@ Phase 7C adds a bounded medium-plus live subset:
 
 Main evidence:
 
-- `outputs/phase6e/medium_fresh_hard_comparison/summary.json`
-- `outputs/phase6e/medium_fresh_hard_comparison/summary.md`
-- `outputs/phase7c/medium_plus_live_subset/comparison/summary.json`
+- `outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_fresh_hard_comparison/summary.json`
+- `outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_fresh_hard_comparison/summary.md`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/comparison/summary.json`
 - `docs/verification/medium-live-deepseek-eval.md`
 - `docs/verification/medium-plus-live-subset.md`
 - `tests/test_phase6e_outputs.py`
@@ -209,8 +209,8 @@ Phase 7B adds a larger source-backed pipeline checkpoint:
 - `fixtures/easy_dataset/real_pilot_nickel_superalloy_medium_plus/`
 - `data/real_pilot_sources/nickel_superalloy_high_temp_failure_medium_plus/sources.jsonl`
 - `outputs/flashrag/real_pilot_nickel_superalloy_medium_plus/`
-- `outputs/phase7b/medium_plus_baseline/`
-- `outputs/phase7b/medium_plus_bm25s/`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-baseline-and-bm25/medium_plus_baseline/`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-baseline-and-bm25/medium_plus_bm25s/`
 - `docs/verification/medium-plus-scale-expansion.md`
 
 Shape:
@@ -257,10 +257,10 @@ partial-recall rows and one BM25s retrieval miss, so it is more useful than an
 
 Output evidence:
 
-- `outputs/phase7c/medium_plus_live_subset/answers/real_pilot_nickel_superalloy_medium_plus/fresh_hard_deepseek_results.jsonl`
-- `outputs/phase7c/medium_plus_live_subset/judge/real_pilot_nickel_superalloy_medium_plus/fresh_hard_judge_results.jsonl`
-- `outputs/phase7c/medium_plus_live_subset/judge_report/summary.json`
-- `outputs/phase7c/medium_plus_live_subset/comparison/summary.json`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/answers/real_pilot_nickel_superalloy_medium_plus/fresh_hard_deepseek_results.jsonl`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/judge/real_pilot_nickel_superalloy_medium_plus/fresh_hard_judge_results.jsonl`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/judge_report/summary.json`
+- `outputs/archive/provenance/expanded-pilots/medium-plus-live-subset/medium_plus_live_subset/comparison/summary.json`
 - `docs/verification/medium-plus-live-subset.md`
 
 Comparison summary:
@@ -285,9 +285,9 @@ chunk extraction.
 
 Output evidence:
 
-- `outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl`
-- `outputs/phase7d/demo_scale_source_acquisition/coverage.json`
-- `outputs/phase7d/demo_scale_source_acquisition/summary.md`
+- `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/candidates.jsonl`
+- `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/coverage.json`
+- `outputs/archive/provenance/source-workflow/demo-scale-source-acquisition/demo_scale_source_acquisition/summary.md`
 - `docs/verification/demo-scale-source-acquisition.md`
 
 Coverage:
@@ -329,9 +329,9 @@ source is accepted; every row remains `not_finalized` and
 
 Output evidence:
 
-- `outputs/phase7e/source_screening_queue/screening_queue.jsonl`
-- `outputs/phase7e/source_screening_queue/screening_summary.json`
-- `outputs/phase7e/source_screening_queue/summary.md`
+- `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_queue.jsonl`
+- `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/screening_summary.json`
+- `outputs/archive/provenance/source-workflow/source-screening-queue/source_screening_queue/summary.md`
 - `docs/verification/source-screening-queue.md`
 
 Queue summary:
@@ -372,10 +372,10 @@ clean pause point with a usable source-side handoff.
 
 Output evidence:
 
-- `outputs/phase7f/source_decisions/source_decisions.jsonl`
-- `outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl`
-- `outputs/phase7f/source_decisions/decision_summary.json`
-- `outputs/phase7f/source_decisions/summary.md`
+- `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/source_decisions.jsonl`
+- `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl`
+- `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/decision_summary.json`
+- `outputs/archive/provenance/source-workflow/source-decisions/source_decisions/summary.md`
 - `docs/verification/source-decisions-and-stop-point.md`
 
 Decision summary:
@@ -415,10 +415,10 @@ verification matrix. It still does not claim final manual verification.
 
 Output evidence:
 
-- `outputs/phase7g/source_metadata/openalex_metadata.jsonl`
-- `outputs/phase7g/full_text_access_combined25/full_text_access.jsonl`
-- `outputs/phase7g/source_verification_combined25/source_verification_matrix.jsonl`
-- `outputs/phase7g/source_verification_combined25/verification_summary.json`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_metadata/openalex_metadata.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_combined25/full_text_access.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_verification_combined25/source_verification_matrix.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-first-batches/source_verification_combined25/verification_summary.json`
 - `docs/verification/source-verification-and-full-text-intake.md`
 
 OpenAlex metadata:
@@ -473,10 +473,10 @@ source rejections.
 
 Output evidence:
 
-- `outputs/phase7h/full_text_access_combined115/full_text_access.jsonl`
-- `outputs/phase7h/full_text_access_combined115/full_text_access_summary.json`
-- `outputs/phase7h/source_verification_combined115/source_verification_matrix.jsonl`
-- `outputs/phase7h/source_verification_combined115/verification_summary.json`
+- `outputs/archive/provenance/source-workflow/source-verification-combined/full_text_access_combined115/full_text_access.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-combined/full_text_access_combined115/full_text_access_summary.json`
+- `outputs/archive/provenance/source-workflow/source-verification-combined/source_verification_combined115/source_verification_matrix.jsonl`
+- `outputs/archive/provenance/source-workflow/source-verification-combined/source_verification_combined115/verification_summary.json`
 - `docs/verification/full-text-intake-combined115.md`
 
 Full-text intake, all 115 rows:
@@ -518,9 +518,9 @@ final accepted whitelist.
 
 Output evidence:
 
-- `outputs/phase7i/manual_finalization_packet/manual_finalization_packet.jsonl`
-- `outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl`
-- `outputs/phase7i/manual_finalization_packet/manual_finalization_summary.json`
+- `outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/manual_finalization_packet.jsonl`
+- `outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/candidate_final_whitelist_queue.jsonl`
+- `outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/manual_finalization_summary.json`
 - `docs/verification/manual-finalization-packet.md`
 
 Manual finalization packet:
@@ -563,9 +563,9 @@ supplied.
 
 Output evidence:
 
-- `outputs/phase7j/human_signoff/human_signoff_template.jsonl`
-- `outputs/phase7j/human_signoff/final_source_whitelist.jsonl`
-- `outputs/phase7j/human_signoff/human_signoff_summary.json`
+- `outputs/archive/provenance/source-workflow/human-signoff/human_signoff/human_signoff_template.jsonl`
+- `outputs/archive/provenance/source-workflow/human-signoff/human_signoff/final_source_whitelist.jsonl`
+- `outputs/archive/provenance/source-workflow/human-signoff/human_signoff/human_signoff_summary.json`
 - `docs/verification/human-signoff-workflow.md`
 
 Human sign-off status:
@@ -592,8 +592,8 @@ deterministic and non-neural.
 Output evidence:
 
 - `benchmark/domainrag/hashed_dense_benchmark.py`
-- `outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl`
-- `outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.json`
+- `outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl`
+- `outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/report_fresh_hard/summary.json`
 - `docs/verification/hashed-dense-formal-benchmark.md`
 
 Fresh-Hard result:
@@ -614,15 +614,15 @@ closing the FlashRAG dense/rerank target.
 Phase 7L adds the first full-text-to-chunk extraction workflow. It consumes:
 
 ```text
-outputs/phase7h/full_text_access_combined115/full_text_access.jsonl
+outputs/archive/provenance/source-workflow/source-verification-combined/full_text_access_combined115/full_text_access.jsonl
 ```
 
 Output evidence:
 
 - `benchmark/domainrag/full_text_chunk_extraction.py`
-- `outputs/phase7l/full_text_chunk_extraction/full_text_chunks.jsonl`
-- `outputs/phase7l/full_text_chunk_extraction/chunk_source_manifest.jsonl`
-- `outputs/phase7l/full_text_chunk_extraction/chunk_extraction_summary.json`
+- `outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/full_text_chunks.jsonl`
+- `outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_source_manifest.jsonl`
+- `outputs/archive/provenance/source-workflow/full-text-chunk-extraction/full_text_chunk_extraction/chunk_extraction_summary.json`
 - `docs/verification/full-text-chunk-extraction.md`
 
 Result:
@@ -665,9 +665,9 @@ Output evidence:
 
 - `benchmark/domainrag/demo_question_generation.py`
 - `data/real_pilot_nickel_superalloy_demo_questions/`
-- `outputs/phase7m/demo_question_generation/demo_question_summary.json`
-- `outputs/phase7m/demo_question_generation/baseline/report_fresh_hard/summary.json`
-- `outputs/phase7m/demo_question_generation/hashed_dense/report_fresh_hard/summary.json`
+- `outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/demo_question_summary.json`
+- `outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/baseline/report_fresh_hard/summary.json`
+- `outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/hashed_dense/report_fresh_hard/summary.json`
 - `outputs/flashrag/real_pilot_nickel_superalloy_demo_questions/`
 - `docs/verification/demo-question-generation.md`
 
@@ -745,7 +745,7 @@ Fresh-Hard split: 20 questions.
 Comparison summary:
 
 ```text
-outputs/phase6e/medium_fresh_hard_comparison/summary.json
+outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_fresh_hard_comparison/summary.json
 ```
 
 | method | answer score | retrieval recall | correctness | context support | faithfulness | hallucination risk | unsupported claims | API calls |
@@ -781,8 +781,8 @@ risky rows.
 
 Main evidence:
 
-- `outputs/phase6f/medium_human_calibration_audit/human_labels.jsonl`
-- `outputs/phase6f/medium_human_calibration_audit/summary.json`
+- `outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit/human_labels.jsonl`
+- `outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit/summary.json`
 - `docs/verification/medium-human-calibration-audit.md`
 
 Result:
@@ -881,8 +881,8 @@ Phase 7A commits that isolated-readiness package:
 
 - `benchmark/domainrag/dense_rerank_readiness.py`
 - `requirements/flashrag-dense-rerank.txt`
-- `outputs/phase7a/dense_rerank_readiness/readiness.json`
-- `outputs/phase7a/dense_rerank_readiness/summary.md`
+- `outputs/archive/provenance/retrieval-diagnostics/dense-rerank-readiness/dense_rerank_readiness/readiness.json`
+- `outputs/archive/provenance/retrieval-diagnostics/dense-rerank-readiness/dense_rerank_readiness/summary.md`
 - `docs/verification/dense-rerank-isolated-readiness.md`
 
 This is a partial implementation state. It defines the Python 3.10 isolated
@@ -894,8 +894,8 @@ results yet.
 Phase 7K adds a separate current-environment benchmark:
 
 - `benchmark/domainrag/hashed_dense_benchmark.py`
-- `outputs/phase7k/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl`
-- `outputs/phase7k/hashed_dense_benchmark/report_fresh_hard/summary.json`
+- `outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/real_pilot_nickel_superalloy_medium_plus/fresh_hard_hashed_dense_results.jsonl`
+- `outputs/archive/provenance/retrieval-diagnostics/hashed-dense-benchmark/hashed_dense_benchmark/report_fresh_hard/summary.json`
 - `docs/verification/hashed-dense-formal-benchmark.md`
 
 This benchmark is formal and uses the real medium-plus Fresh-Hard split, but it

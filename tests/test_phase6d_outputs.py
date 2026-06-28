@@ -10,9 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DATASET_NAME = "real_pilot_nickel_superalloy_medium"
 DATASET = ROOT / "data" / DATASET_NAME
 FLASHRAG = ROOT / "outputs" / "flashrag" / DATASET_NAME
-BASELINE = ROOT / "outputs" / "phase6d" / "medium_baseline"
-BM25 = ROOT / "outputs" / "phase6d" / "medium_flashrag_bm25_bridge"
-COMPARISON = ROOT / "outputs" / "phase6d" / "medium_retrieval_comparison" / "summary.json"
+BASELINE = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-baseline-and-bm25" / "medium_baseline"
+BM25 = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-baseline-and-bm25" / "medium_flashrag_bm25_bridge"
+COMPARISON = ROOT / "outputs" / "archive" / "provenance" / "expanded-pilots" / "medium-baseline-and-bm25" / "medium_retrieval_comparison" / "summary.json"
 
 
 def _read_jsonl(path: Path) -> list[dict]:

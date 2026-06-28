@@ -97,7 +97,7 @@ Fresh-Hard deterministic baseline:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run \
   --dataset data/real_pilot_nickel_superalloy_medium_plus \
-  --output outputs/phase7b/medium_plus_baseline \
+  --output outputs/archive/provenance/expanded-pilots/medium-plus-baseline-and-bm25/medium_plus_baseline \
   --methods no_rag,oracle_context,lexical_rag \
   --split fresh_hard
 ```
@@ -107,7 +107,7 @@ Current-environment BM25s retrieval:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run-bm25s \
   --dataset data/real_pilot_nickel_superalloy_medium_plus \
-  --output outputs/phase7b/medium_plus_bm25s \
+  --output outputs/archive/provenance/expanded-pilots/medium-plus-baseline-and-bm25/medium_plus_bm25s \
   --split fresh_hard \
   --top-k 5
 ```

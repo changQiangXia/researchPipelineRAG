@@ -8,11 +8,11 @@ before using the Judge metrics in the final medium-pilot report.
 ## Inputs
 
 - Dataset packet:
-  `outputs/phase6e/medium_human_calibration_fresh_hard/review_packet.jsonl`
+  `outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_human_calibration_fresh_hard/review_packet.jsonl`
 - Manual labels:
-  `outputs/phase6f/medium_human_calibration_audit/human_labels.jsonl`
+  `outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit/human_labels.jsonl`
 - Output directory:
-  `outputs/phase6f/medium_human_calibration_audit`
+  `outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit`
 
 The manual subset contains 15 rows, evenly distributed across the five
 evaluated methods:
@@ -31,16 +31,16 @@ unsupported-claim flags.
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli calibration-audit \
-  --packet outputs/phase6e/medium_human_calibration_fresh_hard/review_packet.jsonl \
-  --labels outputs/phase6f/medium_human_calibration_audit/human_labels.jsonl \
-  --output outputs/phase6f/medium_human_calibration_audit
+  --packet outputs/archive/provenance/expanded-pilots/medium-live-and-judge/medium_human_calibration_fresh_hard/review_packet.jsonl \
+  --labels outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit/human_labels.jsonl \
+  --output outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit
 ```
 
 This writes:
 
-- `outputs/phase6f/medium_human_calibration_audit/reviewed_rows.jsonl`
-- `outputs/phase6f/medium_human_calibration_audit/summary.json`
-- `outputs/phase6f/medium_human_calibration_audit/summary.md`
+- `outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit/reviewed_rows.jsonl`
+- `outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit/summary.json`
+- `outputs/archive/provenance/expanded-pilots/medium-human-calibration-audit/medium_human_calibration_audit/summary.md`
 
 ## Results
 

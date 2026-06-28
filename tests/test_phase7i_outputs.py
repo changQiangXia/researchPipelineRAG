@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PACKET = ROOT / "outputs" / "phase7i" / "manual_finalization_packet"
+PACKET = ROOT / "outputs" / "archive" / "provenance" / "source-workflow" / "manual-finalization-packet" / "manual_finalization_packet"
 DOC = ROOT / "docs" / "verification" / "manual-finalization-packet.md"
 AUDIT = ROOT / "docs" / "reports" / "rag-md-implementation-audit.json"
 
@@ -55,9 +55,9 @@ def test_phase7i_updates_docs_and_audit_without_claiming_human_finalization():
         "final_whitelist_claim": "not_complete",
         "verification_status": "human_review_packet_not_final",
         "outputs": [
-            "outputs/phase7i/manual_finalization_packet/manual_finalization_packet.jsonl",
-            "outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl",
-            "outputs/phase7i/manual_finalization_packet/manual_finalization_summary.json",
+            "outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/manual_finalization_packet.jsonl",
+            "outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/candidate_final_whitelist_queue.jsonl",
+            "outputs/archive/provenance/source-workflow/manual-finalization-packet/manual_finalization_packet/manual_finalization_summary.json",
             "docs/verification/manual-finalization-packet.md",
         ],
     }

@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PHASE4 = ROOT / "outputs" / "phase4"
+PHASE4 = ROOT / "outputs" / "archive" / "provenance" / "pilot-benchmarks" / "curated-and-candidate-baselines"
 
 
 def test_phase4_reports_cover_curated_and_deepseek_candidate_splits():

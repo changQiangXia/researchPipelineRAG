@@ -42,8 +42,8 @@ def fetcher(url: str):
 
 for offset in range(25, 115, 5):
     build_full_text_access_outputs(
-        Path('outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl'),
-        output_dir=Path(f'outputs/phase7h/full_text_access_offset{offset}_limit5'),
+        Path('outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl'),
+        output_dir=Path(f'outputs/archive/provenance/source-workflow/source-verification-combined/full_text_access_offset{offset}_limit5'),
         fetcher=fetcher,
         offset=offset,
         limit=5,
@@ -58,13 +58,13 @@ PYTHONPATH=benchmark python - <<'PY'
 from pathlib import Path
 from domainrag.full_text_intake import combine_full_text_access_outputs
 
-access_paths = [Path('outputs/phase7g/full_text_access_combined25/full_text_access.jsonl')]
+access_paths = [Path('outputs/archive/provenance/source-workflow/source-verification-first-batches/full_text_access_combined25/full_text_access.jsonl')]
 for offset in range(25, 115, 5):
-    access_paths.append(Path(f'outputs/phase7h/full_text_access_offset{offset}_limit5/full_text_access.jsonl'))
+    access_paths.append(Path(f'outputs/archive/provenance/source-workflow/source-verification-combined/full_text_access_offset{offset}_limit5/full_text_access.jsonl'))
 
 combine_full_text_access_outputs(
     access_paths,
-    output_dir=Path('outputs/phase7h/full_text_access_combined115'),
+    output_dir=Path('outputs/archive/provenance/source-workflow/source-verification-combined/full_text_access_combined115'),
 )
 PY
 ```
@@ -73,10 +73,10 @@ The combined verification matrix was built with:
 
 ```bash
 PYTHONPATH=benchmark python scripts/build_phase7g_source_verification.py \
-  --whitelist outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl \
-  --metadata outputs/phase7g/source_metadata/openalex_metadata.jsonl \
-  --access outputs/phase7h/full_text_access_combined115/full_text_access.jsonl \
-  --output outputs/phase7h/source_verification_combined115
+  --whitelist outputs/archive/provenance/source-workflow/source-decisions/source_decisions/provisional_source_whitelist.jsonl \
+  --metadata outputs/archive/provenance/source-workflow/source-verification-first-batches/source_metadata/openalex_metadata.jsonl \
+  --access outputs/archive/provenance/source-workflow/source-verification-combined/full_text_access_combined115/full_text_access.jsonl \
+  --output outputs/archive/provenance/source-workflow/source-verification-combined/source_verification_combined115
 ```
 
 ## Results

@@ -100,21 +100,21 @@ Command:
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run \
   --dataset data/real_pilot_nickel_superalloy_expanded \
-  --output outputs/phase6a/expanded_baseline \
+  --output outputs/archive/provenance/expanded-pilots/expanded-baseline/expanded_baseline \
   --methods no_rag,oracle_context,lexical_rag \
   --split fresh_hard
 
 PYTHONPATH=benchmark python -m domainrag.cli report \
-  --input outputs/phase6a/expanded_baseline/real_pilot_nickel_superalloy_expanded/fresh_hard_results.jsonl \
-  --output outputs/phase6a/expanded_baseline/report_fresh_hard
+  --input outputs/archive/provenance/expanded-pilots/expanded-baseline/expanded_baseline/real_pilot_nickel_superalloy_expanded/fresh_hard_results.jsonl \
+  --output outputs/archive/provenance/expanded-pilots/expanded-baseline/expanded_baseline/report_fresh_hard
 ```
 
 Output:
 
 ```text
-outputs/phase6a/expanded_baseline/real_pilot_nickel_superalloy_expanded/fresh_hard_results.jsonl
-outputs/phase6a/expanded_baseline/report_fresh_hard/summary.json
-outputs/phase6a/expanded_baseline/report_fresh_hard/summary.md
+outputs/archive/provenance/expanded-pilots/expanded-baseline/expanded_baseline/real_pilot_nickel_superalloy_expanded/fresh_hard_results.jsonl
+outputs/archive/provenance/expanded-pilots/expanded-baseline/expanded_baseline/report_fresh_hard/summary.json
+outputs/archive/provenance/expanded-pilots/expanded-baseline/expanded_baseline/report_fresh_hard/summary.md
 ```
 
 Baseline summary:
