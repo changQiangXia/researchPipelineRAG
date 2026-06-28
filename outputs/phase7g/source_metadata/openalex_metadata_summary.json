@@ -1,0 +1,21 @@
+{
+  "metadata_status_counts": {
+    "found": 115
+  },
+  "retracted_count": 0,
+  "source_count": 115,
+  "type_counts": {
+    "article": 103,
+    "dissertation": 2,
+    "other": 1,
+    "preprint": 6,
+    "report": 2,
+    "review": 1
+  },
+  "venue_type_counts": {
+    "book series": 1,
+    "journal": 103,
+    "repository": 8,
+    "unknown": 3
+  }
+}

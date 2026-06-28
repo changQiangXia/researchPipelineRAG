@@ -4,7 +4,7 @@ Recorded: 2026-06-28
 
 Blueprint: `/root/autodl-tmp/RAG/RAG.md`
 
-Repository milestone: Phase 7F provisional source decisions and stop point
+Repository milestone: Phase 7G source verification and full-text intake checkpoint
 
 ## Executive Summary
 
@@ -33,9 +33,21 @@ package: 82 `accepted_provisional`, 33 `pending_manual_review`, 9
 `rejected_prescreen`, and a 115-row provisional source whitelist. This is the
 recommended pause point for the current engineering/source-screening effort.
 
+Phase 7G resumes from that pause point and starts machine-assisted source
+verification plus real full-text intake. OpenAlex metadata was refreshed for all
+115 provisional whitelist rows; all 115 were found and none are marked
+retracted there. Full-text access was probed for the first 25 rows in 5-row
+batches; 17 rows are parseable, 6 were not accessible, and 2 download attempts
+failed. The combined source verification matrix now marks 1 row as a verified
+source candidate, 15 rows as ready for manual finalization, and 15 as rejected
+after verification, while 84 still need evidence. It still has 0 final accepted
+sources because
+manual venue/JCR/CiteScore or flagship-source confirmation and human sign-off
+remain open.
+
 The current project is not yet a full `RAG.md` demo-scale dataset. The best
 dataset has 100 corpus chunks and 150 questions; `RAG.md` calls for 1,000-3,000
-chunks and 300-500 questions for the demo tier. Phase 7D/7E/7F materially
+chunks and 300-500 questions for the demo tier. Phase 7D/7E/7F/7G materially
 advance the paper acquisition, screening, and provisional decision
 prerequisites, but final manual source verification, full-text parsing, chunk
 extraction, and question generation are still open.
@@ -43,7 +55,7 @@ extraction, and question generation are still open.
 Completion estimate:
 
 - Excluding final scale: about 99%
-- Including `RAG.md` demo scale: 89%-90%
+- Including `RAG.md` demo scale: 90%-91%
 
 The structured audit behind this report is committed at:
 
@@ -355,6 +367,63 @@ Interpretation: the provisional whitelist count is now within the RAG.md
 first source-side tasks are manual verification and targeted review search for
 `coatings`, `life_prediction`, and `microstructure_characterization`.
 
+## Phase 7G Source Verification And Full-Text Intake
+
+Phase 7G starts the post-provisional verification path. It adds OpenAlex
+metadata evidence, real full-text access probing, and a combined source
+verification matrix. It still does not claim final manual verification.
+
+Output evidence:
+
+- `outputs/phase7g/source_metadata/openalex_metadata.jsonl`
+- `outputs/phase7g/full_text_access_combined25/full_text_access.jsonl`
+- `outputs/phase7g/source_verification_combined25/source_verification_matrix.jsonl`
+- `outputs/phase7g/source_verification_combined25/verification_summary.json`
+- `docs/verification/source-verification-and-full-text-intake.md`
+
+OpenAlex metadata:
+
+| metric | value |
+| --- | ---: |
+| provisional whitelist rows checked | 115 |
+| OpenAlex records found | 115 |
+| retracted rows | 0 |
+| article rows | 103 |
+| preprint rows | 6 |
+| review rows | 1 |
+| dissertation/report/other rows | 5 |
+
+Full-text intake, first 25 rows:
+
+| metric | value |
+| --- | ---: |
+| rows probed | 25 |
+| downloaded | 17 |
+| not accessible | 6 |
+| download failed | 2 |
+| parseable | 17 |
+| not attempted | 8 |
+| extracted characters counted | 1120613 |
+
+Combined verification matrix:
+
+| metric | value |
+| --- | ---: |
+| source rows in matrix | 115 |
+| accepted final verification | 0 |
+| verified source candidate | 1 |
+| ready for manual finalization | 15 |
+| rejected after verification | 15 |
+| needs evidence | 84 |
+| final whitelist claim | not_complete |
+
+Interpretation: Phase 7G converts part of the source-side uncertainty into an
+auditable queue. The main bottleneck is now less about finding metadata and more
+about finishing full-text processability checks plus human venue/source-quality
+sign-off. Rows marked `ready_for_manual_finalization` can be reviewed first;
+rows marked `rejected_verification` should be manually spot-checked before
+removal from the final source candidate set.
+
 Historical medium dataset:
 
 ```text
@@ -451,7 +520,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 
 | requirement | status | evidence |
 | --- | --- | --- |
-| Literature source policy | partial | Source manifests, a 124-paper OpenAlex candidate pool, Phase 7E screening queue, and Phase 7F provisional decisions exist, but no final manually verified 100-180-paper top-venue whitelist is committed. |
+| Literature source policy | partial | Source manifests, a 124-paper OpenAlex candidate pool, Phase 7E screening queue, Phase 7F provisional decisions, and Phase 7G machine-assisted source verification exist, but no final manually verified 100-180-paper top-venue whitelist is committed. |
 | Easy Dataset intake | complete | Easy Dataset-style export adapter and copyable integration assets are tested. |
 | DomainRAG data contract | complete | Contract, schema, validator, real datasets, and tests are present. |
 | Public metadata safety | complete | Validator and tests enforce forbidden metadata rules. |
@@ -462,9 +531,9 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Human calibration | complete | 15-row manual audit over Phase 6E calibration packet. |
 | Method comparison | complete | Five methods compared on the same medium Fresh-Hard split. |
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
-| Demo scale | partial | 100 chunks / 150 questions plus a 115-row provisional source whitelist versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
+| Demo scale | partial | 100 chunks / 150 questions plus a 115-row provisional source whitelist and 25-row full-text access probe versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
 | Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates; dense/rerank results are not yet generated. |
-| Final report | complete | This report and `rag-md-implementation-audit.json`. |
+| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G verification documentation. |
 
 See the structured form:
 
@@ -489,6 +558,8 @@ Current medium-plus pilot:
 - 124 OpenAlex source candidates for the next expansion
 - 115 open-access/full-text-ready queue candidates
 - 115 provisional source-whitelist rows
+- 25 source rows with machine full-text access/processability evidence
+- 1 verified source candidate and 15 rows ready for manual finalization after machine checks
 - 0 final manually verified source inclusions
 
 The implementation path is ready for more scale, but the dataset itself is
@@ -543,6 +614,7 @@ The current handoff package is coherent as a medium pilot:
 - A 124-paper OpenAlex candidate pool for demo-scale source screening.
 - A Phase 7E machine pre-screening and full-text processing queue.
 - A Phase 7F provisional source-decision package and 115-row provisional whitelist.
+- A Phase 7G OpenAlex metadata refresh and 25-row full-text/processability checkpoint.
 - Deterministic diagnostic baselines.
 - Live DeepSeek answer generation and Judge evaluation.
 - A five-method Fresh-Hard comparison.
@@ -555,16 +627,18 @@ yet strong enough to claim the full `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase if work resumes: Phase 7G manual verification and
-demo-scale extraction.
+Recommended next phase if work resumes: Phase 7H continued full-text intake,
+manual source finalization, and demo-scale extraction.
 
-This is the recommended pause point. If work resumes, the high-value path is:
+If work resumes, the high-value path is:
 
 1. Verify venue quality, DOI/title/year, article type, retraction status,
-   full-text processability, and domain relevance.
+   full-text processability, and domain relevance for the 1 verified source
+   candidate and 15 ready-for-manual-finalization rows first.
 2. Fill subtopic review gaps for coatings, life prediction, and
    microstructure characterization.
-3. Promote the 115-row provisional whitelist into a final 100-180 source
+3. Continue full-text access probing beyond the first 25 rows and promote the
+   115-row provisional whitelist into a final 100-180 source
    whitelist.
 4. Extract chunks only from verified sources and expand toward at least 1,000
    chunks / 300 questions.
@@ -587,6 +661,7 @@ PYTHONPATH=benchmark pytest tests/test_phase7c_live_subset.py
 PYTHONPATH=benchmark pytest tests/test_phase7d_outputs.py tests/test_source_acquisition.py tests/test_cli.py -k 'phase7d or source_acquisition or acquire_sources'
 PYTHONPATH=benchmark pytest tests/test_phase7e_outputs.py tests/test_source_screening.py tests/test_cli.py -k 'phase7e or source_screening or screen_sources'
 PYTHONPATH=benchmark pytest tests/test_phase7f_outputs.py tests/test_source_decisions.py tests/test_cli.py -k 'phase7f or source_decisions or decide_sources'
+PYTHONPATH=benchmark pytest tests/test_phase7g_outputs.py tests/test_source_verification.py tests/test_source_metadata.py tests/test_full_text_intake.py tests/test_cli.py -k 'phase7g or source_verification or source_metadata or full_text_intake or verify_sources'
 PYTHONPATH=benchmark pytest
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium_plus
 PYTHONPATH=benchmark pytest tests/test_real_pilot_medium_plus_assets.py tests/test_phase7b_outputs.py

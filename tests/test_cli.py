@@ -1031,3 +1031,114 @@ def test_build_phase7f_source_decisions_script_writes_package_without_secrets(tm
     assert "sk-" not in result.stdout
     assert "ghp_" not in result.stdout
     assert (output / "source_decisions.jsonl").exists()
+
+
+def _source_row_for_verification(
+    *,
+    source_id: str = "openalex_W1",
+    venue_whitelist_status: str = "candidate_top_venue_or_domain_flagship",
+) -> dict:
+    return {
+        "source_id": source_id,
+        "doi": "10.1234/example",
+        "title": "High-temperature oxidation of nickel superalloy",
+        "year": 2026,
+        "subtopic": "oxidation",
+        "work_kind": "research_article_candidate",
+        "work_type": "article",
+        "venue": "Corrosion Science",
+        "venue_type": "journal",
+        "venue_whitelist_status": venue_whitelist_status,
+        "domain_relevance_terms": ["nickel", "superalloy"],
+        "oa_url": "https://publisher.example/paper.pdf",
+        "official_url": "https://doi.org/10.1234/example",
+        "source_decision": "accepted_provisional",
+        "decision_status": "provisional_not_final",
+    }
+
+
+def _metadata_row_for_verification(source_id: str = "openalex_W1") -> dict:
+    return {
+        "source_id": source_id,
+        "doi": "https://doi.org/10.1234/example",
+        "title": "High-temperature oxidation of nickel superalloy",
+        "publication_year": 2026,
+        "type": "article",
+        "is_retracted": False,
+    }
+
+
+def _access_row_for_verification(source_id: str = "openalex_W1") -> dict:
+    return {
+        "source_id": source_id,
+        "access_status": "downloaded",
+        "parse_status": "parseable",
+        "content_type": "application/pdf",
+        "bytes_downloaded": 128000,
+        "extracted_chars": 1500,
+    }
+
+
+def test_verify_sources_cli_writes_verification_package(tmp_path: Path):
+    whitelist = tmp_path / "provisional_source_whitelist.jsonl"
+    metadata = tmp_path / "openalex_metadata.jsonl"
+    access = tmp_path / "full_text_access.jsonl"
+    output = tmp_path / "verification"
+    write_jsonl(whitelist, [_source_row_for_verification()])
+    write_jsonl(metadata, [_metadata_row_for_verification()])
+    write_jsonl(access, [_access_row_for_verification()])
+
+    result = _run_cli(
+        "verify-sources",
+        "--whitelist",
+        str(whitelist),
+        "--metadata",
+        str(metadata),
+        "--access",
+        str(access),
+        "--output",
+        str(output),
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "source verification matrix written to" in result.stdout
+    assert (output / "source_verification_matrix.jsonl").exists()
+    assert (output / "final_verification_queue.jsonl").exists()
+    assert (output / "verification_summary.json").exists()
+    assert (output / "summary.md").exists()
+
+
+def test_build_phase7g_source_verification_script_writes_package_without_secrets(
+    tmp_path: Path,
+):
+    whitelist = tmp_path / "provisional_source_whitelist.jsonl"
+    metadata = tmp_path / "openalex_metadata.jsonl"
+    access = tmp_path / "full_text_access.jsonl"
+    output = tmp_path / "verification"
+    write_jsonl(whitelist, [_source_row_for_verification()])
+    write_jsonl(metadata, [_metadata_row_for_verification()])
+    write_jsonl(access, [_access_row_for_verification()])
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/build_phase7g_source_verification.py",
+            "--whitelist",
+            str(whitelist),
+            "--metadata",
+            str(metadata),
+            "--access",
+            str(access),
+            "--output",
+            str(output),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "source verification matrix written to" in result.stdout
+    assert "sk-" not in result.stdout
+    assert "ghp_" not in result.stdout
+    assert (output / "source_verification_matrix.jsonl").exists()

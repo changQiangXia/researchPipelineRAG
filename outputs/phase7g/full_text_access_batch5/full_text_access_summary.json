@@ -1,0 +1,15 @@
+{
+  "access_status_counts": {
+    "downloaded": 5
+  },
+  "content_type_counts": {
+    "application/pdf": 4,
+    "text/html;charset=UTF-8": 1
+  },
+  "parse_status_counts": {
+    "parseable": 5
+  },
+  "parseable_count": 5,
+  "source_count": 5,
+  "total_extracted_chars": 250468
+}

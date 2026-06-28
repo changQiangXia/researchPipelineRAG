@@ -29,6 +29,7 @@ from domainrag.report_generator import generate_report
 from domainrag.source_acquisition import acquire_demo_scale_sources, build_query_plan
 from domainrag.source_decisions import build_decision_outputs
 from domainrag.source_screening import build_screening_outputs
+from domainrag.source_verification import build_verification_outputs
 from domainrag.validator import validate_dataset
 
 
@@ -149,6 +150,17 @@ def build_parser() -> argparse.ArgumentParser:
     decide_sources.add_argument(
         "--output",
         default="outputs/phase7f/source_decisions",
+    )
+    verify_sources = subparsers.add_parser("verify-sources")
+    verify_sources.add_argument(
+        "--whitelist",
+        default="outputs/phase7f/source_decisions/provisional_source_whitelist.jsonl",
+    )
+    verify_sources.add_argument("--metadata", default=None)
+    verify_sources.add_argument("--access", default=None)
+    verify_sources.add_argument(
+        "--output",
+        default="outputs/phase7g/source_verification",
     )
     return parser
 
@@ -426,6 +438,24 @@ def main(argv: list[str] | None = None) -> int:
         print(f"source decisions written to {decisions_path}")
         print(f"provisional source whitelist written to {whitelist_path}")
         print(f"decision summary written to {summary_path}")
+        print(f"markdown summary written to {markdown_path}")
+        return 0
+    if args.command == "verify-sources":
+        try:
+            matrix_path, final_queue_path, summary_path, markdown_path = (
+                build_verification_outputs(
+                    Path(args.whitelist),
+                    output_dir=Path(args.output),
+                    metadata_path=Path(args.metadata) if args.metadata else None,
+                    access_path=Path(args.access) if args.access else None,
+                )
+            )
+        except (OSError, ValidationError) as exc:
+            print(str(exc))
+            return 1
+        print(f"source verification matrix written to {matrix_path}")
+        print(f"final verification queue written to {final_queue_path}")
+        print(f"verification summary written to {summary_path}")
         print(f"markdown summary written to {markdown_path}")
         return 0
     parser.error(f"unknown command: {args.command}")
