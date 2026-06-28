@@ -4,7 +4,7 @@ Recorded: 2026-06-28
 
 Blueprint: `/root/autodl-tmp/RAG/RAG.md`
 
-Repository milestone: Phase 7C, after `c6bb323 Merge Phase 7B medium-plus scale checkpoint`
+Repository milestone: Phase 7D demo-scale source acquisition checkpoint
 
 ## Executive Summary
 
@@ -16,15 +16,22 @@ scoring, live DeepSeek answer generation, live DeepSeek Judge evaluation,
 Fresh-Hard comparison, a small human calibration audit, and a bounded
 medium-plus live subset.
 
+Phase 7D adds a real OpenAlex-backed source-acquisition checkpoint for the
+remaining demo-scale gap: 124 candidate papers across 8 subtopics, including
+113 research-article candidates, 11 review candidates, and 115 open-access
+candidates. These rows are explicitly `candidate_for_manual_verification`; they
+are not a final inclusion list.
+
 The current project is not yet a full `RAG.md` demo-scale dataset. The best
 dataset has 100 corpus chunks and 150 questions; `RAG.md` calls for 1,000-3,000
-chunks and 300-500 questions for the demo tier. Treat this repository as a
-medium-plus pilot whose non-scale engineering path is close to complete.
+chunks and 300-500 questions for the demo tier. Phase 7D materially advances
+the paper acquisition prerequisite, but final source whitelisting, full-text
+processing, chunk extraction, and question generation are still open.
 
 Completion estimate:
 
 - Excluding final scale: about 99%
-- Including `RAG.md` demo scale: 84%-85%
+- Including `RAG.md` demo scale: 86%-87%
 
 The structured audit behind this report is committed at:
 
@@ -205,6 +212,50 @@ addition to deterministic retrieval diagnostics. Retrieval-grounded methods
 remain faithful on this subset, while No-RAG produces unsupported claims and
 higher hallucination risk even when it answers some choice questions correctly.
 
+## Phase 7D Demo-Scale Source Acquisition
+
+Phase 7D starts the source-acquisition path needed for strict `RAG.md`
+demo-scale work. It does not expand the public benchmark dataset yet; it
+creates a reproducible candidate pool that must be manually screened before
+chunk extraction.
+
+Output evidence:
+
+- `outputs/phase7d/demo_scale_source_acquisition/candidates.jsonl`
+- `outputs/phase7d/demo_scale_source_acquisition/coverage.json`
+- `outputs/phase7d/demo_scale_source_acquisition/summary.md`
+- `docs/verification/demo-scale-source-acquisition.md`
+
+Coverage:
+
+| metric | value |
+| --- | ---: |
+| candidate papers | 124 |
+| research article candidates | 113 |
+| review candidates | 11 |
+| open-access candidates | 115 |
+| subtopics covered | 8 |
+| final included sources | 0 |
+
+Subtopic coverage:
+
+| subtopic | candidates | research | reviews | open access |
+| --- | ---: | ---: | ---: | ---: |
+| additive_manufacturing | 8 | 5 | 3 | 6 |
+| coatings | 9 | 9 | 0 | 9 |
+| creep | 28 | 26 | 2 | 27 |
+| fatigue | 10 | 9 | 1 | 9 |
+| hot_corrosion | 17 | 15 | 2 | 14 |
+| life_prediction | 12 | 12 | 0 | 11 |
+| microstructure_characterization | 15 | 15 | 0 | 15 |
+| oxidation | 25 | 22 | 3 | 24 |
+
+Interpretation: the candidate pool now crosses the RAG.md 100-paper lower
+bound and spans the required nickel-superalloy high-temperature-failure
+subtopics. It remains a candidate-only acquisition artifact. The next gate is
+manual venue, DOI, article-type, retraction, full-text, and domain-relevance
+verification, followed by a final 100-180 source whitelist.
+
 Historical medium dataset:
 
 ```text
@@ -301,7 +352,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 
 | requirement | status | evidence |
 | --- | --- | --- |
-| Literature source policy | partial | Source manifests exist, but no full 100-180-paper top-venue verification matrix is committed. |
+| Literature source policy | partial | Source manifests and a 124-paper OpenAlex candidate pool exist, but no final manually verified 100-180-paper top-venue whitelist is committed. |
 | Easy Dataset intake | complete | Easy Dataset-style export adapter and copyable integration assets are tested. |
 | DomainRAG data contract | complete | Contract, schema, validator, real datasets, and tests are present. |
 | Public metadata safety | complete | Validator and tests enforce forbidden metadata rules. |
@@ -312,7 +363,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Human calibration | complete | 15-row manual audit over Phase 6E calibration packet. |
 | Method comparison | complete | Five methods compared on the same medium Fresh-Hard split. |
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
-| Demo scale | partial | 100 chunks / 150 questions versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
+| Demo scale | partial | 100 chunks / 150 questions plus a 124-paper candidate pool versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
 | Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates; dense/rerank results are not yet generated. |
 | Final report | complete | This report and `rag-md-implementation-audit.json`. |
 
@@ -336,12 +387,15 @@ Current medium-plus pilot:
 - 100 corpus chunks
 - 150 total questions
 - 50 Fresh-Hard questions
+- 124 OpenAlex source candidates for the next expansion
+- 0 manually finalized Phase 7D source inclusions
 
 The implementation path is ready for more scale, but the dataset itself is
 still far below the requested demo scale. A true demo-scale build should not be
 claimed until the same validation, FlashRAG preparation, retrieval comparison,
 live answer/Judge evaluation, calibration packet, and at least sampled human
-audit are repeated on a dataset at or near 1,000 chunks.
+audit are repeated on a dataset at or near 1,000 chunks. The Phase 7D candidate
+pool is the start of that route, not the completed scale expansion.
 
 ## Dense And Rerank Gap
 
@@ -384,6 +438,7 @@ The current handoff package is coherent as a medium pilot:
 - A real FlashRAG BM25 retrieval path.
 - A current-environment BM25s retrieval fallback for the 100/150 checkpoint.
 - A bounded medium-plus live DeepSeek answer/Judge subset.
+- A 124-paper OpenAlex candidate pool for demo-scale source screening.
 - Deterministic diagnostic baselines.
 - Live DeepSeek answer generation and Judge evaluation.
 - A five-method Fresh-Hard comparison.
@@ -396,15 +451,22 @@ the full `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase: Phase 7D demo-scale source acquisition.
+Recommended next phase: Phase 7E manual source verification and full-text
+processing queue.
 
-The remaining high-value path is now data scale:
+The remaining high-value path is still data scale, but Phase 7D narrows the
+first bottleneck to source verification:
 
-1. Build a larger source acquisition and screening workflow toward at least
-   1,000 chunks / 300 questions.
-2. Keep the same validation, FlashRAG bundle preparation, retrieval comparison,
+1. Screen the 124 OpenAlex candidates into a final 100-180 source whitelist.
+2. Verify venue quality, DOI/title/year, article type, retraction status,
+   full-text processability, and domain relevance.
+3. Fill subtopic review gaps, especially coatings, life prediction, and
+   microstructure characterization.
+4. Extract chunks only from verified sources and expand toward at least 1,000
+   chunks / 300 questions.
+5. Keep the same validation, FlashRAG bundle preparation, retrieval comparison,
    live answer/Judge, and sampled human calibration gates.
-3. Run dense/rerank only in the isolated environment described by Phase 7A, not
+6. Run dense/rerank only in the isolated environment described by Phase 7A, not
    by mutating the current AutoDL runtime.
 
 If the goal is a defensible near-term project deliverable, finish with this
@@ -418,6 +480,7 @@ Run from repository root:
 ```bash
 PYTHONPATH=benchmark pytest tests/test_phase6g_report.py
 PYTHONPATH=benchmark pytest tests/test_phase7c_live_subset.py
+PYTHONPATH=benchmark pytest tests/test_phase7d_outputs.py tests/test_source_acquisition.py tests/test_cli.py -k 'phase7d or source_acquisition or acquire_sources'
 PYTHONPATH=benchmark pytest
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium_plus
 PYTHONPATH=benchmark pytest tests/test_real_pilot_medium_plus_assets.py tests/test_phase7b_outputs.py
