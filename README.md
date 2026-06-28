@@ -1,4 +1,4 @@
-# DomainRAG-Bench：面向专业领域的可追溯 RAG 测评流水线
+# DomainRAG-Bench：面向专业领域的 RAG 测评流水线
 
 DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据生产、标准化、检索评测和审计流水线。它的核心目标是：从领域文献和证据材料出发，构建带有 `gold evidence`（每道题绑定的标准证据块）与 `qrels`（question relevance labels，即问题与相关证据 chunk 的标准关联表）的标准化数据资产，并在同一评测协议下比较不同 RAG 方法的检索、答题、忠实度和效率表现。
 
