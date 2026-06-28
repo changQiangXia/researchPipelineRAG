@@ -4,7 +4,7 @@ Recorded: 2026-06-28
 
 Blueprint: `/root/autodl-tmp/RAG/RAG.md`
 
-Repository milestone: Phase 7H full-text intake combined115 checkpoint
+Repository milestone: Phase 7I manual finalization packet checkpoint
 
 ## Executive Summary
 
@@ -51,9 +51,14 @@ after verification. It still has 0 final accepted sources because
 manual venue/JCR/CiteScore or flagship-source confirmation and human sign-off
 remain open.
 
+Phase 7I turns the 115-row verification matrix into a human-review packet and a
+108-row candidate final whitelist queue. That queue is inside the RAG.md
+100-180 source-paper target range, but it remains a handoff for real human
+sign-off rather than a final accepted whitelist.
+
 The current project is not yet a full `RAG.md` demo-scale dataset. The best
 dataset has 100 corpus chunks and 150 questions; `RAG.md` calls for 1,000-3,000
-chunks and 300-500 questions for the demo tier. Phase 7D/7E/7F/7G/7H materially
+chunks and 300-500 questions for the demo tier. Phase 7D/7E/7F/7G/7H/7I materially
 advance the paper acquisition, screening, and provisional decision
 prerequisites, but final manual source verification, full-text parsing, chunk
 extraction, and question generation are still open.
@@ -61,7 +66,7 @@ extraction, and question generation are still open.
 Completion estimate:
 
 - Excluding final scale: about 99%
-- Including `RAG.md` demo scale: 92%-93%
+- Including `RAG.md` demo scale: 93%-94%
 
 The structured audit behind this report is committed at:
 
@@ -476,6 +481,51 @@ spot-checking before removal. This is enough to enter source finalization and
 chunk extraction work, but it is still not a final manually verified source
 whitelist.
 
+## Phase 7I Manual Finalization Packet
+
+Phase 7I converts the 115-row verification matrix into a review-ready packet for
+human finalization. It does not simulate human sign-off and does not claim a
+final accepted whitelist.
+
+Output evidence:
+
+- `outputs/phase7i/manual_finalization_packet/manual_finalization_packet.jsonl`
+- `outputs/phase7i/manual_finalization_packet/candidate_final_whitelist_queue.jsonl`
+- `outputs/phase7i/manual_finalization_packet/manual_finalization_summary.json`
+- `docs/verification/manual-finalization-packet.md`
+
+Manual finalization packet:
+
+| metric | value |
+| --- | ---: |
+| source rows in packet | 115 |
+| candidate final whitelist queue | 108 |
+| verified source candidates | 2 |
+| ready for manual finalization | 106 |
+| spot-check rejected sources | 7 |
+| accepted final sources | 0 |
+| final whitelist claim | not_complete |
+
+Candidate queue by subtopic:
+
+| subtopic | queue | verified | ready | reviews | research |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| additive_manufacturing | 5 | 0 | 5 | 3 | 2 |
+| coatings | 9 | 1 | 8 | 0 | 9 |
+| creep | 26 | 0 | 26 | 2 | 24 |
+| fatigue | 8 | 0 | 8 | 1 | 7 |
+| hot_corrosion | 13 | 1 | 12 | 2 | 11 |
+| life_prediction | 11 | 0 | 11 | 0 | 11 |
+| microstructure_characterization | 14 | 0 | 14 | 0 | 14 |
+| oxidation | 22 | 0 | 22 | 3 | 19 |
+
+Interpretation: the candidate final whitelist queue now matches the source-count
+range requested by RAG.md, but only with an 8-source buffer above the lower
+bound. If human review rejects more than 8 queued rows, targeted replacement
+source acquisition is needed before chunk extraction should be treated as
+demo-scale. The next high-value work is human sign-off followed by chunk
+extraction from accepted sources only.
+
 Historical medium dataset:
 
 ```text
@@ -572,7 +622,7 @@ support where the Judge assigned 0.0 support/faithfulness.
 
 | requirement | status | evidence |
 | --- | --- | --- |
-| Literature source policy | partial | Source manifests, a 124-paper OpenAlex candidate pool, Phase 7E screening queue, Phase 7F provisional decisions, Phase 7G source verification, and Phase 7H 115-row full-text intake exist, but no final manually verified 100-180-paper top-venue whitelist is committed. |
+| Literature source policy | partial | Source manifests, a 124-paper OpenAlex candidate pool, Phase 7F provisional decisions, Phase 7H 115-row full-text intake, and Phase 7I 108-row candidate final whitelist queue exist, but no final manually signed-off 100-180-paper top-venue whitelist is committed. |
 | Easy Dataset intake | complete | Easy Dataset-style export adapter and copyable integration assets are tested. |
 | DomainRAG data contract | complete | Contract, schema, validator, real datasets, and tests are present. |
 | Public metadata safety | complete | Validator and tests enforce forbidden metadata rules. |
@@ -583,9 +633,9 @@ support where the Judge assigned 0.0 support/faithfulness.
 | Human calibration | complete | 15-row manual audit over Phase 6E calibration packet. |
 | Method comparison | complete | Five methods compared on the same medium Fresh-Hard split. |
 | Efficiency metrics | complete | Latency, tokens, API calls, total tokens, and errors are reported. |
-| Demo scale | partial | 100 chunks / 150 questions plus a 115-row provisional source whitelist and 115-row full-text access probe versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
+| Demo scale | partial | 100 chunks / 150 questions plus a 108-row candidate final whitelist queue versus RAG.md target of 1,000-3,000 chunks / 300-500 questions. |
 | Dense/rerank methods | partial | Phase 7A adds isolated readiness outputs and gates; dense/rerank results are not yet generated. |
-| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H verification documentation. |
+| Final report | complete | This report, `rag-md-implementation-audit.json`, and Phase 7G/7H/7I verification documentation. |
 
 See the structured form:
 
@@ -612,6 +662,7 @@ Current medium-plus pilot:
 - 115 provisional source-whitelist rows
 - 115 source rows with machine full-text access/processability evidence
 - 2 verified source candidates and 106 rows ready for manual finalization after machine checks
+- 108 source rows in the candidate final whitelist queue
 - 0 final manually verified source inclusions
 
 The implementation path is ready for more scale, but the dataset itself is
@@ -668,6 +719,7 @@ The current handoff package is coherent as a medium pilot:
 - A Phase 7F provisional source-decision package and 115-row provisional whitelist.
 - A Phase 7G OpenAlex metadata refresh and 25-row full-text/processability checkpoint.
 - A Phase 7H 115-row full-text/processability checkpoint and machine finalization queue.
+- A Phase 7I 115-row human-review packet and 108-row candidate final whitelist queue.
 - Deterministic diagnostic baselines.
 - Live DeepSeek answer generation and Judge evaluation.
 - A five-method Fresh-Hard comparison.
@@ -680,19 +732,17 @@ yet strong enough to claim the full `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase if work resumes: Phase 7I manual source finalization,
-chunk extraction, and demo-scale question generation.
+Recommended next phase if work resumes: Phase 7J human sign-off handoff, chunk
+extraction, and demo-scale question generation.
 
 If work resumes, the high-value path is:
 
-1. Verify venue quality, DOI/title/year, article type, retraction status,
-   full-text processability, and domain relevance for the 2 verified source
-   candidates and 106 ready-for-manual-finalization rows first.
+1. Use the 108-row candidate final whitelist queue for real human sign-off.
 2. Fill subtopic review gaps for coatings, life prediction, and
    microstructure characterization.
-3. Promote the 115-row provisional whitelist into a final 100-180 source
-   whitelist, with targeted replacement acquisition if manual review removes
-   too many rows.
+3. Promote human-accepted rows into a final 100-180 source whitelist, with
+   targeted replacement acquisition if manual review removes more than 8 queue
+   rows.
 4. Extract chunks only from human-accepted sources and expand toward at least 1,000
    chunks / 300 questions.
 5. Keep the same validation, FlashRAG bundle preparation, retrieval comparison,

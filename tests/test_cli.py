@@ -1142,3 +1142,42 @@ def test_build_phase7g_source_verification_script_writes_package_without_secrets
     assert "sk-" not in result.stdout
     assert "ghp_" not in result.stdout
     assert (output / "source_verification_matrix.jsonl").exists()
+
+
+def test_build_finalization_packet_cli_writes_review_package(tmp_path: Path):
+    matrix = tmp_path / "source_verification_matrix.jsonl"
+    output = tmp_path / "manual_finalization"
+    row = {
+        **_source_row_for_verification(),
+        "source_verification_status": "verified_source_candidate",
+        "final_inclusion_status": "not_finalized",
+        "verification_checks": {
+            "venue_metric": "verified",
+            "doi_title_year": "verified",
+            "article_type": "verified",
+            "retraction": "verified",
+            "full_text_processability": "verified",
+            "domain_relevance": "verified",
+        },
+        "verification_reasons": [
+            "all_machine_checks_verified_requires_human_final_signoff"
+        ],
+    }
+    write_jsonl(matrix, [row])
+
+    result = _run_cli(
+        "build-finalization-packet",
+        "--verification-matrix",
+        str(matrix),
+        "--output",
+        str(output),
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "manual finalization packet written to" in result.stdout
+    assert "sk-" not in result.stdout
+    assert "ghp_" not in result.stdout
+    assert (output / "manual_finalization_packet.jsonl").exists()
+    assert (output / "candidate_final_whitelist_queue.jsonl").exists()
+    assert (output / "manual_finalization_summary.json").exists()
+    assert (output / "summary.md").exists()

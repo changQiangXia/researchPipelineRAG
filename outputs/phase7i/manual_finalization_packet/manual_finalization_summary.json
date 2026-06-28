@@ -1,0 +1,83 @@
+{
+  "accepted_final_source_count": 0,
+  "action_counts": {
+    "human_finalize_verified_candidate": 2,
+    "human_review_ready_source": 106,
+    "spot_check_rejected_source": 7
+  },
+  "candidate_final_whitelist_queue_count": 108,
+  "candidate_queue_target_status": "candidate_queue_meets_source_count_target",
+  "final_whitelist_claim": "not_complete",
+  "remaining_gaps": [
+    "human source sign-off",
+    "manual venue metric or flagship verification",
+    "manual handling for access-limited full-text rows",
+    "chunk extraction from human-accepted sources",
+    "300-500 question generation from accepted chunks"
+  ],
+  "source_count": 115,
+  "subtopic_count": 8,
+  "subtopics": {
+    "additive_manufacturing": {
+      "candidate_queue_count": 5,
+      "ready_for_manual_finalization": 5,
+      "research_article_candidates": 2,
+      "review_candidates": 3,
+      "verified_source_candidates": 0
+    },
+    "coatings": {
+      "candidate_queue_count": 9,
+      "ready_for_manual_finalization": 8,
+      "research_article_candidates": 9,
+      "review_candidates": 0,
+      "verified_source_candidates": 1
+    },
+    "creep": {
+      "candidate_queue_count": 26,
+      "ready_for_manual_finalization": 26,
+      "research_article_candidates": 24,
+      "review_candidates": 2,
+      "verified_source_candidates": 0
+    },
+    "fatigue": {
+      "candidate_queue_count": 8,
+      "ready_for_manual_finalization": 8,
+      "research_article_candidates": 7,
+      "review_candidates": 1,
+      "verified_source_candidates": 0
+    },
+    "hot_corrosion": {
+      "candidate_queue_count": 13,
+      "ready_for_manual_finalization": 12,
+      "research_article_candidates": 11,
+      "review_candidates": 2,
+      "verified_source_candidates": 1
+    },
+    "life_prediction": {
+      "candidate_queue_count": 11,
+      "ready_for_manual_finalization": 11,
+      "research_article_candidates": 11,
+      "review_candidates": 0,
+      "verified_source_candidates": 0
+    },
+    "microstructure_characterization": {
+      "candidate_queue_count": 14,
+      "ready_for_manual_finalization": 14,
+      "research_article_candidates": 14,
+      "review_candidates": 0,
+      "verified_source_candidates": 0
+    },
+    "oxidation": {
+      "candidate_queue_count": 22,
+      "ready_for_manual_finalization": 22,
+      "research_article_candidates": 19,
+      "review_candidates": 3,
+      "verified_source_candidates": 0
+    }
+  },
+  "target_final_source_whitelist": [
+    100,
+    180
+  ],
+  "verification_status": "human_review_packet_not_final"
+}

@@ -28,6 +28,7 @@ from domainrag.flashrag_method_feasibility import probe_flashrag_method_feasibil
 from domainrag.report_generator import generate_report
 from domainrag.source_acquisition import acquire_demo_scale_sources, build_query_plan
 from domainrag.source_decisions import build_decision_outputs
+from domainrag.source_finalization_packet import build_manual_finalization_outputs
 from domainrag.source_screening import build_screening_outputs
 from domainrag.source_verification import build_verification_outputs
 from domainrag.validator import validate_dataset
@@ -161,6 +162,15 @@ def build_parser() -> argparse.ArgumentParser:
     verify_sources.add_argument(
         "--output",
         default="outputs/phase7g/source_verification",
+    )
+    finalization_packet = subparsers.add_parser("build-finalization-packet")
+    finalization_packet.add_argument(
+        "--verification-matrix",
+        default="outputs/phase7h/source_verification_combined115/source_verification_matrix.jsonl",
+    )
+    finalization_packet.add_argument(
+        "--output",
+        default="outputs/phase7i/manual_finalization_packet",
     )
     return parser
 
@@ -456,6 +466,22 @@ def main(argv: list[str] | None = None) -> int:
         print(f"source verification matrix written to {matrix_path}")
         print(f"final verification queue written to {final_queue_path}")
         print(f"verification summary written to {summary_path}")
+        print(f"markdown summary written to {markdown_path}")
+        return 0
+    if args.command == "build-finalization-packet":
+        try:
+            packet_path, queue_path, summary_path, markdown_path = (
+                build_manual_finalization_outputs(
+                    Path(args.verification_matrix),
+                    output_dir=Path(args.output),
+                )
+            )
+        except (OSError, ValidationError) as exc:
+            print(str(exc))
+            return 1
+        print(f"manual finalization packet written to {packet_path}")
+        print(f"candidate final whitelist queue written to {queue_path}")
+        print(f"manual finalization summary written to {summary_path}")
         print(f"markdown summary written to {markdown_path}")
         return 0
     parser.error(f"unknown command: {args.command}")
