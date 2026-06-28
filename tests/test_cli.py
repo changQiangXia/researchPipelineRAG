@@ -837,3 +837,36 @@ def test_report_command_rejects_invalid_rows(tmp_path: Path, capsys):
     assert exit_code == 1
     assert "record 1: scores.single_choice_accuracy must be numeric" in captured.out
     assert "Traceback" not in captured.out
+
+
+def test_acquire_sources_script_dry_run_prints_openalex_queries_without_secrets():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/acquire_demo_scale_sources.py",
+            "--dry-run",
+            "--per-query",
+            "3",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    assert "https://api.openalex.org/works?" in result.stdout
+    assert "per-page=3" in result.stdout
+    assert "oxidation" in result.stdout
+    assert "creep" in result.stdout
+    assert "sk-" not in result.stdout
+    assert "ghp_" not in result.stdout
+
+
+def test_acquire_sources_cli_dry_run_lists_query_plan(capsys):
+    exit_code = main(["acquire-sources", "--output", "unused", "--per-query", "2", "--dry-run"])
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "OpenAlex query plan" in captured.out
+    assert "per-page=2" in captured.out
+    assert "fatigue" in captured.out

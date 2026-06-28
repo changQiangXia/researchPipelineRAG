@@ -20,12 +20,14 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert "Next Phase Recommendation" in report
     assert "Phase 7B Medium-Plus Update" in report
     assert "Phase 7C Medium-Plus Live Subset" in report
+    assert "Phase 7D Demo-Scale Source Acquisition" in report
     assert "outputs/phase6e/medium_fresh_hard_comparison/summary.json" in report
     assert "outputs/phase6f/medium_human_calibration_audit/summary.json" in report
     assert "outputs/phase7b/medium_plus_bm25s/" in report
     assert "outputs/phase7c/medium_plus_live_subset/comparison/summary.json" in report
+    assert "outputs/phase7d/demo_scale_source_acquisition/coverage.json" in report
 
-    assert audit["phase"] == "Phase 7C"
+    assert audit["phase"] == "Phase 7D"
     assert audit["dataset"]["name"] == "real_pilot_nickel_superalloy_medium_plus"
     assert audit["dataset"]["corpus_chunks"] == 100
     assert audit["dataset"]["questions"] == 150
@@ -33,7 +35,7 @@ def test_phase6g_final_report_covers_rag_md_completion_audit():
     assert audit["rag_md_targets"]["demo"]["corpus_chunks"] == [1000, 3000]
     assert audit["rag_md_targets"]["demo"]["questions"] == [300, 500]
     assert audit["completion_estimate"]["excluding_final_scale"] == "about 99%"
-    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "84%-85%"
+    assert audit["completion_estimate"]["including_rag_md_demo_scale"] == "86%-87%"
 
 
 def test_phase6g_audit_tracks_core_requirements_and_gaps():
@@ -110,3 +112,20 @@ def test_phase6g_audit_tracks_phase7c_medium_plus_live_subset():
     assert leaderboard["lexical_rag"]["retrieval_hit"] == 0.9167
     assert leaderboard["no_rag"]["hallucination_risk"] == 3.75
     assert leaderboard["no_rag"]["unsupported_claims"] == 18
+
+
+def test_phase6g_audit_tracks_phase7d_candidate_pool_without_closing_scale_gap():
+    audit = json.loads(AUDIT.read_text(encoding="utf-8"))
+    requirements = {item["id"]: item for item in audit["requirements"]}
+    acquisition = audit["phase7d_demo_scale_source_acquisition"]
+
+    assert acquisition["candidate_count"] == 124
+    assert acquisition["research_article_candidates"] == 113
+    assert acquisition["review_candidates"] == 11
+    assert acquisition["open_access_candidates"] == 115
+    assert acquisition["subtopic_count"] == 8
+    assert acquisition["final_included_sources"] == 0
+    assert acquisition["verification_status"] == "candidate_pool_only"
+    assert acquisition["inclusion_status"] == "candidate_for_manual_verification"
+    assert requirements["literature_source_policy"]["status"] == "partial"
+    assert requirements["demo_scale"]["status"] == "partial"
