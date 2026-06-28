@@ -51,7 +51,7 @@
   "completion_estimate": {
     "excluding_final_scale": "98%-99%",
     "including_rag_md_demo_scale": "78%-80%",
-    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. The main hard gap is final RAG.md demo scale; dense/rerank methods are intentionally deferred because of runtime dependency conflicts."
+    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. The main hard gap is final RAG.md demo scale; dense/rerank methods now have isolated readiness evidence but have not yet been executed."
   },
   "requirements": [
     {
@@ -202,11 +202,15 @@
     },
     {
       "id": "dense_rerank_methods",
-      "status": "deferred",
-      "summary": "FlashRAG dense retriever and reranker remain deferred to an isolated environment because the current AutoDL runtime has PyTorch/transformers and missing-package conflicts.",
+      "status": "partial",
+      "summary": "FlashRAG dense retriever and reranker have isolated readiness evidence, target dependencies, and acceptance gates, but dense/rerank results have not yet been generated.",
       "evidence": [
         "outputs/phase5e/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json",
-        "docs/verification/flashrag-method-feasibility-and-calibration.md"
+        "outputs/phase7a/dense_rerank_readiness/readiness.json",
+        "outputs/phase7a/dense_rerank_readiness/summary.md",
+        "requirements/flashrag-dense-rerank.txt",
+        "docs/verification/flashrag-method-feasibility-and-calibration.md",
+        "docs/verification/dense-rerank-isolated-readiness.md"
       ]
     },
     {
@@ -309,7 +313,7 @@
     "main_bias": "DeepSeek Judge is directionally reliable on the reviewed subset but conservative on partial-evidence BM25 oracle-reader rows."
   },
   "next_phase_recommendation": {
-    "name": "Phase 7A scale path decision",
+    "name": "Phase 7B scale path decision",
     "recommended_path": "Write the medium pilot up as the validated engineering milestone, then choose between a hundreds-of-chunks expansion and a true RAG.md demo-scale 1,000+ chunk build.",
     "minimum_next_scale": {
       "corpus_chunks": 100,
