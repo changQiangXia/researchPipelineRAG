@@ -1,25 +1,130 @@
-# DomainRAG-Bench
+# DomainRAG-Bench：面向专业领域的可追溯 RAG 测评流水线
 
-DomainRAG-Bench 是一个面向专业领域 RAG 评测的数据生产、数据契约、检索评测和审计流水线项目。它的目标不是做一个孤立 demo，而是把“领域材料 -> 可追溯题库 -> 标准 benchmark 数据集 -> RAG 方法评测 -> 模型回答/Judge -> 人工校准和来源审计”串成一条可复现流程。
+DomainRAG-Bench 是一个面向专业领域 RAG 测评的数据生产、标准化、检索评测和审计流水线。它的核心目标是：从领域文献和证据材料出发，构建带有 `gold evidence` 与 `qrels` 的标准化数据资产，并在同一评测协议下比较不同 RAG 方法的检索、答题、忠实度和效率表现。
 
-当前实现领域是“镍基高温合金高温失效”。这个领域只是示例，项目设计上可以迁移到其他专业领域。
+当前示例领域是 **镍基高温合金高温失效**。换句话说，当前实现领域是“镍基高温合金高温失效”；这个领域足够专业、知识更新快，适合构造基础模型不能完全依赖常识回答、但可以通过领域知识库回答的 `Fresh-Hard` 问题。
 
-## 三个核心概念
+当前仓库已经形成一条可复现的工程流水线：从 Easy Dataset 风格输入，到 DomainRAG 标准数据集，再到 FlashRAG bundle、本地检索 baseline、DeepSeek answer/Judge、人工审核 workflow 和结构化审计。当前数据集仍是 `provisional`，不是 `human-final` benchmark。
 
-**Easy Dataset**
+## 项目亮点
 
-Easy Dataset 在本项目里指上游数据生产工具或数据生产风格。本仓库不要求读者安装 Easy Dataset；它只约定一种容易导出的输入形状：
+- 从领域材料构建 literature-grounded RAG benchmark，而不是只做孤立 demo。
+- 使用 Easy Dataset 风格输入：`chunks.jsonl` + `items.jsonl`。
+- 定义 DomainRAG 标准数据契约：`corpus.jsonl`、`canonical_dataset.jsonl`、splits 和 `qrels`。
+- 每道题绑定 `source_chunk_ids`，保留 `gold evidence` 和 `gold context`。
+- 支持 `no_rag`、`oracle_context`、`lexical_rag`、BM25、hashed dense 等诊断基线。
+- 支持 `Fresh-Hard` split，用于测试模型在新近、专业证据上的依赖程度。
+- 可导出 FlashRAG-compatible bundle，让同一批数据进入下游 RAG benchmark 生态。
+- 集成 DeepSeek answer/Judge 路径，但明确不替代人工最终签核。
+- 保留候选文献筛选、来源审核、全文解析、人工 sign-off workflow 和结构化审计记录。
+
+## 当前示例领域：镍基高温合金高温失效
+
+当前实现领域是：
+
+```text
+镍基高温合金高温失效
+```
+
+该领域覆盖氧化、蠕变、疲劳、热腐蚀、涂层、增材制造、组织表征和寿命预测等子方向。项目使用这个领域作为示例，是因为它符合专业 RAG benchmark 的典型条件：
+
+- 领域知识高度专业，普通通用模型容易依赖模糊常识。
+- 近年研究持续更新，适合构造 `Fresh-Hard` 问题。
+- 问题需要可追溯证据，而不是开放式泛泛回答。
+- 研究型文献可以提供机制、参数、实验结果和失败案例。
+- 综述型文献可以提供概念体系、技术路线、争议和趋势。
+
+当前公开数据集中不导出 DOI、作者、venue、页码、原始 PDF 路径或论文题目。公开 benchmark 只保留证据 chunk 和内部 `source_chunk_ids`，用于检索评测和 `qrels` 构建。
+
+## 整体技术路线
+
+```text
+领域文献 / 证据材料
+        |
+        v
+Easy Dataset 风格输入
+chunks.jsonl + items.jsonl
+        |
+        v
+DomainRAG 标准数据集
+corpus.jsonl + canonical_dataset.jsonl + splits + qrels
+        |
+        v
+FlashRAG bundle / DomainRAG runner
+        |
+        v
+RAG 方法对比
+no_rag / oracle_context / lexical_rag / BM25 / dense diagnostics
+        |
+        v
+Answer、Judge、reports、audit、human sign-off workflow
+```
+
+这条流水线的核心设计是把“生成题库”和“评测 RAG”之间的接口固定下来。只要一个新领域能提供 Easy Dataset 风格输入，就可以转换成 DomainRAG 标准数据集，再进入统一的评测和报告流程。
+
+## 当前已形成的产物
+
+| 产物 | 位置 | 当前状态 |
+| --- | --- | --- |
+| provisional 300 题数据集 | `data/real_pilot_nickel_superalloy_demo_questions/` | 100 chunks / 300 questions |
+| medium-plus pilot 数据集 | `data/real_pilot_nickel_superalloy_medium_plus/` | 100 chunks / 150 questions |
+| FlashRAG bundle | `outputs/flashrag/real_pilot_nickel_superalloy_demo_questions/` | 可作为 FlashRAG 风格输入 |
+| 当前输出导航 | `outputs/current/` | 面向读者的成果摘要 |
+| 历史运行证据 | `outputs/archive/provenance/` | 按产物类型收束，不再按 phase 展示 |
+| 全文 chunk manifests | `outputs/current/full_text_chunks.md` | 2,196 条 machine-parseable chunk manifests |
+| 来源审核 workflow | `outputs/current/source_review.md` | 108 条 pending human sign-off candidates |
+| 结构化审计 | `docs/reports/rag-md-implementation-audit.json` | 对照 `RAG.md` 的状态记录 |
+
+当前状态可以概括为：
+
+```text
+工程流水线：基本完成
+严格 human-final benchmark：等待真实人工来源签核
+```
+
+## 当前评测快照
+
+当前 provisional 300 题数据集的 `Fresh-Hard` split 结果摘要如下：
+
+| method | questions | retrieval_hit | retrieval_recall | api_calls |
+| --- | ---: | ---: | ---: | ---: |
+| `no_rag` | 100 | 0.0000 | 0.0000 | 0 |
+| `oracle_context` | 100 | 1.0000 | 1.0000 | 0 |
+| `lexical_rag` | 100 | 0.7200 | 0.7200 | 0 |
+| `hashed_dense_oracle_reader` | 100 | 0.7000 | 0.7000 | 0 |
+| `hashed_dense_lexical_rerank_oracle_reader` | 100 | 0.7200 | 0.7200 | 0 |
+
+这张表的读法：
+
+- `no_rag` 测试没有检索上下文时的表现。
+- `oracle_context` 直接提供 `gold context`，用于判断题目是否能被证据回答。
+- `lexical_rag` 测试普通词面检索能否找到 `gold evidence`。
+- hashed dense 是本地 non-neural 诊断基线，不是 FlashRAG neural dense/reranker 结果。
+
+`oracle_context` 与检索方法之间的差距很关键：它把“题目本身可由证据回答”和“检索器是否真的找到了证据”分开看。
+
+详细结果见：
+
+```text
+outputs/current/benchmark_results.md
+```
+
+## 核心概念
+
+**Easy Dataset 风格**
+
+在本仓库中，Easy Dataset 风格指一种上游数据生产和导出形状，而不是强制依赖 Easy Dataset 应用本体：
 
 ```text
 chunks.jsonl
 items.jsonl
 ```
 
-`chunks.jsonl` 存放可公开的证据文本块，`items.jsonl` 存放题目、答案、题型、split 和证据引用。只要其他工具能导出这两个文件，也可以接入本项目。
+`chunks.jsonl` 存放证据文本块。`items.jsonl` 存放题目、答案、题型、split 和证据引用。
 
-**DomainRAG**
+**DomainRAG 标准数据集**
 
-DomainRAG 是本项目定义的标准 benchmark 数据契约。它把 Easy Dataset 风格输入转换成 RAG 评测需要的统一结构：
+DomainRAG 将 Easy Dataset 风格输入转换为稳定的标准 benchmark 数据契约：
 
 ```text
 corpus.jsonl
@@ -30,154 +135,115 @@ fresh_hard_test.jsonl
 qrels/*.tsv
 ```
 
-这个契约的关键是每道题都必须绑定 `source_chunk_ids`，也就是 gold evidence。这样检索是否命中证据、模型是否使用证据回答，都可以被追踪和评分。
+这个契约由 validators、runners、reports 和 FlashRAG adapters 共同消费。
 
 **FlashRAG**
 
-FlashRAG 是下游 RAG benchmark 框架。本项目能把 DomainRAG 标准数据集转换成 FlashRAG bundle，让同一批数据进入更标准的 RAG 检索/生成评测生态。当前仓库已经生成 FlashRAG 兼容数据包，并保留了 BM25、hashed dense 等本地评测路径。
+FlashRAG 是下游 RAG benchmark 框架。本项目会把 DomainRAG 标准数据集导出为 FlashRAG-compatible bundle，让同一批数据进入更通用的 RAG 实验生态。
 
-一句话关系：
+**gold evidence**
 
-```text
-Easy Dataset 风格输入 -> DomainRAG 标准数据集 -> FlashRAG bundle / benchmark runner
-```
+`gold evidence` 是题目绑定的标准证据块，在数据中表现为 `source_chunk_ids`。
 
-## 当前示例领域
+**qrels**
 
-当前领域是镍基高温合金高温失效。围绕这个领域，仓库已经形成一组可运行产物：
+`qrels` 将 question id 与相关 corpus chunk id 连接起来，用于计算 retrieval hit、recall 和 MRR。
 
-| 产物 | 位置 | 状态 |
-| --- | --- | --- |
-| 人工策划 medium-plus pilot | `data/real_pilot_nickel_superalloy_medium_plus/` | 100 chunks / 150 questions，已通过数据契约校验 |
-| provisional 300 题数据集 | `data/real_pilot_nickel_superalloy_demo_questions/` | 100 chunks / 300 questions，已通过数据契约校验 |
-| FlashRAG bundle | `outputs/flashrag/real_pilot_nickel_superalloy_demo_questions/` | 可作为 FlashRAG 数据输入 |
-| 当前输出入口 | `outputs/current/` | 给读者看的成果导航 |
-| 历史运行记录 | `outputs/archive/provenance/` | 运行证据，不作为第一阅读入口 |
-| 项目审计 | `docs/reports/rag-md-implementation-audit.json` | 对照 RAG.md 的结构化状态 |
+**gold context**
 
-项目还包含候选文献筛选、全文解析、chunk manifest、检索 benchmark、DeepSeek answer/Judge 和人工校准记录。它们现在被组织为“当前成果入口 + 历史证据归档”，而不是在 `outputs/` 根目录展示一排 phase 目录。
+`gold context` 是由 `qrels` 指向的真实证据文本。`oracle_context` 会直接使用这部分上下文。
 
-当前必须保留的边界：
+**Fresh-Hard**
 
-- 300 题数据集是 `provisional`，不是 human-final demo benchmark。
-- 2,196 条全文 chunk manifest 是 machine-parseable 结果，不是 human-final accepted-source corpus。
-- 已有 human sign-off workflow，但没有真实人工签核的 100-180 篇最终文献白名单。
-- 本地 hashed dense benchmark 不是 FlashRAG neural dense/reranker。
+`Fresh-Hard` 是用于压力测试证据依赖的 split。理想情况下，这类问题不能稳定依赖常识答对，但可以在给定正确证据时被回答。
 
-## 项目流水线
+**三种诊断基线**
 
-### 1. 数据生产线
+- `no_rag`：不给检索上下文。
+- `oracle_context`：直接提供 gold context，也就是标准证据上下文。
+- `lexical_rag`：从 corpus 中做词面检索。
 
-```text
-领域材料
-  -> Easy Dataset 风格导出: chunks.jsonl + items.jsonl
-  -> export-domainrag
-  -> DomainRAG 标准数据集
-  -> validate-data
-```
+这三种方法组合起来，可以区分问题是出在题目设计、检索命中，还是答案生成。
 
-**Easy Dataset 风格** 指上游数据以 `chunks.jsonl` 和 `items.jsonl` 表达。这个风格足够简单，可以来自 Easy Dataset，也可以来自自定义脚本或人工整理。
-
-**DomainRAG 标准数据集** 是转换后的正式 benchmark 输入。它包含 corpus、canonical questions、split 文件和 qrels。
-
-**gold evidence** 是题目绑定的标准证据块，也就是 `source_chunk_ids`。
-
-**qrels** 是检索评测使用的标准答案表，把 question id 和 gold evidence chunk id 连接起来。
-
-### 2. 评测线
-
-```text
-DomainRAG 标准数据集
-  -> no_rag / oracle_context / lexical_rag
-  -> report
-  -> optional DeepSeek answer / Judge
-```
-
-三种基础方法的意义：
-
-| 方法 | 含义 | 用途 |
-| --- | --- | --- |
-| `no_rag` | 不给检索上下文，只让模型或规则基线回答 | 测试题目是否会被常识或猜测答中 |
-| `oracle_context` | 直接提供 gold context，也就是 qrels 指向的标准证据 | 测试题目本身是否能由证据回答，是上限参考 |
-| `lexical_rag` | 用词面检索从 corpus 中找上下文 | 测试普通检索是否能命中 gold evidence |
-
-如果 `oracle_context` 高、`no_rag` 低，说明题目确实依赖证据。如果 `lexical_rag` 低于 `oracle_context`，瓶颈通常在检索。如果检索命中但答案仍差，瓶颈通常在生成或上下文使用。
-
-### 3. 来源审计线
-
-```text
-候选文献
-  -> screening queue
-  -> provisional source decisions
-  -> full-text access / parsing
-  -> manual finalization packet
-  -> human sign-off labels
-  -> final_source_whitelist.jsonl
-```
-
-这条线的目的不是自动宣布文献通过，而是把 candidate、provisional、ready for manual finalization 和 accepted_final 明确分开。只有真实人工标签能生成最终文献白名单。
-
-## 输入示例
-
-下面直接使用当前真实数据集中的记录。
+## 输入与输出示例
 
 ### Corpus chunk
 
-文件：`data/real_pilot_nickel_superalloy_demo_questions/corpus.jsonl`
+文件：
+
+```text
+data/real_pilot_nickel_superalloy_demo_questions/corpus.jsonl
+```
+
+示例：
 
 ```json
 {"id": "ns_ht_oxidation_gb_energy_001", "contents": "Initial oxidation in Inconel 718 can depend on grain-boundary character. Boundaries with different energy states can change oxygen adsorption, diffusion, and oxide nucleation, so intergranular oxidation does not begin uniformly across all boundaries."}
 ```
 
-这是一个可公开的证据 chunk。公开数据里不放 DOI、作者、venue、页码、原始 PDF 路径或论文题目。
-
 ### Canonical question
 
-文件：`data/real_pilot_nickel_superalloy_demo_questions/canonical_dataset.jsonl`
+文件：
+
+```text
+data/real_pilot_nickel_superalloy_demo_questions/canonical_dataset.jsonl
+```
+
+示例：
 
 ```json
 {"id": "real_pilot_nickel_superalloy_demo_questions_q0001", "question_type": "single_choice", "question": "Which statement is directly supported by the evidence chunk?", "options": {"A": "Initial oxidation in Inconel 718 can depend on grain-boundary character.", "B": "The evidence is about dataset bookkeeping rather than materials behavior.", "C": "The evidence says the mechanism is unrelated to high-temperature exposure.", "D": "The evidence only describes API retry settings."}, "answer": ["A"], "source_chunk_ids": ["ns_ht_oxidation_gb_energy_001"], "difficulty": "easy", "quality_score": 0.7}
 ```
 
-这里的 `source_chunk_ids` 就是 gold evidence。它说明这道题的标准证据来自哪个 corpus chunk。
+这里的 `source_chunk_ids` 就是 `gold evidence`，说明这道题的标准证据来自哪个 corpus chunk。
 
 ### Qrels row
 
-文件：`data/real_pilot_nickel_superalloy_demo_questions/qrels/fresh_hard.tsv`
+文件：
+
+```text
+data/real_pilot_nickel_superalloy_demo_questions/qrels/fresh_hard.tsv
+```
+
+示例：
 
 ```text
 real_pilot_nickel_superalloy_demo_questions_q0201	ns_ht_oxidation_lpbf_gh3536_001	1
 ```
 
-qrels 用于检索评测。它表示某个 question 与某个 corpus chunk 是标准相关关系，相关分数为 `1`。
+这表示某个 question 与某个 corpus chunk 是标准相关关系，相关分数为 `1`。
 
-### Easy Dataset 风格输入
+### 输出入口
 
-归档中保留了一份 Easy Dataset 风格中间导出：
-
-```text
-outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/easy_dataset_export/chunks.jsonl
-outputs/archive/provenance/demo-dataset/demo-question-generation/demo_question_generation/easy_dataset_export/items.jsonl
-```
-
-如果迁移到新领域，最小输入也应先准备这两个文件，再用 `export-domainrag` 或项目内生成器转换成 DomainRAG 标准数据集。
-
-## 主要输出在哪里
-
-先看：
+当前成果先看：
 
 ```text
 outputs/README.md
 outputs/current/README.md
 ```
 
-`outputs/current/` 是给读者看的当前成果导航。历史阶段运行记录已经移到：
+历史运行证据在：
 
 ```text
 outputs/archive/provenance/
 ```
 
-不要从历史执行顺序去理解项目。`outputs/archive/provenance/` 已按成果主题收束为若干归档目录，用于复现和审计。
+不要从历史执行顺序理解项目。当前归档已经按成果主题收束，用于复现和审计。
+
+## 仓库导览
+
+| 目的 | 路径 |
+| --- | --- |
+| DomainRAG 核心代码 | `benchmark/domainrag/` |
+| 数据 schema 与校验 | `benchmark/domainrag/schema.py`、`benchmark/domainrag/validator.py` |
+| 数据契约说明 | `docs/data-contract.md` |
+| 当前 300 题数据集 | `data/real_pilot_nickel_superalloy_demo_questions/` |
+| medium-plus pilot 数据集 | `data/real_pilot_nickel_superalloy_medium_plus/` |
+| FlashRAG bundles | `outputs/flashrag/` |
+| 面向读者的当前输出 | `outputs/current/` |
+| 历史运行证据 | `outputs/archive/provenance/` |
+| RAG.md 实现审计 | `docs/reports/rag-md-implementation-audit.json` |
+| 测试 | `tests/` |
 
 ## 快速运行
 
@@ -190,7 +256,7 @@ PYTHONPATH=benchmark python -m domainrag.cli validate-data \
   --dataset data/real_pilot_nickel_superalloy_demo_questions
 ```
 
-运行 Fresh-Hard 本地 baseline：
+运行 `Fresh-Hard` 本地 baseline：
 
 ```bash
 PYTHONPATH=benchmark python -m domainrag.cli run \
@@ -227,14 +293,24 @@ PYTHONPATH=benchmark pytest
 
 迁移时优先换数据，不要先改评测器。
 
-1. 定义领域和子方向。
-2. 准备来源策略，区分研究型来源和综述型来源。
-3. 生成 Easy Dataset 风格输入：`chunks.jsonl` 和 `items.jsonl`。
+1. 定义目标领域和 5-8 个子主题。
+2. 准备研究型文献和综述型文献的来源策略。
+3. 构建或导出 Easy Dataset 风格的 `chunks.jsonl` 和 `items.jsonl`。
 4. 转换为 DomainRAG 标准数据集。
-5. 跑 `validate-data`。
-6. 跑 `no_rag`、`oracle_context`、`lexical_rag`。
-7. 只在小样本稳定后再接入 live DeepSeek answer/Judge。
-8. 做人工校准和来源签核。
+5. 运行 `validate-data`。
+6. 运行 `no_rag`、`oracle_context`、`lexical_rag`。
+7. 增加 FlashRAG/BM25 或 dense retrieval 路径。
+8. 小样本本地 baseline 稳定后，再接入 DeepSeek answer/Judge。
+9. 做人工校准和来源签核，再声明最终 benchmark。
+
+研究型文献和综述型文献在工作流中的作用不同：
+
+| 来源类型 | 主要作用 |
+| --- | --- |
+| 研究型文献 | 机制、实验条件、参数、结果、失败案例 |
+| 综述型文献 | 概念结构、分类体系、技术路线、争议、趋势 |
+
+新领域不需要复制镍基高温合金主题，但必须保留证据契约：每道题都要指向 source chunks，每个相关 chunk 都要能通过 `qrels` 被检索评测使用。
 
 最小迁移闭环：
 
@@ -254,37 +330,48 @@ PYTHONPATH=benchmark python -m domainrag.cli run \
   --split fresh_hard
 ```
 
-## 严谨性边界
+## 严谨性与当前边界
 
-项目的严谨性来自几道约束：
+这个项目的严谨性来自显式证据绑定和可审计流程。
 
-- 每道题必须绑定 gold evidence。
-- `validate-data` 校验字段、split、qrels 和公开元数据安全。
-- 公开 benchmark 不泄露 DOI、作者、venue、页码、原始 PDF 路径或论文题目。
-- `no_rag`、`oracle_context`、`lexical_rag` 分别测试无上下文、理想上下文和实际检索。
-- DeepSeek answer 和 DeepSeek Judge 是辅助评测，不替代 qrels、规则指标或人工校准。
-- human sign-off 只能由真实人工标签完成，不能由 Codex 或 DeepSeek 自动代替。
+已经具备的约束包括：
 
-当前最重要的未完成项：
+- 每道题必须有 `source_chunk_ids`。
+- 检索结果通过 `qrels` 评测。
+- `no_rag`、`oracle_context` 和检索基线分离不同失败模式。
+- `Fresh-Hard` split 测试证据依赖。
+- 公开数据不泄露 DOI、作者、venue、页码、原始 PDF 路径和论文题目。
+- DeepSeek answer/Judge 记录 API 使用和错误状态。
+- 人工 sign-off workflow 与机器筛选明确分离。
 
-- 没有最终人工签核的 100-180 篇文献白名单。
-- 300 题数据集仍是 provisional，不是 human-final benchmark。
-- 全文 chunk manifest 尚未过滤到 human-accepted final sources。
-- neural dense/rerank 仍需隔离环境正式运行。
+当前边界也必须明确：
 
-## 重点文件
+- 300 题数据集是 `provisional`，不是 `human-final`。
+- 2,196 条全文 chunk manifests 是 machine-parseable 结果，不是 human-final accepted-source corpus。
+- 项目已有 human sign-off workflow，但还没有真实人工签核的 100-180 篇最终文献白名单。
+- hashed dense 是本地 non-neural 诊断基线。
+- FlashRAG neural dense/reranker 仍需要隔离依赖环境正式运行。
 
-| 目的 | 文件或目录 |
-| --- | --- |
-| 理解当前输出 | `outputs/README.md`、`outputs/current/README.md` |
-| 理解数据契约 | `docs/data-contract.md`、`benchmark/domainrag/schema.py`、`benchmark/domainrag/validator.py` |
-| 查看当前 300 题数据集 | `data/real_pilot_nickel_superalloy_demo_questions/` |
-| 查看 FlashRAG bundle | `outputs/flashrag/real_pilot_nickel_superalloy_demo_questions/` |
-| 查看结构化审计 | `docs/reports/rag-md-implementation-audit.json` |
-| 查看历史运行记录 | `outputs/archive/provenance/` |
-| 查看测试 | `tests/` |
+因此，当前仓库适合作为可复现 prototype 和研究流水线展示，但不能描述为最终人工验证 benchmark。
 
-## 密钥安全
+## Codex 与 DeepSeek 的分工
+
+**Codex** 负责工程侧工作：
+
+- 阅读和修改仓库代码。
+- 实现 adapters、validators、runners 和 reports。
+- 维护测试。
+- 整理 outputs 和 README。
+- 保持可复现性和审计路径。
+
+**DeepSeek API** 作为模型服务使用：
+
+- 题目生成。
+- 答案生成。
+- Judge 评价。
+- 辅助复核。
+
+DeepSeek 不替代 `qrels`、确定性校验器或最终人工来源签核。Codex 也不能替代真实人工 sign-off。
 
 真实 DeepSeek API key 只从环境变量读取：
 
@@ -293,3 +380,21 @@ DEEPSEEK_API_KEY
 ```
 
 测试不会调用真实 DeepSeek API，仓库也不保存 API key。
+
+## 当前完成状态
+
+| 模块 | 状态 |
+| --- | --- |
+| 工程流水线 | 基本完成 |
+| DomainRAG 数据契约 | 已完成 |
+| Easy Dataset 风格输入 | 已完成 |
+| FlashRAG bundle 准备 | 已完成 |
+| BM25 / lexical / oracle / no-rag baseline | 已完成 |
+| DeepSeek answer/Judge 路径 | 已在 pilot 和 bounded subset 上实现 |
+| 300 题 provisional 数据集 | 已完成 provisional 版本 |
+| 全文 chunk manifests | 已完成 machine-parseable manifests |
+| 人工最终文献白名单 | 待完成 |
+| human-final benchmark 声明 | 目前不能声明 |
+| neural dense/rerank | 待隔离环境正式运行 |
+
+相对于 `RAG.md`，当前工程流水线已经基本打通；严格意义上的最终 benchmark 还需要真实人工来源签核、基于 human-accepted sources 的 chunk 过滤或重建，以及最终题库复核。
