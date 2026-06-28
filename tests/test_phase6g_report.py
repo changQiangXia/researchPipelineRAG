@@ -56,7 +56,7 @@ def test_phase6g_audit_tracks_core_requirements_and_gaps():
 
     assert set(requirements) == expected_ids
     assert requirements["demo_scale"]["status"] == "partial"
-    assert requirements["dense_rerank_methods"]["status"] == "deferred"
+    assert requirements["dense_rerank_methods"]["status"] == "partial"
     assert requirements["final_report"]["status"] == "complete"
     assert all(item["evidence"] for item in requirements.values())
     assert all(item["status"] in {"complete", "partial", "deferred"} for item in requirements.values())

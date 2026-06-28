@@ -1,0 +1,165 @@
+{
+  "acceptance_gates": [
+    {
+      "command": "PYTHONPATH=benchmark python -m domainrag.cli dense-rerank-readiness --feasibility outputs/phase5e/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json --output outputs/phase7a/dense_rerank_readiness",
+      "expected": "readiness.json and summary.md are regenerated without mutating the base env",
+      "name": "install_isolated_requirements"
+    },
+    {
+      "command": "PYTHONPATH=benchmark python -m domainrag.cli probe-flashrag-methods --flashrag-path benchmark/flashrag-fork --output outputs/phase7a/dense_rerank_readiness/isolated_feasibility.json",
+      "expected": "flashrag_dense and flashrag_reranker become feasible in the isolated env",
+      "name": "flashrag_dense_import_probe"
+    },
+    {
+      "command": "PYTHONPATH=benchmark python -m domainrag.cli prepare-flashrag --dataset data/real_pilot_nickel_superalloy_medium --output outputs/flashrag --dataset-name real_pilot_nickel_superalloy_medium",
+      "expected": "medium FlashRAG bundle remains valid before dense/rerank runs",
+      "name": "medium_dense_retrieval_smoke"
+    },
+    {
+      "command": "PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium",
+      "expected": "dataset is valid",
+      "name": "medium_dataset_validation"
+    },
+    {
+      "command": "PYTHONPATH=benchmark pytest",
+      "expected": "all tests pass in the base repository and isolated env-specific tests pass separately",
+      "name": "regression_tests"
+    }
+  ],
+  "current_environment": {
+    "blocker_count": 6,
+    "blockers": [
+      {
+        "error": "No module named 'openai'",
+        "error_type": "ModuleNotFoundError",
+        "kind": "module_import_failure",
+        "name": "flashrag.generator.generator"
+      },
+      {
+        "error": "No module named 'termcolor'",
+        "error_type": "ModuleNotFoundError",
+        "kind": "module_import_failure",
+        "name": "flashrag.pipeline.pipeline"
+      },
+      {
+        "error": "No module named 'FlagEmbedding'",
+        "error_type": "ModuleNotFoundError",
+        "kind": "missing_package",
+        "name": "FlagEmbedding"
+      },
+      {
+        "error": "No module named 'sentence_transformers'",
+        "error_type": "ModuleNotFoundError",
+        "kind": "missing_package",
+        "name": "sentence_transformers"
+      },
+      {
+        "error": "No module named 'sklearn'",
+        "error_type": "ModuleNotFoundError",
+        "kind": "missing_package",
+        "name": "sklearn"
+      },
+      {
+        "dependent": "transformers",
+        "dependent_version": "5.12.1",
+        "installed": "2.1.2+cu121",
+        "kind": "version_mismatch",
+        "name": "torch",
+        "requirement": "torch>=2.4 for this transformers build"
+      }
+    ],
+    "decision": "use_isolated_environment",
+    "observed_packages": {
+      "FlagEmbedding": {
+        "error": "No module named 'FlagEmbedding'",
+        "error_type": "ModuleNotFoundError",
+        "ok": false,
+        "version": null
+      },
+      "faiss": {
+        "error": null,
+        "error_type": null,
+        "ok": true,
+        "version": "1.14.3"
+      },
+      "numpy": {
+        "error": null,
+        "error_type": null,
+        "ok": true,
+        "version": "1.26.3"
+      },
+      "sentence_transformers": {
+        "error": "No module named 'sentence_transformers'",
+        "error_type": "ModuleNotFoundError",
+        "ok": false,
+        "version": null
+      },
+      "sklearn": {
+        "error": "No module named 'sklearn'",
+        "error_type": "ModuleNotFoundError",
+        "ok": false,
+        "version": null
+      },
+      "torch": {
+        "error": null,
+        "error_type": null,
+        "ok": true,
+        "version": "2.1.2+cu121"
+      },
+      "transformers": {
+        "error": null,
+        "error_type": null,
+        "ok": true,
+        "version": "5.12.1"
+      }
+    },
+    "rationale": "Do not mutate the current AutoDL environment because dense/rerank requires model-backed packages and PyTorch/transformers changes.",
+    "safe_to_mutate": false
+  },
+  "generated_at": "2026-06-28T01:25:35.577611+00:00",
+  "isolated_environment": {
+    "creation_commands": [
+      "python3.10 -m venv .venvs/flashrag-dense",
+      ". .venvs/flashrag-dense/bin/activate",
+      "python -m pip install --upgrade pip",
+      "python -m pip install -r requirements/flashrag-dense-rerank.txt"
+    ],
+    "environment_variables": [
+      "PYTHONPATH=benchmark",
+      "FLASHRAG_HOME=<path-to-flashrag-fork>",
+      "DEEPSEEK_API_KEY=<only needed for generated-answer evaluation>"
+    ],
+    "manager": "venv or conda",
+    "pip_requirements": [
+      "torch>=2.4",
+      "transformers>=4.40,<5",
+      "sentence-transformers>=3.0",
+      "FlagEmbedding>=1.3",
+      "scikit-learn>=1.4",
+      "faiss-cpu>=1.8",
+      "numpy>=1.26,<2",
+      "termcolor>=2.4",
+      "openai>=1.40"
+    ],
+    "python": "3.10",
+    "requirements_file": "requirements/flashrag-dense-rerank.txt"
+  },
+  "phase": "Phase 7A",
+  "recommendation": {
+    "next_step": "build_isolated_dense_rerank_environment",
+    "rationale": "BM25 and lexical already separate on the medium pilot. Dense/rerank should be evaluated next only inside a dependency-isolated environment."
+  },
+  "source_feasibility_manifest": "outputs/phase5e/flashrag_method_feasibility/real_pilot_nickel_superalloy_manifest.json",
+  "source_manifest_summary": {
+    "flashrag_bm25_feasible": true,
+    "flashrag_commit": "e0e73399ce8d4563397b5fb4980de72a9c5e15a6",
+    "flashrag_dense_feasible": false,
+    "flashrag_path": "benchmark/flashrag-fork",
+    "flashrag_reranker_feasible": false
+  },
+  "target_methods": [
+    "flashrag_dense",
+    "flashrag_reranker",
+    "flashrag_bm25_plus_reranker"
+  ]
+}

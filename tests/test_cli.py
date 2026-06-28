@@ -427,6 +427,47 @@ def test_probe_flashrag_methods_command_writes_manifest(tmp_path: Path, capsys, 
     assert manifest["methods"]["flashrag_bm25"]["feasible"] is True
 
 
+def test_dense_rerank_readiness_module_entrypoint_writes_manifest_and_summary(tmp_path: Path):
+    feasibility = tmp_path / "feasibility.json"
+    output = tmp_path / "readiness"
+    feasibility.write_text(
+        json.dumps(
+            {
+                "packages": {
+                    "torch": {"ok": True, "version": "2.1.2+cu121"},
+                    "transformers": {"ok": True, "version": "5.12.1"},
+                    "sentence_transformers": {"ok": False, "version": None},
+                    "FlagEmbedding": {"ok": False, "version": None},
+                },
+                "blockers": [
+                    {"kind": "missing_package", "name": "sentence_transformers"},
+                    {"kind": "missing_package", "name": "FlagEmbedding"},
+                ],
+                "methods": {
+                    "flashrag_bm25": {"feasible": True},
+                    "flashrag_dense": {"feasible": False},
+                    "flashrag_reranker": {"feasible": False},
+                },
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    result = _run_cli(
+        "dense-rerank-readiness",
+        "--feasibility",
+        str(feasibility),
+        "--output",
+        str(output),
+    )
+
+    assert result.returncode == 0
+    assert "dense/rerank readiness written" in result.stdout
+    assert (output / "readiness.json").exists()
+    assert (output / "summary.md").exists()
+
+
 def test_verify_flashrag_method_feasibility_script_writes_manifest(tmp_path: Path):
     flashrag = tmp_path / "flashrag-fork"
     output = tmp_path / "manifest.json"
