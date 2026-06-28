@@ -94,13 +94,16 @@ def test_phase7c_updates_docs_and_audit_without_claiming_final_scale():
     assert "36 answer rows" in doc
     assert "36 judge rows" in doc
     assert "outputs/phase7c/medium_plus_live_subset/comparison/summary.json" in doc
-    assert audit["phase"] == "Phase 7C"
+    assert audit["phase"] == "Phase 7D"
     assert audit["dataset"]["name"] == DATASET_NAME
     assert audit["dataset"]["corpus_chunks"] == 100
     assert audit["dataset"]["questions"] == 150
     assert audit["phase7c_medium_plus_live_subset"]["questions"] == 12
     assert audit["phase7c_medium_plus_live_subset"]["answer_rows"] == 36
     assert audit["phase7c_medium_plus_live_subset"]["judge_rows"] == 36
+    assert audit["phase7d_demo_scale_source_acquisition"]["verification_status"] == (
+        "candidate_pool_only"
+    )
     assert requirements["demo_scale"]["status"] == "partial"
     assert requirements["live_deepseek_judge"]["status"] == "complete"
     assert "outputs/phase7c/medium_plus_live_subset/" in requirements[
