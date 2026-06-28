@@ -1,0 +1,53 @@
+{
+  "flashrag_bm25_live_deepseek": {
+    "api_calls": 12,
+    "errors": 0,
+    "mean_latency_ms": 5885.985262847195,
+    "metrics": {
+      "context_support": 5.0,
+      "correctness": 5.0,
+      "faithfulness": 5.0,
+      "hallucination_risk": 0.0,
+      "relevance": 5.0
+    },
+    "questions": 12,
+    "total_input_tokens": 9746,
+    "total_output_tokens": 6786,
+    "total_tokens": 16532,
+    "unsupported_claims": 0
+  },
+  "lexical_rag": {
+    "api_calls": 12,
+    "errors": 0,
+    "mean_latency_ms": 5092.495622889449,
+    "metrics": {
+      "context_support": 5.0,
+      "correctness": 5.0,
+      "faithfulness": 5.0,
+      "hallucination_risk": 0.0,
+      "relevance": 5.0
+    },
+    "questions": 12,
+    "total_input_tokens": 9176,
+    "total_output_tokens": 5626,
+    "total_tokens": 14802,
+    "unsupported_claims": 0
+  },
+  "no_rag": {
+    "api_calls": 12,
+    "errors": 0,
+    "mean_latency_ms": 12541.11513386791,
+    "metrics": {
+      "context_support": 0.0,
+      "correctness": 2.5833333333333335,
+      "faithfulness": 1.25,
+      "hallucination_risk": 3.75,
+      "relevance": 5.0
+    },
+    "questions": 12,
+    "total_input_tokens": 4271,
+    "total_output_tokens": 13945,
+    "total_tokens": 18216,
+    "unsupported_claims": 18
+  }
+}
