@@ -115,6 +115,14 @@ def _import_status(module_name: str) -> dict[str, Any]:
 
 
 def _package_status(package_name: str) -> dict[str, Any]:
+    metadata_version = _metadata_package_version(package_name)
+    if metadata_version is not None:
+        return {
+            "ok": True,
+            "version": metadata_version,
+            "error_type": None,
+            "error": None,
+        }
     try:
         module = importlib.import_module(package_name)
     except Exception as exc:
@@ -132,16 +140,20 @@ def _package_status(package_name: str) -> dict[str, Any]:
     }
 
 
-def _package_version(package_name: str, module: Any) -> str | None:
-    version = getattr(module, "__version__", None)
-    if isinstance(version, str):
-        return version
+def _metadata_package_version(package_name: str) -> str | None:
     for distribution_name in _distribution_names(package_name):
         try:
             return importlib.metadata.version(distribution_name)
         except importlib.metadata.PackageNotFoundError:
             continue
     return None
+
+
+def _package_version(package_name: str, module: Any) -> str | None:
+    version = getattr(module, "__version__", None)
+    if isinstance(version, str):
+        return version
+    return _metadata_package_version(package_name)
 
 
 def _distribution_names(package_name: str) -> tuple[str, ...]:

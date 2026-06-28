@@ -1,25 +1,25 @@
 {
-  "phase": "Phase 6G",
+  "phase": "Phase 7B",
   "report": "docs/reports/domainrag-medium-pilot-final-report.md",
   "blueprint": "/root/autodl-tmp/RAG/RAG.md",
   "dataset": {
-    "name": "real_pilot_nickel_superalloy_medium",
+    "name": "real_pilot_nickel_superalloy_medium_plus",
     "domain": "nickel-superalloy high-temperature failure",
-    "corpus_chunks": 40,
-    "questions": 60,
-    "dev_questions": 20,
-    "test_questions": 20,
-    "fresh_hard_questions": 20,
+    "corpus_chunks": 100,
+    "questions": 150,
+    "dev_questions": 50,
+    "test_questions": 50,
+    "fresh_hard_questions": 50,
     "question_type_counts": {
-      "single_choice": 15,
-      "multiple_choice": 15,
-      "fill_blank": 15,
-      "short_answer": 15
+      "single_choice": 38,
+      "multiple_choice": 38,
+      "fill_blank": 37,
+      "short_answer": 37
     },
     "source_records": 32,
     "evidence": [
-      "data/real_pilot_nickel_superalloy_medium/statistics.json",
-      "docs/verification/medium-scale-real-pilot-expansion.md"
+      "data/real_pilot_nickel_superalloy_medium_plus/statistics.json",
+      "docs/verification/medium-plus-scale-expansion.md"
     ]
   },
   "rag_md_targets": {
@@ -50,8 +50,8 @@
   },
   "completion_estimate": {
     "excluding_final_scale": "98%-99%",
-    "including_rag_md_demo_scale": "78%-80%",
-    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. The main hard gap is final RAG.md demo scale; dense/rerank methods now have isolated readiness evidence but have not yet been executed."
+    "including_rag_md_demo_scale": "82%-84%",
+    "reason": "The data contract, validators, adapters, BM25 FlashRAG path, live DeepSeek answer/Judge evaluation, Fresh-Hard comparison, and human calibration audit are implemented and verified. Phase 7B raises the current best validated dataset to 100 chunks and 150 questions with Fresh-Hard retrieval evidence. The main hard gap remains final RAG.md demo scale; dense/rerank methods have isolated readiness evidence but have not yet been executed."
   },
   "requirements": [
     {
@@ -59,8 +59,8 @@
       "status": "partial",
       "summary": "The project uses source-backed nickel-superalloy high-temperature failure chunks and source manifests, but it does not yet contain the full 100-180 paper top-venue white-list and official literature verification matrix required by RAG.md.",
       "evidence": [
-        "data/real_pilot_sources/nickel_superalloy_high_temp_failure_medium/sources.jsonl",
-        "docs/verification/medium-scale-real-pilot-expansion.md",
+        "data/real_pilot_sources/nickel_superalloy_high_temp_failure_medium_plus/sources.jsonl",
+        "docs/verification/medium-plus-scale-expansion.md",
         "/root/autodl-tmp/RAG/RAG.md"
       ]
     },
@@ -84,9 +84,9 @@
         "docs/data-contract.md",
         "benchmark/domainrag/schema.py",
         "benchmark/domainrag/validator.py",
-        "data/real_pilot_nickel_superalloy_medium/",
+        "data/real_pilot_nickel_superalloy_medium_plus/",
         "tests/test_validator.py",
-        "tests/test_real_pilot_medium_assets.py"
+        "tests/test_real_pilot_medium_plus_assets.py"
       ]
     },
     {
@@ -97,7 +97,7 @@
         "docs/data-contract.md",
         "benchmark/domainrag/validator.py",
         "tests/test_validator.py",
-        "tests/test_real_pilot_medium_assets.py"
+        "tests/test_real_pilot_medium_plus_assets.py"
       ]
     },
     {
@@ -141,10 +141,13 @@
     {
       "id": "fresh_hard_evaluation",
       "status": "complete",
-      "summary": "Fresh-Hard split exists in all real pilot datasets and is the main live comparison split in Phases 5D, 6B, 6C, 6E, and 6F.",
+      "summary": "Fresh-Hard split exists in all real pilot datasets and now includes 50 questions in the Phase 7B medium-plus dataset.",
       "evidence": [
-        "data/real_pilot_nickel_superalloy_medium/fresh_hard_test.jsonl",
+        "data/real_pilot_nickel_superalloy_medium_plus/fresh_hard_test.jsonl",
+        "outputs/phase7b/medium_plus_baseline/real_pilot_nickel_superalloy_medium_plus/fresh_hard_results.jsonl",
+        "outputs/phase7b/medium_plus_bm25s/real_pilot_nickel_superalloy_medium_plus/fresh_hard_bm25s_results.jsonl",
         "outputs/phase6e/medium_fresh_hard_comparison/summary.json",
+        "docs/verification/medium-plus-scale-expansion.md",
         "docs/verification/medium-live-deepseek-eval.md"
       ]
     },
@@ -194,9 +197,10 @@
     {
       "id": "demo_scale",
       "status": "partial",
-      "summary": "The current best dataset is 40 chunks and 60 questions, below the RAG.md demo target of 1,000-3,000 chunks and 300-500 questions.",
+      "summary": "The current best dataset is 100 chunks and 150 questions, below the RAG.md demo target of 1,000-3,000 chunks and 300-500 questions.",
       "evidence": [
-        "data/real_pilot_nickel_superalloy_medium/statistics.json",
+        "data/real_pilot_nickel_superalloy_medium_plus/statistics.json",
+        "docs/verification/medium-plus-scale-expansion.md",
         "/root/autodl-tmp/RAG/RAG.md"
       ]
     },
@@ -216,11 +220,13 @@
     {
       "id": "final_report",
       "status": "complete",
-      "summary": "Phase 6G adds a final medium-pilot report and this structured RAG.md implementation audit.",
+      "summary": "Phase 6G adds the final medium-pilot report; Phase 7B updates this structured RAG.md implementation audit with medium-plus scale evidence.",
       "evidence": [
         "docs/reports/domainrag-medium-pilot-final-report.md",
         "docs/reports/rag-md-implementation-audit.json",
-        "tests/test_phase6g_report.py"
+        "docs/verification/medium-plus-scale-expansion.md",
+        "tests/test_phase6g_report.py",
+        "tests/test_phase7b_outputs.py"
       ]
     }
   ],
@@ -312,9 +318,30 @@
     },
     "main_bias": "DeepSeek Judge is directionally reliable on the reviewed subset but conservative on partial-evidence BM25 oracle-reader rows."
   },
+  "phase7b_medium_plus_retrieval": {
+    "dataset": "real_pilot_nickel_superalloy_medium_plus",
+    "corpus_chunks": 100,
+    "questions": 150,
+    "fresh_hard_questions": 50,
+    "multi_source_questions": 86,
+    "fresh_hard_multi_source_questions": 43,
+    "methods": {
+      "lexical_rag": {
+        "retrieval_hit": 0.88,
+        "retrieval_recall": 0.7033,
+        "retrieval_mrr": 0.6047
+      },
+      "bm25s_oracle_reader": {
+        "retrieval_hit": 0.86,
+        "retrieval_recall": 0.7117,
+        "retrieval_mrr": 0.6073
+      }
+    },
+    "runtime_note": "The Phase 7B FlashRAG bundle is generated, but current-environment retrieval uses direct bm25s because FlashRAG retriever imports are killed by the PyTorch/transformers mismatch documented in Phase 7A."
+  },
   "next_phase_recommendation": {
-    "name": "Phase 7B scale path decision",
-    "recommended_path": "Write the medium pilot up as the validated engineering milestone, then choose between a hundreds-of-chunks expansion and a true RAG.md demo-scale 1,000+ chunk build.",
+    "name": "Phase 7C medium-plus live subset or demo-scale source acquisition",
+    "recommended_path": "Either run a bounded live DeepSeek answer/Judge subset on the 50-question medium-plus Fresh-Hard split, or start the larger source-acquisition workflow needed for a true RAG.md demo-scale 1,000+ chunk build.",
     "minimum_next_scale": {
       "corpus_chunks": 100,
       "questions": 150

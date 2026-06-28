@@ -4,6 +4,7 @@ import argparse
 import os
 from pathlib import Path
 
+from domainrag.bm25s_retrieval import run_bm25s_retrieval
 from domainrag.benchmark_runner import run_benchmark
 from domainrag.calibration_audit import generate_calibration_audit
 from domainrag.calibration_packet import generate_calibration_packet
@@ -104,6 +105,11 @@ def build_parser() -> argparse.ArgumentParser:
     run_flashrag_bm25.add_argument("--top-k", type=int, default=5)
     run_flashrag_bm25.add_argument("--index-dir", default=None)
     run_flashrag_bm25.add_argument("--rebuild-index", action="store_true", default=False)
+    run_bm25s = subparsers.add_parser("run-bm25s")
+    run_bm25s.add_argument("--dataset", required=True)
+    run_bm25s.add_argument("--output", required=True)
+    run_bm25s.add_argument("--split", default="dev", choices=["dev", "test", "fresh_hard"])
+    run_bm25s.add_argument("--top-k", type=int, default=5)
     probe_flashrag_methods = subparsers.add_parser("probe-flashrag-methods")
     probe_flashrag_methods.add_argument("--flashrag-path", required=True)
     probe_flashrag_methods.add_argument("--output", required=True)
@@ -289,6 +295,19 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc))
             return 1
         print(f"FlashRAG BM25 results written to {result_path}")
+        return 0
+    if args.command == "run-bm25s":
+        try:
+            result_path = run_bm25s_retrieval(
+                Path(args.dataset),
+                Path(args.output),
+                split=args.split,
+                top_k=args.top_k,
+            )
+        except (ValidationError, ValueError) as exc:
+            print(str(exc))
+            return 1
+        print(f"BM25s results written to {result_path}")
         return 0
     if args.command == "probe-flashrag-methods":
         try:
