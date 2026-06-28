@@ -1,0 +1,125 @@
+{
+  "candidate_count": 124,
+  "demo_scale_targets": {
+    "corpus_chunks": [
+      1000,
+      3000
+    ],
+    "questions": [
+      300,
+      500
+    ],
+    "source_papers": [
+      100,
+      180
+    ]
+  },
+  "final_included_sources": 0,
+  "full_text_queue_status_counts": {
+    "needs_access_check": 9,
+    "ready_for_full_text_download_attempt": 115
+  },
+  "full_text_ready_candidates": 115,
+  "full_text_status_counts": {
+    "landing_page_only": 9,
+    "open_access_full_text_candidate": 115
+  },
+  "limitations": [
+    "machine pre-screening only",
+    "venue metrics still require manual verification",
+    "full-text processability still requires download and parsing verification",
+    "article type and retraction status still require publisher/database checks",
+    "domain relevance still requires manual title/abstract/full-text screening"
+  ],
+  "priority_counts": {
+    "high": 3,
+    "low": 42,
+    "medium": 79
+  },
+  "research_article_candidates": 113,
+  "review_candidates": 11,
+  "review_gap_subtopics": [
+    "coatings",
+    "life_prediction",
+    "microstructure_characterization"
+  ],
+  "screening_status_counts": {
+    "needs_manual_verification": 124
+  },
+  "subtopic_count": 8,
+  "subtopics": {
+    "additive_manufacturing": {
+      "candidate_count": 8,
+      "full_text_ready_candidates": 6,
+      "high_priority_candidates": 0,
+      "low_priority_candidates": 4,
+      "medium_priority_candidates": 4,
+      "research_article_candidates": 5,
+      "review_candidates": 3
+    },
+    "coatings": {
+      "candidate_count": 9,
+      "full_text_ready_candidates": 9,
+      "high_priority_candidates": 1,
+      "low_priority_candidates": 2,
+      "medium_priority_candidates": 6,
+      "research_article_candidates": 9,
+      "review_candidates": 0
+    },
+    "creep": {
+      "candidate_count": 28,
+      "full_text_ready_candidates": 27,
+      "high_priority_candidates": 0,
+      "low_priority_candidates": 4,
+      "medium_priority_candidates": 24,
+      "research_article_candidates": 26,
+      "review_candidates": 2
+    },
+    "fatigue": {
+      "candidate_count": 10,
+      "full_text_ready_candidates": 9,
+      "high_priority_candidates": 0,
+      "low_priority_candidates": 2,
+      "medium_priority_candidates": 8,
+      "research_article_candidates": 9,
+      "review_candidates": 1
+    },
+    "hot_corrosion": {
+      "candidate_count": 17,
+      "full_text_ready_candidates": 14,
+      "high_priority_candidates": 2,
+      "low_priority_candidates": 8,
+      "medium_priority_candidates": 7,
+      "research_article_candidates": 15,
+      "review_candidates": 2
+    },
+    "life_prediction": {
+      "candidate_count": 12,
+      "full_text_ready_candidates": 11,
+      "high_priority_candidates": 0,
+      "low_priority_candidates": 7,
+      "medium_priority_candidates": 5,
+      "research_article_candidates": 12,
+      "review_candidates": 0
+    },
+    "microstructure_characterization": {
+      "candidate_count": 15,
+      "full_text_ready_candidates": 15,
+      "high_priority_candidates": 0,
+      "low_priority_candidates": 5,
+      "medium_priority_candidates": 10,
+      "research_article_candidates": 15,
+      "review_candidates": 0
+    },
+    "oxidation": {
+      "candidate_count": 25,
+      "full_text_ready_candidates": 24,
+      "high_priority_candidates": 0,
+      "low_priority_candidates": 10,
+      "medium_priority_candidates": 15,
+      "research_article_candidates": 22,
+      "review_candidates": 3
+    }
+  },
+  "verification_status": "machine_prescreen_only"
+}
