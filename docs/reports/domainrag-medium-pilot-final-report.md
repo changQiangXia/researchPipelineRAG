@@ -4,7 +4,7 @@ Recorded: 2026-06-28
 
 Blueprint: `/root/autodl-tmp/RAG/RAG.md`
 
-Repository milestone: Phase 7B, after `a53c18c Merge Phase 7A dense rerank readiness`
+Repository milestone: Phase 7C, after `c6bb323 Merge Phase 7B medium-plus scale checkpoint`
 
 ## Executive Summary
 
@@ -13,7 +13,8 @@ high-temperature-failure domain. The project implements the core engineering
 chain requested by `RAG.md`: a DomainRAG data contract, Easy Dataset-style
 intake, FlashRAG bundle preparation, real FlashRAG BM25 retrieval, typed
 scoring, live DeepSeek answer generation, live DeepSeek Judge evaluation,
-Fresh-Hard comparison, and a small human calibration audit.
+Fresh-Hard comparison, a small human calibration audit, and a bounded
+medium-plus live subset.
 
 The current project is not yet a full `RAG.md` demo-scale dataset. The best
 dataset has 100 corpus chunks and 150 questions; `RAG.md` calls for 1,000-3,000
@@ -22,8 +23,8 @@ medium-plus pilot whose non-scale engineering path is close to complete.
 
 Completion estimate:
 
-- Excluding final scale: 98%-99%
-- Including `RAG.md` demo scale: 82%-84%
+- Excluding final scale: about 99%
+- Including `RAG.md` demo scale: 84%-85%
 
 The structured audit behind this report is committed at:
 
@@ -109,11 +110,24 @@ Phase 6E recorded:
 - BM25 live Judge: 20 rows, 20 API calls, 0 errors
 - Total live API calls recorded in outputs: 180
 
+Phase 7C adds a bounded medium-plus live subset:
+
+- Dataset: `real_pilot_nickel_superalloy_medium_plus`
+- Split: Fresh-Hard
+- Questions: 12
+- Methods: `no_rag`, `lexical_rag`, `flashrag_bm25_live_deepseek`
+- Answer rows: 36
+- Judge rows: 36
+- Total live API calls: 75
+- Answer/Judge errors: 0
+
 Main evidence:
 
 - `outputs/phase6e/medium_fresh_hard_comparison/summary.json`
 - `outputs/phase6e/medium_fresh_hard_comparison/summary.md`
+- `outputs/phase7c/medium_plus_live_subset/comparison/summary.json`
 - `docs/verification/medium-live-deepseek-eval.md`
+- `docs/verification/medium-plus-live-subset.md`
 - `tests/test_phase6e_outputs.py`
 
 ## Phase 7B Medium-Plus Update
@@ -160,6 +174,36 @@ current AutoDL environment kills the FlashRAG retriever import after the
 PyTorch/transformers mismatch documented in Phase 7A. This is recorded as a
 real retrieval fallback, not as a completed FlashRAG BM25 run at medium-plus
 scale.
+
+## Phase 7C Medium-Plus Live Subset
+
+Phase 7C runs live DeepSeek answer generation and live DeepSeek Judge scoring
+on a bounded, diagnostic subset of the medium-plus Fresh-Hard split.
+
+The committed run uses the first 12 Fresh-Hard questions. That subset includes
+partial-recall rows and one BM25s retrieval miss, so it is more useful than an
+8-question sample that happened to have saturated retrieval hits.
+
+Output evidence:
+
+- `outputs/phase7c/medium_plus_live_subset/answers/real_pilot_nickel_superalloy_medium_plus/fresh_hard_deepseek_results.jsonl`
+- `outputs/phase7c/medium_plus_live_subset/judge/real_pilot_nickel_superalloy_medium_plus/fresh_hard_judge_results.jsonl`
+- `outputs/phase7c/medium_plus_live_subset/judge_report/summary.json`
+- `outputs/phase7c/medium_plus_live_subset/comparison/summary.json`
+- `docs/verification/medium-plus-live-subset.md`
+
+Comparison summary:
+
+| method | questions | retrieval hit | retrieval recall | answer score | correctness | faithfulness | hallucination risk | unsupported claims |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `flashrag_bm25_live_deepseek` | 12 | 0.9167 | 0.7569 | 0.8554 | 5.0000 | 5.0000 | 0.0000 | 0 |
+| `lexical_rag` | 12 | 0.9167 | 0.7361 | 0.8540 | 5.0000 | 5.0000 | 0.0000 | 0 |
+| `no_rag` | 12 | 0.0000 | 0.0000 | 0.3074 | 2.5833 | 1.2500 | 3.7500 | 18 |
+
+Interpretation: the medium-plus data now has real model-backed evidence in
+addition to deterministic retrieval diagnostics. Retrieval-grounded methods
+remain faithful on this subset, while No-RAG produces unsupported claims and
+higher hallucination risk even when it answers some choice questions correctly.
 
 Historical medium dataset:
 
@@ -339,6 +383,7 @@ The current handoff package is coherent as a medium pilot:
 - A FlashRAG-compatible bundle.
 - A real FlashRAG BM25 retrieval path.
 - A current-environment BM25s retrieval fallback for the 100/150 checkpoint.
+- A bounded medium-plus live DeepSeek answer/Judge subset.
 - Deterministic diagnostic baselines.
 - Live DeepSeek answer generation and Judge evaluation.
 - A five-method Fresh-Hard comparison.
@@ -351,20 +396,20 @@ the full `RAG.md` dataset scale.
 
 ## Next Phase Recommendation
 
-Recommended next phase: Phase 7C medium-plus live subset or demo-scale source acquisition.
+Recommended next phase: Phase 7D demo-scale source acquisition.
 
-Two practical options:
+The remaining high-value path is now data scale:
 
-1. Medium-plus live subset: run bounded live DeepSeek answer/Judge evaluation
-   over a sampled subset of the 50-question medium-plus Fresh-Hard split.
-2. True demo-scale build: target at least 1,000 chunks / 300 questions. This
-   aligns with `RAG.md`, but it requires a larger source acquisition and
-   review workflow before more API evaluation.
+1. Build a larger source acquisition and screening workflow toward at least
+   1,000 chunks / 300 questions.
+2. Keep the same validation, FlashRAG bundle preparation, retrieval comparison,
+   live answer/Judge, and sampled human calibration gates.
+3. Run dense/rerank only in the isolated environment described by Phase 7A, not
+   by mutating the current AutoDL runtime.
 
 If the goal is a defensible near-term project deliverable, finish with this
-medium report and append a scale roadmap. If the goal is strict `RAG.md`
-completion, the next work must be dataset scale, not another small evaluator
-feature.
+medium-plus report and append a scale roadmap. If the goal is strict `RAG.md`
+completion, the next work must be dataset scale, not another evaluator feature.
 
 ## Verification Commands
 
@@ -372,9 +417,10 @@ Run from repository root:
 
 ```bash
 PYTHONPATH=benchmark pytest tests/test_phase6g_report.py
+PYTHONPATH=benchmark pytest tests/test_phase7c_live_subset.py
 PYTHONPATH=benchmark pytest
 PYTHONPATH=benchmark python -m domainrag.cli validate-data --dataset data/real_pilot_nickel_superalloy_medium_plus
 PYTHONPATH=benchmark pytest tests/test_real_pilot_medium_plus_assets.py tests/test_phase7b_outputs.py
-grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs benchmark scripts tests README.md docs data fixtures || true
+grep -REn "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9_]+" outputs benchmark scripts tests README.md docs data fixtures pyproject.toml || true
 git diff --check
 ```
